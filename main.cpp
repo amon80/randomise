@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <set>
 #include <map>
+#include "permutationtree.h"
 
 // Partion the design matrix M basing on the contrast C as indicated on the paper
 //X contains the design for the regressors of interest and Z for nuisance variable
@@ -29,10 +30,10 @@ void partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd& C, Eigen::MatrixXd& X, 
 
 //This function confronts two rows
 //Two rows are equal if they have the same elements
-bool confrontRows(Eigen::MatrixXd& X, int row1, int row2){
+bool confrontRows(Eigen::MatrixXd& X, int row1Index, int row2Index){
     int ncols = X.cols();
     for(int i = 0; i < ncols; i++){
-        if(X(row1, i) != X(row2, i))
+        if(X(row1Index, i) != X(row2Index, i))
             return false;
     }
     return true;
@@ -47,9 +48,9 @@ bool confrontBlocks(Eigen::MatrixXd& X, std::vector<int>& block1, std::vector<in
         return false;
     int n = block1.size();
     for(int i = 0; i < n; i++){
-        int row1 = block1[i];
-        int row2 = block2[i];
-        if(!confrontRows(X, row1, row2))
+        int row1Index = block1[i];
+        int rowIndex = block2[i];
+        if(!confrontRows(X, row1Index, rowIndex))
             return false;
     }
     return true;
@@ -59,6 +60,10 @@ bool confrontBlocks(Eigen::MatrixXd& X, std::vector<int>& block1, std::vector<in
 //This functions finds all the blocks and stores them in a convinient manner
 //For every block i, blocks[i] contains the indices of the rows that compose the block
 //This works since blocks are numbered from 0 to numBlocks-1
+
+//It is important to note that if the hypothesis is whole block exchangeability
+//blocks must be composed by consecutive rows, and must be of the same size
+//(otherwise permuting them is impossible)
 std::vector<std::vector<int>> findBlocks(std::vector<int>& b){
     int numBlocks = *(std::max_element(b.begin(),b.end())) + 1;
     int numRows = b.size();
@@ -90,7 +95,7 @@ int fact(int n){
 
 //NOTE: in both cases (PB and !PB) the for loop that finds repeated elements doesn't reach the last element.
 //This works because there are only two cases possible:
-//1) If the last item repeats one of the previous, it has already been counted.
+//1) If the last item is equal to one of the previous, it has already been counted.
 //2) If not, than it's count is equal to one, than the division is not necessary.
 int calculateMaxShufflings(Eigen::MatrixXd& X, std::vector<std::vector<int>>& blocks, bool PB, bool EE, bool ISE){
     int numPermutation = 1;
@@ -121,7 +126,7 @@ int calculateMaxShufflings(Eigen::MatrixXd& X, std::vector<std::vector<int>>& bl
                     }
                 }
                 //now, for block i we have all the informations we need
-                //compute permutation for such block here
+                //compute the number of permutations for such block here
                 numPermutation *= fact(rowsInBlockI);
                 for(auto& row: uniqueRows){
                     int timesRepeated = row.second;
@@ -174,9 +179,9 @@ void randomise(T& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, bool EE, bool ISE, 
 }
 
 
-
-int main(int argc, char *argv[])
-{
+//test #1: Testing the functions that computes the number of permutations
+//With exchangeability blocks
+void test1(int argc, char *argv[]){
     Eigen::MatrixXd X(6,2);
 
     X(0, 0) = 1;
@@ -241,6 +246,219 @@ int main(int argc, char *argv[])
     int maxShufflings2 = calculateMaxShufflings(X, blocks2, true, true, true);
     int maxShufflings3 = calculateMaxShufflings(X, blocks3, true, true, true);
     int maxShufflings4 = calculateMaxShufflings(X, blocks4, true, true, true);
+}
+
+
+//-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
+
+//Test #2: In particular: example #f from the paper is tried here
+//Mixed experiment
+void test2(int argc, char *argv[]){
+    std::vector<std::vector<int>> multyRowArray(4);
+
+    //first row
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    //second row
+    multyRowArray[1].push_back(-1);
+    multyRowArray[1].push_back(-1);
+    multyRowArray[1].push_back(-1);
+    multyRowArray[1].push_back(-2);
+    multyRowArray[1].push_back(-2);
+    multyRowArray[1].push_back(-2);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(3);
+    //third row
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(2);
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(2);
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(2);
+    multyRowArray[2].push_back(3);
+    //fourth row
+    multyRowArray[3].push_back(1);
+    multyRowArray[3].push_back(2);
+    multyRowArray[3].push_back(3);
+    multyRowArray[3].push_back(4);
+    multyRowArray[3].push_back(5);
+    multyRowArray[3].push_back(6);
+    multyRowArray[3].push_back(7);
+    multyRowArray[3].push_back(8);
+    multyRowArray[3].push_back(9);
+
+    PermutationTree t(multyRowArray);
+    std::cout << "finished" << std::endl;
+}
+
+//Test #3: Same as test number 2, with simpler configuration
+//Example #a -> Within block but not whole block
+void test3(int argc, char *argv[]){
+    std::vector<std::vector<int>> multyRowArray(3);
+
+    //first row
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    multyRowArray[0].push_back(-1);
+    //second row
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(3);
+    //third row
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(2);
+    multyRowArray[2].push_back(3);
+    multyRowArray[2].push_back(4);
+    multyRowArray[2].push_back(5);
+    multyRowArray[2].push_back(6);
+    multyRowArray[2].push_back(7);
+    multyRowArray[2].push_back(8);
+    multyRowArray[2].push_back(9);
+
+    PermutationTree t(multyRowArray);
+    std::cout << "finished" << std::endl;
+}
+
+//Test #4: Same as test number 3, with simpler configuration
+//Example #b -> Whole block but not within block
+void test4(int argc, char *argv[]){
+    std::vector<std::vector<int>> multyRowArray(3);
+
+    //first row
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    //second row
+    multyRowArray[1].push_back(-1);
+    multyRowArray[1].push_back(-1);
+    multyRowArray[1].push_back(-1);
+    multyRowArray[1].push_back(-2);
+    multyRowArray[1].push_back(-2);
+    multyRowArray[1].push_back(-2);
+    multyRowArray[1].push_back(-3);
+    multyRowArray[1].push_back(-3);
+    multyRowArray[1].push_back(-3);
+    //third row
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(2);
+    multyRowArray[2].push_back(3);
+    multyRowArray[2].push_back(4);
+    multyRowArray[2].push_back(5);
+    multyRowArray[2].push_back(6);
+    multyRowArray[2].push_back(7);
+    multyRowArray[2].push_back(8);
+    multyRowArray[2].push_back(9);
+
+    PermutationTree t(multyRowArray);
+    std::cout << "finished" << std::endl;
+}
+
+//Test #5: Same as test number 4, with simpler configuration
+//Example #c -> Within block and whole block
+void test5(int argc, char *argv[]){
+    std::vector<std::vector<int>> multyRowArray(3);
+
+    //first row
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    //second row
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(3);
+    //third row
+    multyRowArray[2].push_back(1);
+    multyRowArray[2].push_back(2);
+    multyRowArray[2].push_back(3);
+    multyRowArray[2].push_back(4);
+    multyRowArray[2].push_back(5);
+    multyRowArray[2].push_back(6);
+    multyRowArray[2].push_back(7);
+    multyRowArray[2].push_back(8);
+    multyRowArray[2].push_back(9);
+
+    PermutationTree t(multyRowArray);
+    std::cout << "finished" << std::endl;
+}
+
+//Test #6: Same as test number 5, with simpler configuration
+//Example #f -> unrestricted exchangeability
+void test6(int argc, char *argv[]){
+    std::vector<std::vector<int>> multyRowArray(2);
+
+    //first row
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    multyRowArray[0].push_back(1);
+    //second row
+    multyRowArray[1].push_back(1);
+    multyRowArray[1].push_back(2);
+    multyRowArray[1].push_back(3);
+    multyRowArray[1].push_back(4);
+    multyRowArray[1].push_back(5);
+    multyRowArray[1].push_back(6);
+    multyRowArray[1].push_back(7);
+    multyRowArray[1].push_back(8);
+    multyRowArray[1].push_back(9);
+
+    PermutationTree t(multyRowArray);
+    std::cout << "finished" << std::endl;
+}
+
+int main(int argc, char *argv[])
+{
+    //test1(argc, argv)
+    //test2(argc, argv);
+    //test3(argc, argv);
+    //test4(argc, argv);
+    //test5(argc, argv);
+    test6(argc, argv);
 
 
     return 0;

@@ -275,6 +275,10 @@ HEADERS += \
     Eigen/src/SVD/SVDBase.h \
     Eigen/src/SVD/UpperBidiagonalization.h \
     Eigen/src/UmfPackSupport/UmfPackSupport.h \
+    treeblock.h \
+    permutationtree.h
 
 SOURCES += \
-    main.cpp
+    main.cpp \
+    treeblock.cpp \
+    permutationtree.cpp
