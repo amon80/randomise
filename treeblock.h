@@ -6,16 +6,17 @@
 class TreeBlock
 {
 public:
-    TreeBlock(int startBlockIndex, int endBlockIndex, int permutable);
+    TreeBlock(std::vector<int>& indices, bool permutable);
+    TreeBlock(bool permutable);
     void addSon(TreeBlock * son);
-    int getStartBlockIndex();
-    int getEndBlockIndex();
-    void addValue(float v);
+    int getIndex(int i);
+    void setValue(int value);
+    int getNumSons();
+    int getIndicesSize();
 private:
-    int startBlockIndex;
-    int endBlockIndex;
+    std::vector<int> indices;
     bool permutable;
-    float value;
+    int value;
     std::vector<TreeBlock*> sons;
 };
 
