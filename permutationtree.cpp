@@ -5,7 +5,6 @@
 //-------------UTILITY FUNCTIONS------------
 
 
-
 int findMax(std::vector<int>& v, TreeBlock * block){
     int n = block->getIndicesSize();
     int max = abs(v[block->getIndex(0)]);
