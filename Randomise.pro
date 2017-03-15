@@ -277,10 +277,12 @@ HEADERS += \
     Eigen/src/UmfPackSupport/UmfPackSupport.h \
     treeblock.h \
     permutationtree.h \
-    tests.h
+    tests.h \
+    mymath.h
 
 SOURCES += \
     main.cpp \
     treeblock.cpp \
     permutationtree.cpp \
-    tests.cpp
+    tests.cpp \
+    mymath.cpp

@@ -31,7 +31,7 @@ void partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd& C, Eigen::MatrixXd& X, 
 
 //This function confronts two rows
 //Two rows are equal if they have the same elements
-bool confrontRows(Eigen::MatrixXd& X, int row1Index, int row2Index){
+/*bool confrontRows(Eigen::MatrixXd& X, int row1Index, int row2Index){
     int ncols = X.cols();
     for(int i = 0; i < ncols; i++){
         if(X(row1Index, i) != X(row2Index, i))
@@ -77,14 +77,6 @@ std::vector<std::vector<int>> findBlocks(std::vector<int>& b){
         }
     }
     return blocks;
-}
-
-int fact(int n){
-    int toReturn = 1;
-    for(int i = 1; i<=n ; i++){
-        toReturn *= i;
-    }
-    return toReturn;
 }
 
 //X is the N x s matrix obtained from the partitioning
@@ -165,6 +157,8 @@ int calculateMaxShufflings(Eigen::MatrixXd& X, std::vector<std::vector<int>>& bl
     return numPermutation;
 }
 
+
+
 //single contrast version
 //ask for multi-contrast
 template <typename T>
@@ -179,14 +173,39 @@ void randomise(T& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, bool EE, bool ISE, 
     //TODO
 }
 
+*/
+
 int main(int argc, char *argv[])
 {
-    //test1(argc, argv)
-    test2(argc, argv);
-    //test3(argc, argv);
-    //test4(argc, argv);
-    //test5(argc, argv);
-    //test6(argc, argv);
+    //First matrix used for tests, no repetitions at all
+    Eigen::MatrixXd X1(9, 2);
+
+    X1(0,0) = 1;
+    X1(0,1) = 2;
+    X1(1,0) = 3;
+    X1(1,1) = 4;
+    X1(2,0) = 5;
+    X1(2,1) = 6;
+    X1(3,0) = 7;
+    X1(3,1) = 8;
+    X1(4,0) = 9;
+    X1(4,1) = 10;
+
+    X1(5,0) = 11;
+    X1(5,1) = 12;
+    X1(6,0) = 13;
+    X1(6,1) = 14;
+    X1(7,0) = 15;
+    X1(7,1) = 16;
+    X1(8,0) = 17;
+    X1(8,1) = 18;
+
+    //test1(X1)
+    //test2(X1);
+    //test3(X1);
+    //test4(X1);
+    //test5(X1);
+    test6(X1);
 
 
     return 0;
