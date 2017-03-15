@@ -28,136 +28,7 @@ void partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd& C, Eigen::MatrixXd& X, 
    Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
 }
 
-
-//This function confronts two rows
-//Two rows are equal if they have the same elements
-/*bool confrontRows(Eigen::MatrixXd& X, int row1Index, int row2Index){
-    int ncols = X.cols();
-    for(int i = 0; i < ncols; i++){
-        if(X(row1Index, i) != X(row2Index, i))
-            return false;
-    }
-    return true;
-}
-
-//This function confronts two blocks
-//Two blocks are equal if:
-//1) They have the same size
-//2) Their rows are equal in order
-bool confrontBlocks(Eigen::MatrixXd& X, std::vector<int>& block1, std::vector<int>& block2){
-    if(block1.size() != block2.size())
-        return false;
-    int n = block1.size();
-    for(int i = 0; i < n; i++){
-        int row1Index = block1[i];
-        int rowIndex = block2[i];
-        if(!confrontRows(X, row1Index, rowIndex))
-            return false;
-    }
-    return true;
-}
-
-
-//This functions finds all the blocks and stores them in a convinient manner
-//For every block i, blocks[i] contains the indices of the rows that compose the block
-//This works since blocks are numbered from 0 to numBlocks-1
-
-//It is important to note that if the hypothesis is whole block exchangeability
-//blocks must be composed by consecutive rows, and must be of the same size
-//(otherwise permuting them is impossible)
-std::vector<std::vector<int>> findBlocks(std::vector<int>& b){
-    int numBlocks = *(std::max_element(b.begin(),b.end())) + 1;
-    int numRows = b.size();
-    std::vector<std::vector<int>> blocks(numBlocks);
-    for(int i = 0; i < numBlocks; i++){
-        for(int j = 0; j < numRows; j++){
-            if(b[j] == i){
-                blocks[i].push_back(j);
-            }
-        }
-    }
-    return blocks;
-}
-
-//X is the N x s matrix obtained from the partitioning
-//b is a vector of N integers. Each element in position i specifies the block of the i-th row of the matrix X
-//block are enumerated from 0 to numBlock-1
-//PB is a boolean flag that specifies if permutation are within block or whole block
-//EE is a boolean flag that specifies if errors are exchangeable
-//ISE is a boolean flag that specifies if errors are symmetric and indipendent
-
-//NOTE: in both cases (PB and !PB) the for loop that finds repeated elements doesn't reach the last element.
-//This works because there are only two cases possible:
-//1) If the last item is equal to one of the previous, it has already been counted.
-//2) If not, than it's count is equal to one, than the division is not necessary.
-int calculateMaxShufflings(Eigen::MatrixXd& X, std::vector<std::vector<int>>& blocks, bool PB, bool EE, bool ISE){
-    int numPermutation = 1;
-    int numBlocks = blocks.size();
-    int numRows = X.rows();
-
-    if(!PB){//within-block exchangeability
-        if(ISE){
-            numPermutation <<= numRows;
-        }
-        if(EE){
-            //check if there are repeated rows in each block
-            for(int i = 0; i < numBlocks; i++){
-                std::set<int> rowsToSkip;
-                std::map<int, int> uniqueRows;
-                int rowsInBlockI = blocks[i].size();
-                for(int j = 0; j < rowsInBlockI-1; j++){
-                    if(rowsToSkip.count(blocks[i][j]))
-                        continue;
-                    else
-                        uniqueRows[blocks[i][j]] = 1;
-                    for(int k = j+1; k < rowsInBlockI; k++){
-                        bool areRowsEqual = confrontRows(X, blocks[i][j], blocks[i][k]);
-                        if(areRowsEqual){
-                            rowsToSkip.insert(blocks[i][k]);
-                            uniqueRows[blocks[i][j]] += 1;
-                        }
-                    }
-                }
-                //now, for block i we have all the informations we need
-                //compute the number of permutations for such block here
-                numPermutation *= fact(rowsInBlockI);
-                for(auto& row: uniqueRows){
-                    int timesRepeated = row.second;
-                    numPermutation /= fact(timesRepeated);
-                }
-            }
-        }
-    }else{//whole-block exchangeability
-        if(ISE){
-            numPermutation <<= numBlocks;
-        }
-        if(EE){
-            std::set<int> blocksToSkip;
-            std::map<int, int> uniqueBlocks;
-            for(int i = 0; i < numBlocks-1; i++){
-                if(blocksToSkip.count(i))
-                    continue;
-                else
-                    uniqueBlocks[i] = 1;
-                for(int j = i+1; j < numBlocks; j++){
-                    bool areBlocksEqual = confrontBlocks(X, blocks[i], blocks[j]);
-                    if(areBlocksEqual){
-                        blocksToSkip.insert(j);
-                        uniqueBlocks[i] += 1;
-                    }
-                }
-           }
-           numPermutation *= fact(numBlocks);
-           for(auto& block: uniqueBlocks){
-                int timesRepeated = block.second;
-                numPermutation /= fact(timesRepeated);
-           }
-        }
-    }
-    return numPermutation;
-}
-
-
+/*
 
 //single contrast version
 //ask for multi-contrast
@@ -200,12 +71,43 @@ int main(int argc, char *argv[])
     X1(8,0) = 17;
     X1(8,1) = 18;
 
-    //test1(X1)
-    //test2(X1);
-    //test3(X1);
-    //test4(X1);
-    //test5(X1);
+    //Second matrix used for tests
+    Eigen::MatrixXd X2(9, 2);
+
+    X2(0,0) = 1;
+    X2(0,1) = 2;
+    X2(1,0) = 3;
+    X2(1,1) = 4;
+    X2(2,0) = 5;
+    X2(2,1) = 6;
+    X2(3,0) = 7;
+    X2(3,1) = 8;
+    X2(4,0) = 9;
+    X2(4,1) = 10;
+
+    X2(5,0) = 11;
+    X2(5,1) = 12;
+    X2(6,0) = 1;
+    X2(6,1) = 2;
+    X2(7,0) = 3;
+    X2(7,1) = 4;
+    X2(8,0) = 5;
+    X2(8,1) = 6;
+
+
+    //First suite of tests
+    test2(X1);
+    test3(X1);
+    test4(X1);
+    test5(X1);
     test6(X1);
+
+    //Second suite of tests
+    test2(X2);
+    test3(X2);
+    test4(X2);
+    test5(X2);
+    test6(X2);
 
 
     return 0;
