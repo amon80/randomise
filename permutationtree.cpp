@@ -115,14 +115,24 @@ void PermutationTree::initializeThreeColsArray(TreeBlock * block){
         block = root;
     int numSons = block->getNumSons();
     //base case is the same of confrontbranch function, so be careful
-    if(numSons == 0){
+    if(numSons == 0)
         return;
-    }
     block->initializeThreeColsArray();
-    for(int i = 0; i < numSons; i++){
+    for(int i = 0; i < numSons; i++)
         initializeThreeColsArray(block->getSon(i));
-    }
 }
+
+void PermutationTree::initializeBinaryCounters(TreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return;
+    block->initializeBinaryCounter();
+    for(int i = 0; i < numSons; i++)
+        initializeBinaryCounters(block->getSon(i));
+}
+
 
 
 //before calling this function, be sure to have initialized the three cols array for each node

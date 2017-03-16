@@ -50,19 +50,29 @@ int TreeBlock::getValue(){
 // We're actually treating the three cols array
 // as a three rows array
 void TreeBlock::initializeThreeColsArray(){
-    if(!permutable){
-        //if the block is not permutable, three cols array is actually a 0 cols array.
-        return;
+    if(permutable){
+        int numsons = sons.size();
+        //first column is a sequence of integers that represente each of the branches.
+        //It is inizialed to all -1 so that it can be filled later.
+        threecolsarray[0] = std::vector<int>(numsons, -1);
+        for(int i = 1; i < 3; i++){
+            threecolsarray[i] = std::vector<int>(numsons);
+        }
+        //TODO: other stuff concerning second and third row.
     }
-    int numsons = sons.size();
-    //first column is a sequence of integers that represente each of the branches.
-    //It is inizialed to all -1 so that it can be filled later.
-    threecolsarray[0] = std::vector<int>(numsons, -1);
-    for(int i = 1; i < 3; i++){
-        threecolsarray[i] = std::vector<int>(numsons);
-    }
-    //TODO: other stuff concerning second and third row.
 }
+
+void TreeBlock::initializeBinaryCounter(){
+    if(permutable){
+        int numSons = sons.size();
+        counter = BinaryString(numSons);
+    }
+}
+
+BinaryString& TreeBlock::getBinaryCounter(){
+    return counter;
+}
+
 
 //i: 0 <= i <= 2
 //getArray can be called succesfully only if block is permutable
