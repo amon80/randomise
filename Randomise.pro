@@ -279,7 +279,8 @@ HEADERS += \
     permutationtree.h \
     tests.h \
     mymath.h \
-    binarystring.h
+    binarystring.h \
+    lalgorithm.h
 
 SOURCES += \
     main.cpp \
@@ -287,4 +288,5 @@ SOURCES += \
     permutationtree.cpp \
     tests.cpp \
     mymath.cpp \
-    binarystring.cpp
+    binarystring.cpp \
+    lalgorithm.cpp
