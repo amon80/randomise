@@ -23,4 +23,7 @@ void test5(Eigen::MatrixXd& X);
 //Example #f -> unrestricted exchangeability
 void test6(Eigen::MatrixXd& X);
 
+void testBinaryStringsOperators();
+
+
 #endif // TESTS_H

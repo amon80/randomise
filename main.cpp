@@ -95,19 +95,25 @@ int main(int argc, char *argv[])
     X2(8,1) = 6;
 
 
-    //First suite of tests
+    /*
+     * First suite of tests
     test2(X1);
     test3(X1);
     test4(X1);
     test5(X1);
     test6(X1);
+    */
 
-    //Second suite of tests
+    /*
+     * Second suite of tests
     test2(X2);
     test3(X2);
     test4(X2);
     test5(X2);
     test6(X2);
+    */
+
+    //testBinaryStringsOperators();
 
 
     return 0;

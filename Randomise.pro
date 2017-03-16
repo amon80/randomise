@@ -278,11 +278,13 @@ HEADERS += \
     treeblock.h \
     permutationtree.h \
     tests.h \
-    mymath.h
+    mymath.h \
+    binarystring.h
 
 SOURCES += \
     main.cpp \
     treeblock.cpp \
     permutationtree.cpp \
     tests.cpp \
-    mymath.cpp
+    mymath.cpp \
+    binarystring.cpp

@@ -2,6 +2,7 @@
 #include <Eigen/Dense>
 #include <vector>
 #include "permutationtree.h"
+#include "binarystring.h"
 
 //-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
 
@@ -213,4 +214,12 @@ void test6(Eigen::MatrixXd& X){
     t.initializeThreeColsArray();
     int numPermutations = t.calculatePermutations(X, true, true);
     std::cout << numPermutations << std::endl;
+}
+
+void testBinaryStringsOperators(){
+    BinaryString b1(8);
+
+    do{
+        std::cout << b1 << std::endl;
+    }while(b1++ != b1);
 }
