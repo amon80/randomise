@@ -115,6 +115,15 @@ int main(int argc, char *argv[])
 
     //testBinaryStringsOperators();
 
+    std::vector<int> toTest(4);
+
+    toTest[0] = 1;
+    toTest[1] = 2;
+    toTest[2] = 2;
+    toTest[3] = 3;
+
+    testLAlgorithm(toTest);
+
 
     return 0;
 }

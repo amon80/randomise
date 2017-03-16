@@ -3,6 +3,7 @@
 #include <vector>
 #include "permutationtree.h"
 #include "binarystring.h"
+#include "lalgorithm.h"
 
 //-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
 
@@ -222,4 +223,8 @@ void testBinaryStringsOperators(){
     do{
         std::cout << b1 << std::endl;
     }while(b1++ != b1);
+}
+
+void testLAlgorithm(std::vector<int>& toTest){
+    lalgorithm(toTest, std::cout);
 }
