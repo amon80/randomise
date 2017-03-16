@@ -84,8 +84,7 @@ bool confrontBranch(TreeBlock * b1, TreeBlock * b2, Eigen::MatrixXd &X){
     }
     //recursion case
     for(int i = 0; i < b1sons; i++){
-        bool c = confrontBranch(b1->getSon(i), b2->getSon(i), X);
-        if(!c)
+        if(!confrontBranch(b1->getSon(i), b2->getSon(i), X))
             return false;
     }
     //if the function arrives here, means that all sub branches are equal, so the branches

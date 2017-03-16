@@ -14,6 +14,7 @@ public:
     int calculatePermutations(Eigen::MatrixXd& X, bool EE, bool ISE, TreeBlock * block = nullptr);
 private:
     TreeBlock* root;
+
 };
 
 #endif // PERMUTATIONTREE_H

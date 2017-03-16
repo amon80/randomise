@@ -27,6 +27,7 @@ private:
     bool permutable;
     std::vector<std::vector<int>> threecolsarray;
     int value;
+
     std::vector<TreeBlock*> sons;
 };
 
