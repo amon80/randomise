@@ -137,17 +137,15 @@ int& BinaryString::operator[](std::size_t idx){
 
 BinaryString& BinaryString::operator++(){
     int index;
-    for(index = n_bits-1; index >= 0; index--){
+    for(index = n_bits-1; index >= 0; index--)
         if(string[index] == 0)
             break;
-    }
     if(index == -1)
         return *this;
     string[index] = 1;
-    for(index += 1; index < n_bits; index++){
+    for(index += 1; index < n_bits; index++)
         if(string[index] == 1)
             string[index] = 0;
-    }
     return *this;
 }
 
@@ -157,9 +155,25 @@ BinaryString BinaryString::operator++(int){
    return tmp;   // return old value
 }
 
+void BinaryString::reset(){
+    for(int i = 0; i < n_bits; i++)
+        string[i] = 0;
+}
+
 // ------------ ACCESS METHODS ------------
 
 int BinaryString::size(){
     return n_bits;
+}
+
+bool BinaryString::isIncrementable(){
+    int index;
+    for(index = n_bits-1; index >= 0; index--)
+        if(string[index] == 0)
+            break;
+    if(index == -1)
+        return false;
+    else
+        return true;
 }
 

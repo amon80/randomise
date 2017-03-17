@@ -23,8 +23,10 @@ public:
     int& operator[](std::size_t idx);
     BinaryString& operator++();
     BinaryString operator++(int);
+    void reset();
     //access functions
     int size();
+    bool isIncrementable();
     
 private:
     friend std::ostream& operator<<(std::ostream &os, const BinaryString& p);
