@@ -23,14 +23,14 @@ public:
     PermutationTreeBlock * getSon(int i);
     //-------THREECOLS ARRAY METHODS----
     void initializeThreeColsArray();
-    std::vector<int>& getArray(int i);
+    ThreeColsArray& getThreeColsArray();
     //-------BINARY COUNTER METHODS-----
     void initializeBinaryCounter();
     BinaryString& getBinaryCounter();
 private:
     std::vector<int> indices;
     bool permutable;
-    std::vector<std::vector<int>> threecolsarray;
+    ThreeColsArray threecolsarray;
     int value;
     BinaryString counter;
     std::vector<PermutationTreeBlock*> sons;

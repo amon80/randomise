@@ -161,15 +161,13 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
             //building the permutation matrix should be filled here
             //so it can be used to find unique branches and how many times they repeat
             int branch_id = 0;
-            std::vector<int> firstRow = block->getArray(0);
+            ThreeColsArray t = block->getThreeColsArray();
             for(int i = 0; i < numSons; i++){
-                if(firstRow[i] == -1){
-                    firstRow[i] = branch_id++;
-                    for(int j = i + 1; j < numSons; j++){
-                        if(confrontBranch(block->getSon(i), block->getSon(j), X)){
-                            firstRow[j] = firstRow[i];
-                        }
-                    }
+                if(t(0,i) == -1){
+                    t(0,i) = branch_id++;
+                    for(int j = i + 1; j < numSons; j++)
+                        if(confrontBranch(block->getSon(i), block->getSon(j), X))
+                            t(0,j) = t(0,i);
                 }
             }
             //At this point, there are exactly branch_id different branches
@@ -179,10 +177,9 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
             if(branch_id < numSons){
                 for(int i = 0; i < branch_id; i++){
                     int timesThatBranchIRepeats = 0;
-                    for(int j = 0; j < numSons; j++){
-                        if(firstRow[j] == i)
+                    for(int j = 0; j < numSons; j++)
+                        if(t(0,j) == i)
                             timesThatBranchIRepeats++;
-                    }
                     numPermutation /= fact(timesThatBranchIRepeats);
                 }
             }
