@@ -3,7 +3,7 @@
 #include <vector>
 #include "permutationtree.h"
 #include "binarystring.h"
-#include "lalgorithm.h"
+#include "threecolsarray.h"
 
 //-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
 
@@ -219,12 +219,22 @@ void test6(Eigen::MatrixXd& X){
 
 void testBinaryStringsOperators(){
     BinaryString b1(8);
-
     do{
         std::cout << b1 << std::endl;
     }while(b1++ != b1);
 }
 
-void testLAlgorithm(std::vector<int>& toTest){
-    lalgorithm(toTest, std::cout);
+void lalgorithmtest(ThreeColsArray& t){
+    int iteration_number = 0;
+    while(true){
+        std::cout << "Iteration " << iteration_number++ << " - array status:" << std::endl;
+        std::cout << t << std::endl;
+        if(t.isLAlgorithmApplicable())
+            t.lalgorithm1iteration();
+        else
+            break;
+    }
+    std::cout << "Finished permutations, trying reset" << std::endl;
+    t.reset();
+    std::cout << t << std::endl;
 }

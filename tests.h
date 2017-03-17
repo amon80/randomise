@@ -24,7 +24,8 @@ void test5(Eigen::MatrixXd& X);
 void test6(Eigen::MatrixXd& X);
 
 void testBinaryStringsOperators();
-void testLAlgorithm(std::vector<int>& toTest);
+
+void lalgorithmtest(ThreeColsArray& t);
 
 
 #endif // TESTS_H

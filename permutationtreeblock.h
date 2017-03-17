@@ -1,17 +1,18 @@
-#ifndef TREEBLOCK_H
-#define TREEBLOCK_H
+#ifndef PERMUTATIONTREEBLOCK_H
+#define PERMUTATIONTREEBLOCK_H
 
 #include <vector>
 #include "binarystring.h"
+#include "threecolsarray.h"
 
-class TreeBlock
+class PermutationTreeBlock
 {
 public:
     //--------CONSTRUCTORS-----------
-    TreeBlock(std::vector<int>& indices, bool permutable);
-    TreeBlock(bool permutable);
+    PermutationTreeBlock(std::vector<int>& indices, bool permutable);
+    PermutationTreeBlock(bool permutable);
     //--------MODIFIERS--------------
-    void addSon(TreeBlock * son);
+    void addSon(PermutationTreeBlock * son);
     void setValue(int value);
     //--------ACCESS METHODS---------
     int getIndex(int i);
@@ -19,7 +20,7 @@ public:
     int getNumSons();
     int getIndicesSize();
     bool isPermutable();
-    TreeBlock * getSon(int i);
+    PermutationTreeBlock * getSon(int i);
     //-------THREECOLS ARRAY METHODS----
     void initializeThreeColsArray();
     std::vector<int>& getArray(int i);
@@ -32,7 +33,7 @@ private:
     std::vector<std::vector<int>> threecolsarray;
     int value;
     BinaryString counter;
-    std::vector<TreeBlock*> sons;
+    std::vector<PermutationTreeBlock*> sons;
 };
 
-#endif // TREEBLOCK_H
+#endif // PERMUTATIONTREEBLOCK_H

@@ -1,6 +1,6 @@
-#include "treeblock.h"
+#include "permutationtreeblock.h"
 
-TreeBlock::TreeBlock(std::vector<int>& indices, bool permutable)
+PermutationTreeBlock::PermutationTreeBlock(std::vector<int>& indices, bool permutable)
     :indices(indices),
      permutable(permutable),
      threecolsarray(permutable ? std::vector<std::vector<int>>(3) : std::vector<std::vector<int>>(0))
@@ -8,48 +8,48 @@ TreeBlock::TreeBlock(std::vector<int>& indices, bool permutable)
 
 }
 
-TreeBlock::TreeBlock(bool permutable)
+PermutationTreeBlock::PermutationTreeBlock(bool permutable)
     :permutable(permutable),
     threecolsarray(permutable ? std::vector<std::vector<int>>(3) : std::vector<std::vector<int>>(0))
 {
 
 }
 
-void TreeBlock::addSon(TreeBlock * son){
+void PermutationTreeBlock::addSon(PermutationTreeBlock * son){
     sons.push_back(son);
 }
 
-void TreeBlock::setValue(int v){
+void PermutationTreeBlock::setValue(int v){
     this->value = v;
 }
 
-int TreeBlock::getNumSons(){
+int PermutationTreeBlock::getNumSons(){
     return sons.size();
 }
 
-int TreeBlock::getIndex(int i){
+int PermutationTreeBlock::getIndex(int i){
     return indices[i];
 }
 
-int TreeBlock::getIndicesSize(){
+int PermutationTreeBlock::getIndicesSize(){
     return indices.size();
 }
 
-bool TreeBlock::isPermutable(){
+bool PermutationTreeBlock::isPermutable(){
     return permutable;
 }
 
-TreeBlock * TreeBlock::getSon(int i){
+PermutationTreeBlock * PermutationTreeBlock::getSon(int i){
     return sons[i];
 }
 
-int TreeBlock::getValue(){
+int PermutationTreeBlock::getValue(){
     return value;
 }
 
 // We're actually treating the three cols array
 // as a three rows array
-void TreeBlock::initializeThreeColsArray(){
+void PermutationTreeBlock::initializeThreeColsArray(){
     if(permutable){
         int numsons = sons.size();
         //first column is a sequence of integers that represente each of the branches.
@@ -58,25 +58,33 @@ void TreeBlock::initializeThreeColsArray(){
         for(int i = 1; i < 3; i++){
             threecolsarray[i] = std::vector<int>(numsons);
         }
-        //TODO: other stuff concerning second and third row.
+        //second and third columns are rearrengements of indices
+        //so their content at the beginning are just the indices in order
+        //they have been filled separetly so code is clearer.
+        int n = threecolsarray.size();
+        for(int i = 1; i < n; i++){
+            for(int j = 0; j < numsons; j++){
+                 threecolsarray[i][j] = j;
+            }
+        }
     }
 }
 
-void TreeBlock::initializeBinaryCounter(){
+void PermutationTreeBlock::initializeBinaryCounter(){
     if(permutable){
         int numSons = sons.size();
         counter = BinaryString(numSons);
     }
 }
 
-BinaryString& TreeBlock::getBinaryCounter(){
+BinaryString& PermutationTreeBlock::getBinaryCounter(){
     return counter;
 }
 
 
 //i: 0 <= i <= 2
 //getArray can be called succesfully only if block is permutable
-std::vector<int>& TreeBlock::getArray(int i){
+std::vector<int>& PermutationTreeBlock::getArray(int i){
     return threecolsarray[i];
 }
 

@@ -275,18 +275,18 @@ HEADERS += \
     Eigen/src/SVD/SVDBase.h \
     Eigen/src/SVD/UpperBidiagonalization.h \
     Eigen/src/UmfPackSupport/UmfPackSupport.h \
-    treeblock.h \
     permutationtree.h \
     tests.h \
     mymath.h \
     binarystring.h \
-    lalgorithm.h
+    threecolsarray.h \
+    permutationtreeblock.h
 
 SOURCES += \
     main.cpp \
-    treeblock.cpp \
     permutationtree.cpp \
     tests.cpp \
     mymath.cpp \
     binarystring.cpp \
-    lalgorithm.cpp
+    threecolsarray.cpp \
+    permutationtreeblock.cpp

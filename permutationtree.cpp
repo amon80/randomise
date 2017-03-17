@@ -1,11 +1,11 @@
 #include "permutationtree.h"
-#include "treeblock.h"
+#include "permutationtreeblock.h"
 #include "mymath.h"
 
 //-------------UTILITY FUNCTIONS------------
 
 
-int findMax(std::vector<int>& v, TreeBlock * block){
+int findMax(std::vector<int>& v, PermutationTreeBlock * block){
     int n = block->getIndicesSize();
     int max = abs(v[block->getIndex(0)]);
     for(int i = 1; i < n; i++){
@@ -16,7 +16,7 @@ int findMax(std::vector<int>& v, TreeBlock * block){
     return max;
 }
 
-std::vector<int> findIndices(std::vector<int>& row, int block_number, TreeBlock * block){
+std::vector<int> findIndices(std::vector<int>& row, int block_number, PermutationTreeBlock * block){
     std::vector<int> indices;
     int n = block->getIndicesSize();
     for(int i = 0; i < n; i++){
@@ -26,13 +26,13 @@ std::vector<int> findIndices(std::vector<int>& row, int block_number, TreeBlock 
     return indices;
 }
 
-void buildTreeRecursively(TreeBlock * block, unsigned int currentRow, std::vector<std::vector<int>>& multyRowArray){
+void buildTreeRecursively(PermutationTreeBlock * block, unsigned int currentRow, std::vector<std::vector<int>>& multyRowArray){
     //base case
     if(currentRow == multyRowArray.size()-1){
         int n = block->getIndicesSize();
         for(int i = 0; i < n; i++){
             //last row are actual observations, so indices don't make really sense
-            TreeBlock * element = new TreeBlock(false);
+            PermutationTreeBlock * element = new PermutationTreeBlock(false);
             element->setValue(multyRowArray[currentRow][block->getIndex(i)]);
             block->addSon(element);
         }
@@ -50,7 +50,7 @@ void buildTreeRecursively(TreeBlock * block, unsigned int currentRow, std::vecto
             permutable = true;
         if(indices.size() == 1)
             permutable = false;
-        TreeBlock * sonI = new TreeBlock(indices, permutable);
+        PermutationTreeBlock * sonI = new PermutationTreeBlock(indices, permutable);
         block->addSon(sonI);
         buildTreeRecursively(sonI, currentRow+1, multyRowArray);
     }
@@ -66,7 +66,7 @@ bool confrontRows(Eigen::MatrixXd& X, int row1, int row2){
     return true;
 }
 
-bool confrontBranch(TreeBlock * b1, TreeBlock * b2, Eigen::MatrixXd &X){
+bool confrontBranch(PermutationTreeBlock * b1, PermutationTreeBlock * b2, Eigen::MatrixXd &X){
     int b1sons = b1->getNumSons();
     int b2sons = b2->getNumSons();
     //to be equal, branches must have the same structure
@@ -105,12 +105,12 @@ PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
     for(int i = 0; i < n; i++){
         indices[i] = i;
     }
-    root = new TreeBlock(indices, permutable);
+    root = new PermutationTreeBlock(indices, permutable);
     buildTreeRecursively(root, 1, multyRowArray);
 }
 
 
-void PermutationTree::initializeThreeColsArray(TreeBlock * block){
+void PermutationTree::initializeThreeColsArray(PermutationTreeBlock * block){
     if(block == nullptr)
         block = root;
     int numSons = block->getNumSons();
@@ -122,7 +122,7 @@ void PermutationTree::initializeThreeColsArray(TreeBlock * block){
         initializeThreeColsArray(block->getSon(i));
 }
 
-void PermutationTree::initializeBinaryCounters(TreeBlock * block){
+void PermutationTree::initializeBinaryCounters(PermutationTreeBlock * block){
     if(block == nullptr)
         block = root;
     int numSons = block->getNumSons();
@@ -137,22 +137,23 @@ void PermutationTree::initializeBinaryCounters(TreeBlock * block){
 
 //before calling this function, be sure to have initialized the three cols array for each node
 //in the tree
-int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE, TreeBlock *block){
+int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE, PermutationTreeBlock *block){
     int numPermutation = 1;
 
     if(block == nullptr)
         block = root;
     int numSons = block->getNumSons();
+    bool permutable = block->isPermutable();
 
     if(numSons == 0)
         return numPermutation;
 
     if(ISE){
-        if(block->isPermutable())
+        if(permutable)
             numPermutation <<= numSons;
     }
     if(EE){
-        if(block->isPermutable()){
+        if(permutable){
             //in the EE hypothesis, if block is permutable, a check for equal branches
             //(same rows of the design matrix) must be made.
 

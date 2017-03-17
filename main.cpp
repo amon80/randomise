@@ -2,10 +2,8 @@
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <vector>
-#include <algorithm>
-#include <set>
-#include <map>
 #include "permutationtree.h"
+#include "threecolsarray.h"
 #include "tests.h"
 
 // Partion the design matrix M basing on the contrast C as indicated on the paper
@@ -115,15 +113,14 @@ int main(int argc, char *argv[])
 
     //testBinaryStringsOperators();
 
-    std::vector<int> toTest(4);
+    ThreeColsArray t(4);
 
-    toTest[0] = 1;
-    toTest[1] = 2;
-    toTest[2] = 2;
-    toTest[3] = 3;
+    t(0,0) = 0;
+    t(0,1) = 1;
+    t(0,2) = 1;
+    t(0,3) = 2;
 
-    testLAlgorithm(toTest);
-
+    lalgorithmtest(t);
 
     return 0;
 }
