@@ -73,11 +73,13 @@ bool confrontBranch(PermutationTreeBlock * b1, PermutationTreeBlock * b2, Eigen:
     if(b1sons != b2sons)
         return false;
     //base case for recursion, using the matrix
-    //NOT SURE, MAY BE CAUSE OF BUGS <- maybe fixed with 0
+    //-1 is because elements in the leaves are numbered from
+    //1...nleaves, while the matrix has rows
+    //0...nleaves-1
     if(b1sons == 0){
         int row1 = b1->getValue();
         int row2 = b2->getValue();
-        if(confrontRows(X, row1, row2))
+        if(confrontRows(X, row1-1, row2-1))
             return true;
         else
             return false;
@@ -162,13 +164,12 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
             //building the permutation matrix should be filled here
             //so it can be used to find unique branches and how many times they repeat
             int branch_id = 0;
-            ThreeColsArray t = block->getThreeColsArray();
             for(int i = 0; i < numSons; i++){
-                if(t(0,i) == -1){
-                    t(0,i) = branch_id++;
+                if(block->getThreeColsArray().at(0,i) == -1){
+                    block->getThreeColsArray().at(0,i) = branch_id++;
                     for(int j = i + 1; j < numSons; j++)
                         if(confrontBranch(block->getSon(i), block->getSon(j), X))
-                            t(0,j) = t(0,i);
+                            block->getThreeColsArray().at(0,j) = block->getThreeColsArray().at(0,i);
                 }
             }
             //At this point, there are exactly branch_id different branches
@@ -179,7 +180,7 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
                 for(int i = 0; i < branch_id; i++){
                     int timesThatBranchIRepeats = 0;
                     for(int j = 0; j < numSons; j++)
-                        if(t(0,j) == i)
+                        if(block->getThreeColsArray().at(0,j) == i)
                             timesThatBranchIRepeats++;
                     numPermutation /= fact(timesThatBranchIRepeats);
                 }
