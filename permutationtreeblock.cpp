@@ -1,5 +1,6 @@
 #include "permutationtreeblock.h"
 #include <utility>
+#include <map>
 
 PermutationTreeBlock::PermutationTreeBlock(std::vector<int>& indices, bool permutable)
     :indices(indices),
@@ -22,13 +23,23 @@ void PermutationTreeBlock::setValue(int v){
     this->value = v;
 }
 
+//rowToUse can be 1 -> reset or 2 -> next permutation
 void PermutationTreeBlock::permuteTreeUsingThreeColsArray(int rowToUse){
     int numsons = sons.size();
+    std::map<int, int> swappings;
     for(int i = 0; i < numsons; i++){
         int index = threecolsarray(rowToUse,i);
         if(index == i)
             continue;
-        swapSons(i, index);
+        //BUG! Elements gets swapped twice (third row) <- Seems to be corrected by using a swappings map
+        if(!swappings.count(index)){
+            swappings[i] = index;
+            swapSons(i, index);
+        }
+        else{
+            if(swappings[index] != i)
+                swapSons(i, index);
+        }
     }
 }
 
