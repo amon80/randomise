@@ -57,6 +57,11 @@ void test2(Eigen::MatrixXd& X){
     t.initializeThreeColsArray();
     int numPermutations = t.calculatePermutations(X, true, true);
     std::cout << numPermutations << std::endl;
+    std::vector<int> currentPerm = t.getPermutationVector();
+    std::cout << "Current permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a;
+    std::cout << std::endl;
 }
 
 //Test #3: Same as test number 2, with simpler configuration
@@ -99,6 +104,11 @@ void test3(Eigen::MatrixXd& X){
     t.initializeThreeColsArray();
     int numPermutations = t.calculatePermutations(X, true, true);
     std::cout << numPermutations << std::endl;
+    std::vector<int> currentPerm = t.getPermutationVector();
+    std::cout << "Current permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a;
+    std::cout << std::endl;
 }
 
 //Test #4: Same as test number 3, with simpler configuration
@@ -141,6 +151,11 @@ void test4(Eigen::MatrixXd& X){
     t.initializeThreeColsArray();
     int numPermutations = t.calculatePermutations(X, true, true);
     std::cout << numPermutations << std::endl;
+    std::vector<int> currentPerm = t.getPermutationVector();
+    std::cout << "Current permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a;
+    std::cout << std::endl;
 }
 
 //Test #5: Same as test number 4, with simpler configuration
@@ -183,6 +198,11 @@ void test5(Eigen::MatrixXd& X){
     t.initializeThreeColsArray();
     int numPermutations = t.calculatePermutations(X, true, true);
     std::cout << numPermutations << std::endl;
+    std::vector<int> currentPerm = t.getPermutationVector();
+    std::cout << "Current permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a;
+    std::cout << std::endl;
 }
 
 //Test #6: Same as test number 5, with simpler configuration
@@ -214,14 +234,19 @@ void test6(Eigen::MatrixXd& X){
     PermutationTree t(multyRowArray);
     t.initializeThreeColsArray();
     int numPermutations = t.calculatePermutations(X, true, true);
-    std::cout << numPermutations << std::endl;
+    std::cout << "Number of possible shufflings:" << numPermutations << std::endl;
+    std::vector<int> currentPerm = t.getPermutationVector();
+    std::cout << "Current permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a;
+    std::cout << std::endl;
 }
 
-void testBinaryStringsOperators(){
-    BinaryString b1(8);
-    do{
-        std::cout << b1 << std::endl;
-    }while(b1++ != b1);
+void testBinaryStringsOperators(int n){
+    BinaryString b(n);
+    while(b.isIncrementable())
+        std::cout << b++ << std::endl;
+    std::cout << b << std::endl;
 }
 
 void lalgorithmtest(ThreeColsArray& t){
@@ -233,6 +258,17 @@ void lalgorithmtest(ThreeColsArray& t){
             t.lalgorithm1iteration();
         else
             break;
+    }
+    std::cout << "Finished permutations, trying reset" << std::endl;
+    t.reset();
+    std::cout << t << std::endl;
+}
+
+void randomSwappingTest(ThreeColsArray& t, int num_iteration){
+    for(int i = 0; i < num_iteration; i++){
+        std::cout << "Iteration " << i << " - array status:" << std::endl;
+        std::cout << t << std::endl;
+        t.randomSwapping();
     }
     std::cout << "Finished permutations, trying reset" << std::endl;
     t.reset();

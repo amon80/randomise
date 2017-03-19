@@ -23,9 +23,11 @@ void test5(Eigen::MatrixXd& X);
 //Example #f -> unrestricted exchangeability
 void test6(Eigen::MatrixXd& X);
 
-void testBinaryStringsOperators();
+void testBinaryStringsOperators(int n);
 
 void lalgorithmtest(ThreeColsArray& t);
+
+void randomSwappingTest(ThreeColsArray& t, int num_iteration);
 
 
 #endif // TESTS_H
