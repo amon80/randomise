@@ -1,4 +1,5 @@
 #include "permutationtreeblock.h"
+#include <utility>
 
 PermutationTreeBlock::PermutationTreeBlock(std::vector<int>& indices, bool permutable)
     :indices(indices),
@@ -21,6 +22,52 @@ void PermutationTreeBlock::setValue(int v){
     this->value = v;
 }
 
+void PermutationTreeBlock::permuteTreeUsingThreeColsArray(int rowToUse){
+    int numsons = sons.size();
+    for(int i = 0; i < numsons; i++){
+        int index = threecolsarray(rowToUse,i);
+        if(index == i)
+            continue;
+        swapSons(i, index);
+    }
+}
+
+void PermutationTreeBlock::applyLAlgorithm(){
+    threecolsarray.lalgorithm1iteration();
+    //The third column is the one that effectively permutes branches
+    permuteTreeUsingThreeColsArray(2);
+}
+
+void PermutationTreeBlock::randomSwapSons(){
+    threecolsarray.randomSwapping();
+    permuteTreeUsingThreeColsArray(2);
+}
+
+
+void PermutationTreeBlock::swapSons(int index1, int index2){
+    using std::swap;
+
+    swap(sons[index1], sons[index2]);
+}
+
+void PermutationTreeBlock::resetNodePermutationState(){
+    permuteTreeUsingThreeColsArray(1);
+    threecolsarray.reset();
+}
+
+void PermutationTreeBlock::incrementCounter(){
+    counter++;
+}
+
+void PermutationTreeBlock::resetCounter(){
+    counter.reset();
+}
+
+void PermutationTreeBlock::setRandomCounter(){
+    counter.generateRandomly();
+}
+
+
 int PermutationTreeBlock::getNumSons(){
     return sons.size();
 }
@@ -37,6 +84,14 @@ bool PermutationTreeBlock::isPermutable(){
     return permutable;
 }
 
+bool PermutationTreeBlock::isLAlgorithmApplicable(){
+    return permutable && threecolsarray.isLAlgorithmApplicable();
+}
+
+bool PermutationTreeBlock::isIncrementable(){
+    return permutable && counter.isIncrementable();
+}
+
 PermutationTreeBlock * PermutationTreeBlock::getSon(int i){
     return sons[i];
 }
@@ -45,20 +100,17 @@ int PermutationTreeBlock::getValue(){
     return value;
 }
 
-// We're actually treating the three cols array
-// as a three rows array
 void PermutationTreeBlock::initializeThreeColsArray(){
-    if(permutable){
-        int numsons = sons.size();
-        threecolsarray = ThreeColsArray(numsons);
-    }
+    if(permutable)
+        threecolsarray = ThreeColsArray(sons.size());
 }
 
 void PermutationTreeBlock::initializeBinaryCounter(){
-    if(permutable){
-        int numSons = sons.size();
+    int numSons = sons.size();
+    if(numSons == 0)
+        counter = BinaryString();
+    else
         counter = BinaryString(numSons);
-    }
 }
 
 BinaryString& PermutationTreeBlock::getBinaryCounter(){
@@ -66,8 +118,6 @@ BinaryString& PermutationTreeBlock::getBinaryCounter(){
 }
 
 
-//i: 0 <= i <= 2
-//getArray can be called succesfully only if block is permutable
 ThreeColsArray& PermutationTreeBlock::getThreeColsArray(){
     return threecolsarray;
 }
