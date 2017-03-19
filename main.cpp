@@ -92,32 +92,42 @@ int main(int argc, char *argv[])
     X2(8,0) = 5;
     X2(8,1) = 6;
 
-    // First suite of tests
-    //test2(X1);
-    //test3(X1);
-    //test4(X1);
-    //test5(X1);
-    //test6(X1);
+    std::vector<std::vector<int>> multyRowArrayUnrestriced(3);
+
+    //first row
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArrayUnrestriced[0].push_back(1);
+    //second row
+    multyRowArrayUnrestriced[1].push_back(-1);
+    multyRowArrayUnrestriced[1].push_back(-1);
+    multyRowArrayUnrestriced[1].push_back(-1);
+    multyRowArrayUnrestriced[1].push_back(-2);
+    multyRowArrayUnrestriced[1].push_back(-2);
+    multyRowArrayUnrestriced[1].push_back(-2);
+    multyRowArrayUnrestriced[1].push_back(3);
+    multyRowArrayUnrestriced[1].push_back(3);
+    multyRowArrayUnrestriced[1].push_back(3);
+    //third row
+    multyRowArrayUnrestriced[2].push_back(1);
+    multyRowArrayUnrestriced[2].push_back(2);
+    multyRowArrayUnrestriced[2].push_back(3);
+    multyRowArrayUnrestriced[2].push_back(4);
+    multyRowArrayUnrestriced[2].push_back(5);
+    multyRowArrayUnrestriced[2].push_back(6);
+    multyRowArrayUnrestriced[2].push_back(7);
+    multyRowArrayUnrestriced[2].push_back(8);
+    multyRowArrayUnrestriced[2].push_back(9);
 
 
-    //Second suite of tests
-    //test2(X2);
-    //test3(X2);
-    //test4(X2);
-    //test5(X2);
-    //test6(X2);
-
-    testBinaryStringsOperators(5);
-
-    //ThreeColsArray t(4);
-
-    //t(0,0) = 0;
-    //t(0,1) = 1;
-    //t(0,2) = 1;
-    //t(0,3) = 2;
-
-    //lalgorithmtest(t);
-    //randomSwappingTest(t, 10);
+    //testLAlgorithmTree(X1, multyRowArrayUnrestriced);
+    testBinaryCounterTree(X1, multyRowArrayUnrestriced);
 
     return 0;
 }

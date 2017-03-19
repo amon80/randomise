@@ -7,246 +7,68 @@
 
 //-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
 
-//Test #2: In particular: example #e from the paper is tried here
-//Mixed experiment
-void test2(Eigen::MatrixXd& X){
-    std::vector<std::vector<int>> multyRowArray(4);
-
-    //first row
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    //second row
-    multyRowArray[1].push_back(-1);
-    multyRowArray[1].push_back(-1);
-    multyRowArray[1].push_back(-1);
-    multyRowArray[1].push_back(-2);
-    multyRowArray[1].push_back(-2);
-    multyRowArray[1].push_back(-2);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(3);
-    //third row
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(2);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(2);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(2);
-    multyRowArray[2].push_back(3);
-    //fourth row
-    multyRowArray[3].push_back(0);
-    multyRowArray[3].push_back(1);
-    multyRowArray[3].push_back(2);
-    multyRowArray[3].push_back(3);
-    multyRowArray[3].push_back(4);
-    multyRowArray[3].push_back(5);
-    multyRowArray[3].push_back(6);
-    multyRowArray[3].push_back(7);
-    multyRowArray[3].push_back(8);
+void testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray) {
 
     PermutationTree t(multyRowArray);
     t.initializeThreeColsArray();
-    int numPermutations = t.calculatePermutations(X, true, true);
-    std::cout << numPermutations << std::endl;
-    std::vector<int> currentPerm = t.getPermutationVector();
-    std::cout << "Current permutation is: " << std::endl;
-    for(int a: currentPerm)
-        std::cout << a;
-    std::cout << std::endl;
-}
-
-//Test #3: Same as test number 2, with simpler configuration
-//Example #a -> Within block but not whole block
-void test3(Eigen::MatrixXd& X){
-    std::vector<std::vector<int>> multyRowArray(3);
-
-    //first row
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    multyRowArray[0].push_back(-1);
-    //second row
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(3);
-    //third row
-    multyRowArray[2].push_back(0);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(2);
-    multyRowArray[2].push_back(3);
-    multyRowArray[2].push_back(4);
-    multyRowArray[2].push_back(5);
-    multyRowArray[2].push_back(6);
-    multyRowArray[2].push_back(7);
-    multyRowArray[2].push_back(8);
-
-    PermutationTree t(multyRowArray);
-    t.initializeThreeColsArray();
-    int numPermutations = t.calculatePermutations(X, true, true);
-    std::cout << numPermutations << std::endl;
-    std::vector<int> currentPerm = t.getPermutationVector();
-    std::cout << "Current permutation is: " << std::endl;
-    for(int a: currentPerm)
-        std::cout << a;
-    std::cout << std::endl;
-}
-
-//Test #4: Same as test number 3, with simpler configuration
-//Example #b -> Whole block but not within block
-void test4(Eigen::MatrixXd& X){
-    std::vector<std::vector<int>> multyRowArray(3);
-
-    //first row
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    //second row
-    multyRowArray[1].push_back(-1);
-    multyRowArray[1].push_back(-1);
-    multyRowArray[1].push_back(-1);
-    multyRowArray[1].push_back(-2);
-    multyRowArray[1].push_back(-2);
-    multyRowArray[1].push_back(-2);
-    multyRowArray[1].push_back(-3);
-    multyRowArray[1].push_back(-3);
-    multyRowArray[1].push_back(-3);
-    //third row
-    multyRowArray[2].push_back(0);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(2);
-    multyRowArray[2].push_back(3);
-    multyRowArray[2].push_back(4);
-    multyRowArray[2].push_back(5);
-    multyRowArray[2].push_back(6);
-    multyRowArray[2].push_back(7);
-    multyRowArray[2].push_back(8);
-
-    PermutationTree t(multyRowArray);
-    t.initializeThreeColsArray();
-    int numPermutations = t.calculatePermutations(X, true, true);
-    std::cout << numPermutations << std::endl;
-    std::vector<int> currentPerm = t.getPermutationVector();
-    std::cout << "Current permutation is: " << std::endl;
-    for(int a: currentPerm)
-        std::cout << a;
-    std::cout << std::endl;
-}
-
-//Test #5: Same as test number 4, with simpler configuration
-//Example #c -> Within block and whole block
-void test5(Eigen::MatrixXd& X){
-    std::vector<std::vector<int>> multyRowArray(3);
-
-    //first row
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    //second row
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(3);
-    //third row
-    multyRowArray[2].push_back(0);
-    multyRowArray[2].push_back(1);
-    multyRowArray[2].push_back(2);
-    multyRowArray[2].push_back(3);
-    multyRowArray[2].push_back(4);
-    multyRowArray[2].push_back(5);
-    multyRowArray[2].push_back(6);
-    multyRowArray[2].push_back(7);
-    multyRowArray[2].push_back(8);
-
-    PermutationTree t(multyRowArray);
-    t.initializeThreeColsArray();
-    int numPermutations = t.calculatePermutations(X, true, true);
-    std::cout << numPermutations << std::endl;
-    std::vector<int> currentPerm = t.getPermutationVector();
-    std::cout << "Current permutation is: " << std::endl;
-    for(int a: currentPerm)
-        std::cout << a;
-    std::cout << std::endl;
-}
-
-//Test #6: Same as test number 5, with simpler configuration
-//Example #f -> unrestricted exchangeability
-void test6(Eigen::MatrixXd& X){
-    std::vector<std::vector<int>> multyRowArray(2);
-
-    //first row
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    multyRowArray[0].push_back(1);
-    //second row
-    multyRowArray[1].push_back(0);
-    multyRowArray[1].push_back(1);
-    multyRowArray[1].push_back(2);
-    multyRowArray[1].push_back(3);
-    multyRowArray[1].push_back(4);
-    multyRowArray[1].push_back(5);
-    multyRowArray[1].push_back(6);
-    multyRowArray[1].push_back(7);
-    multyRowArray[1].push_back(8);
-
-    PermutationTree t(multyRowArray);
-    t.initializeThreeColsArray();
-    int numPermutations = t.calculatePermutations(X, true, true);
+    t.initializeBinaryCounters();
+    int numPermutations = t.calculatePermutations(X, true, false);
     std::cout << "Number of possible shufflings:" << numPermutations << std::endl;
+    int currentPermutation = 1;
+    while(true){
+        std::vector<int> currentPerm = t.getPermutationVector();
+        std::cout << currentPermutation++ << " permutation is: " << std::endl;
+        for(int a: currentPerm)
+            std::cout << a << " ";
+        std::cout << std::endl;
+        if(!t.LAlgorithm())
+            break;
+    }
+
+    std::cout << "Finished permutations! Restoring the tree to its original state" << std::endl;
+    t.resetTreePermutationState();
     std::vector<int> currentPerm = t.getPermutationVector();
-    std::cout << "Current permutation is: " << std::endl;
+    std::cout << "Original permutation is: " << std::endl;
     for(int a: currentPerm)
-        std::cout << a;
+        std::cout << a << " ";
     std::cout << std::endl;
+    std::cout << "Finished!" << std::endl;
+}
+
+void testBinaryCounterTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray) {
+
+    PermutationTree t(multyRowArray);
+    t.initializeThreeColsArray();
+    t.initializeBinaryCounters();
+    int numPermutations = t.calculatePermutations(X, false, true);
+    std::cout << "Number of possible sign flipping:" << numPermutations << std::endl;
+    int currentPermutation = 1;
+    while(true){
+        std::vector<int> currentPerm = t.getSignVector();
+        std::cout << currentPermutation++ << " sign flipping is: " << std::endl;
+        for(int a: currentPerm)
+            std::cout << a << " ";
+        std::cout << std::endl;
+        if(!t.signFlipping())
+            break;
+    }
+
+    std::cout << "Finished sign flippings! Restoring the tree to its original state" << std::endl;
+    t.resetTreeSignState();
+    std::vector<int> currentPerm = t.getPermutationVector();
+    std::cout << "Original sign flipping is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a << " ";
+    std::cout << std::endl;
+    std::cout << "Finished!" << std::endl;
+
 }
 
 void testBinaryStringsOperators(int n){
     BinaryString b(n);
-    while(b.isIncrementable())
-        std::cout << b++ << std::endl;
     std::cout << b << std::endl;
+    while(b.isIncrementable())
+        std::cout << ++b << std::endl;
 }
 
 void lalgorithmtest(ThreeColsArray& t){
