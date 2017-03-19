@@ -122,12 +122,20 @@ void ThreeColsArray::lalgorithm1iteration(){
 }
 
 void ThreeColsArray::reset(){
-    for(int i = 0; i < nrows; i++)
-        swaprows(i, array[1][i]);
+    for(int i = 0; i < nrows; i++){
+        int index = array[1][i];
+        if(index == i)
+            continue;
+        swaprows(i, index);
+    }
     resetThirdColumn();
 }
 
 int& ThreeColsArray::operator()(int i, int j){
+    return array[i][j];
+}
+
+int& ThreeColsArray::at(int i, int j){
     return array[i][j];
 }
 
