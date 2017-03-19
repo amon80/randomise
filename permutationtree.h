@@ -20,14 +20,12 @@ public:
     std::vector<int> getSignVector(PermutationTreeBlock * block = nullptr);
     int getNumLeaves();
     //----------PERMUTATION METHODS----
-    bool isLAlgorithmApplicable();
-    bool areThereOtherSignFlipping();
-    void LAlgorithm();
-    void signFlipping();
-    //TODO: implement the following methods:
-    //1) Given a tree, build a permutation matrix from it.
-    //2) Given a tree, shuffle it so to obtain the next permutation matrix
-    //3) The same two methods as above for the sign flipping matrix.
+    //Note: this two function have sense only when listing all the possible
+    //shufflings/sign flipping
+    bool LAlgorithm(PermutationTreeBlock * block = nullptr, std::vector<PermutationTreeBlock*> * alreadyVisited = nullptr);
+    bool signFlipping(PermutationTreeBlock * block = nullptr, std::vector<PermutationTreeBlock *> *alreadyVisited = nullptr);
+    void resetTreePermutationState(PermutationTreeBlock * block = nullptr);
+    void resetTreeSignState(PermutationTreeBlock * block = nullptr);
 private:
     PermutationTreeBlock* root;
     int numleaves;

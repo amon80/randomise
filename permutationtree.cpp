@@ -235,19 +235,116 @@ int PermutationTree::getNumLeaves(){
     return numleaves;
 }
 
-bool PermutationTree::isLAlgorithmApplicable(){
-
+bool PermutationTree::LAlgorithm(PermutationTreeBlock * block, std::vector<PermutationTreeBlock*> * alreadyVisited){
+    if(block == nullptr){
+        block = root;
+        alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
+    }
+    //base case #1: block is not permutable. In this case it shall not be added to the list
+    if(!block->isPermutable()){
+        return false;
+    }
+    //base case #2: block is permutable, let's check if L algorithm is appliable
+    //"The tree is swept from the top node [...] stopping when a single pairwise permutation of branches can be performed"
+    if(block->isLAlgorithmApplicable()){
+        block->applyLAlgorithm();
+        //"The branches are then swapped, all the previous visited nodes already visited
+        //are reset back to the original, unpermuted state"
+        int n = alreadyVisited->size();
+        for(int i = 0; i < n; i++){
+            PermutationTreeBlock * currentNodeToReset = alreadyVisited->at(i);
+            currentNodeToReset->resetNodePermutationState();
+        }
+        delete alreadyVisited;
+        return true;
+    }
+    //recursion case - if the function arrives here then the block is permutable, but has reached is last possible
+    //lexicograph permutation. So, it shall be added to list of already visited nodes.
+    alreadyVisited->push_back(block);
+    int numSons = block->getNumSons();
+    bool oneOfTheSonsIsPermutable = false;
+    for(int i = 0; i < numSons; i++){
+        if(LAlgorithm(block->getSon(i), alreadyVisited)){
+            oneOfTheSonsIsPermutable = true;
+            break;
+        }
+    }
+    if(oneOfTheSonsIsPermutable)
+        return true;
+    else{
+        if(block == root)
+            delete alreadyVisited;
+        return false;
+    }
 }
 
-bool PermutationTree::areThereOtherSignFlipping(){
-
+bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<PermutationTreeBlock*> * alreadyVisited){
+    if(block == nullptr){
+        block = root;
+        alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
+    }
+    //base case #1: block is not permutable. In this case it shall not be added to the list
+    if(!block->isPermutable()){
+        return false;
+    }
+    //base case #2: block is permutable, let's check if counter is incrementable
+    //"The tree is swept from the top node [...] stopping when a single sign flipping can be performed
+    if(block->isIncrementable()){
+        block->incrementCounter();
+        //"The counter is incremented all the previous visited nodes already visited
+        //are reset back to the original, non sign flipped state"
+        int n = alreadyVisited->size();
+        for(int i = 0; i < n; i++){
+            PermutationTreeBlock * currentNodeToReset = alreadyVisited->at(i);
+            currentNodeToReset->resetCounter();
+        }
+        delete alreadyVisited;
+        return true;
+    }
+    //recursion case - if the function arrives here then the block is permutable, but his counter has reached its last possible
+    //state. So, it shall be added to list of already visited nodes.
+    alreadyVisited->push_back(block);
+    int numSons = block->getNumSons();
+    bool oneOfTheSonsIsSignFlippable = false;
+    for(int i = 0; i < numSons; i++){
+        if(signFlipping(block->getSon(i), alreadyVisited)){
+            oneOfTheSonsIsSignFlippable = true;
+            break;
+        }
+    }
+    if(oneOfTheSonsIsSignFlippable)
+        return true;
+    else{
+        if(block == root)
+            delete alreadyVisited;
+        return false;
+    }
 }
 
-void PermutationTree::LAlgorithm(){
-
+void PermutationTree::resetTreePermutationState(PermutationTreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return;
+    if(block->isPermutable())
+        block->resetNodePermutationState();
+    for(int i = 0; i < numSons; i++){
+        resetTreePermutationState(block->getSon(i));
+    }
 }
 
-void PermutationTree::signFlipping(){
-
+void PermutationTree::resetTreeSignState(PermutationTreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return;
+    if(block->isPermutable())
+        block->resetCounter();
+    for(int i = 0; i < numSons; i++){
+        resetTreePermutationState(block->getSon(i));
+    }
 }
+
 
