@@ -24,6 +24,7 @@ public:
     BinaryString& operator++();
     BinaryString operator++(int);
     void reset();
+    void generateRandomly();
     //access functions
     int size();
     bool isIncrementable();

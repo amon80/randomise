@@ -79,21 +79,9 @@ BinaryString::BinaryString(int num_bits, bool random)
     :n_bits(num_bits),
     string(new int[num_bits])
 {
-    int i;
-    if(random){
-        std::random_device rd;
-        std::mt19937 e2(rd());
-        std::uniform_int_distribution<int> dist(0, 1);
-
-        for (int i = 0; i < n_bits; ++i) {
-            string[i] = dist(e2);
-        }
-    }
-    else{
-        for(i = 0; i < n_bits; i++){
-            string[i] = 0;
-        }
-    }
+    reset();
+    if(random)
+        generateRandomly();
 }
 
 //----------- COPY SEMANTICS --------------
@@ -160,6 +148,17 @@ void BinaryString::reset(){
         string[i] = 0;
 }
 
+void BinaryString::generateRandomly(){
+    std::random_device rd;
+    std::mt19937 e2(rd());
+    std::uniform_int_distribution<int> dist(0, 1);
+
+    for (int i = 0; i < n_bits; ++i) {
+        string[i] = dist(e2);
+    }
+}
+
+
 // ------------ ACCESS METHODS ------------
 
 int BinaryString::size(){
@@ -168,6 +167,8 @@ int BinaryString::size(){
 
 bool BinaryString::isIncrementable(){
     int index;
+    if(n_bits == 0)
+        return false;
     for(index = n_bits-1; index >= 0; index--)
         if(string[index] == 0)
             break;
