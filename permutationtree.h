@@ -9,16 +9,28 @@ class PermutationTreeBlock;
 class PermutationTree
 {
 public:
+    //----------CONSTRUCTOR------------
     PermutationTree(std::vector<std::vector<int>>& multyRowArray);
+    //----------INITIALIZERS-----------
     void initializeThreeColsArray(PermutationTreeBlock *block = nullptr);
     void initializeBinaryCounters(PermutationTreeBlock *block = nullptr);
     int calculatePermutations(Eigen::MatrixXd& X, bool EE, bool ISE, PermutationTreeBlock * block = nullptr);
+    //----------ACCESS METHODS---------
+    std::vector<int> getPermutationVector(PermutationTreeBlock * block = nullptr);
+    std::vector<int> getSignVector(PermutationTreeBlock * block = nullptr);
+    int getNumLeaves();
+    //----------PERMUTATION METHODS----
+    bool isLAlgorithmApplicable();
+    bool areThereOtherSignFlipping();
+    void LAlgorithm();
+    void signFlipping();
     //TODO: implement the following methods:
     //1) Given a tree, build a permutation matrix from it.
     //2) Given a tree, shuffle it so to obtain the next permutation matrix
     //3) The same two methods as above for the sign flipping matrix.
 private:
     PermutationTreeBlock* root;
+    int numleaves;
 };
 
 #endif // PERMUTATIONTREE_H

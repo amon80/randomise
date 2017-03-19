@@ -101,6 +101,7 @@ PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
     if(multyRowArray[0][0] > 0)
         permutable = true;
     int n = multyRowArray[0].size();
+    numleaves = n;
     std::vector<int> indices(n);
     for(int i = 0; i < n; i++){
         indices[i] = i;
@@ -192,3 +193,60 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
 
     return numPermutation;
 }
+
+std::vector<int> PermutationTree::getPermutationVector(PermutationTreeBlock *block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return (std::vector<int>(1, block->getValue()));
+    std::vector<int> toReturn;
+    for(int i = 0; i < numSons; i++){
+        std::vector<int> toReturnI = getPermutationVector(block->getSon(i));
+        for(int a: toReturnI)
+            toReturn.push_back(a);
+    }
+    return toReturn;
+}
+
+std::vector<int> PermutationTree::getSignVector(PermutationTreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return (std::vector<int>(1, block->getValue()));
+    std::vector<int> toReturn;
+    BinaryString counter = block->getBinaryCounter();
+    for(int i = 0; i < numSons; i++){
+        std::vector<int> toReturnI = getSignVector(block->getSon(i));
+        for(int a: toReturnI){
+            if(counter[i] == 1)
+                toReturn.push_back(-a);
+            else
+                toReturn.push_back(a);
+        }
+    }
+    return toReturn;
+}
+
+
+int PermutationTree::getNumLeaves(){
+    return numleaves;
+}
+
+bool PermutationTree::isLAlgorithmApplicable(){
+
+}
+
+bool PermutationTree::areThereOtherSignFlipping(){
+
+}
+
+void PermutationTree::LAlgorithm(){
+
+}
+
+void PermutationTree::signFlipping(){
+
+}
+
