@@ -1,4 +1,6 @@
 #include "threecolsarray.h"
+#include <chrono>
+#include <random>
 
 //-------FRIEND FUNCTIONS--------
 
@@ -16,14 +18,12 @@ std::ostream& operator<<(std::ostream& os, const ThreeColsArray& obj){
 
 
 ThreeColsArray::ThreeColsArray()
-    :index(-1)
 {
 
 }
 
 ThreeColsArray::ThreeColsArray(int nrows)
     :array(std::vector<std::vector<int>>(3)),
-     index(-1),
      nrows(nrows)
 {
     for (int i = 0; i < 3; ++i)
@@ -52,8 +52,6 @@ bool ThreeColsArray::isLAlgorithmApplicable(){
          --jplus1;
     }
 
-    index = j;
-
     if(j == -1)
         return false;
     else
@@ -67,14 +65,42 @@ void ThreeColsArray::swaprows(int index1, int index2){
         swap(array[i][index1], array[i][index2]);
 }
 
+void ThreeColsArray::randomSwapping(){
+    //just before any swapping is performed third column is regenerated
+    resetThirdColumn();
+
+    unsigned seed1 = std::chrono::system_clock::now().time_since_epoch().count();
+
+    std::mt19937 g1 (seed1);  // mt19937 is a standard mersenne_twister_engine
+
+    for (int i = nrows-1; i >= 0; --i) {
+        std::uniform_int_distribution<int> d(0,i);
+        int target = d(g1);
+        if(target == i)
+            continue;
+        swaprows(i, d(g1));
+    }
+}
+
 void ThreeColsArray::lalgorithm1iteration(){
     //just before l algorithm application, third column is regenerated
     resetThirdColumn();
 
-    //L3
-    int j = index;
+    //L2
+
     std::vector<int> list = array[0];
 
+    int jplus1 = list.size() - 1;
+    int j = jplus1 -1;
+
+    while(j >= 0){
+        if(list[j] < list[jplus1])
+            break;
+         --j;
+         --jplus1;
+    }
+
+    //L3
     int l = list.size() - 1;
     while(l > j){
         if(list[j] < list[l]){
@@ -86,7 +112,7 @@ void ThreeColsArray::lalgorithm1iteration(){
 
     //L4
 
-    int k = j + 1;
+    int k = jplus1;
     l = list.size()-1;
 
     while(k < l){
@@ -99,7 +125,6 @@ void ThreeColsArray::reset(){
     for(int i = 0; i < nrows; i++)
         swaprows(i, array[1][i]);
     resetThirdColumn();
-    index = -1;
 }
 
 int& ThreeColsArray::operator()(int i, int j){
