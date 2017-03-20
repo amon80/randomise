@@ -280,7 +280,8 @@ HEADERS += \
     mymath.h \
     binarystring.h \
     threecolsarray.h \
-    permutationtreeblock.h
+    permutationtreeblock.h \
+    matrices.h
 
 SOURCES += \
     main.cpp \
@@ -289,4 +290,5 @@ SOURCES += \
     mymath.cpp \
     binarystring.cpp \
     threecolsarray.cpp \
-    permutationtreeblock.cpp
+    permutationtreeblock.cpp \
+    matrices.cpp
