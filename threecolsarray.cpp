@@ -1,6 +1,5 @@
 #include "threecolsarray.h"
-#include <chrono>
-#include <random>
+#include <algorithm>
 
 //-------FRIEND FUNCTIONS--------
 
@@ -69,16 +68,16 @@ void ThreeColsArray::randomSwapping(){
     //just before any swapping is performed third column is regenerated
     resetThirdColumn();
 
-    unsigned seed1 = std::chrono::system_clock::now().time_since_epoch().count();
+    //copying the third column
+    std::vector<int> secondColumn(array[2]);
 
-    std::mt19937 g1 (seed1);  // mt19937 is a standard mersenne_twister_engine
+    //performing the shuffling on the copy
+    std::random_shuffle(secondColumn.begin(), secondColumn.end());
 
-    for (int i = nrows-1; i > 0; --i) {
-        std::uniform_int_distribution<int> d(0,i);
-        int target = d(g1);
-        if(target == i)
-            continue;
-        swaprows(i, target);
+    //perform swaps according to the shuffled copy
+    for(int i = 0; i < nrows; i++){
+        swaprows(i, secondColumn[i]);
+        //TO TEST!!!
     }
 }
 
@@ -122,23 +121,21 @@ void ThreeColsArray::lalgorithm1iteration(){
     }
 }
 
-void ThreeColsArray::reset(){
-    bool originalState = false;
-    while(!originalState){
-        originalState = true;
-        for(int i = 0; i < nrows; i++){
-            int index = array[1][i];
-            if(index == i)
-                continue;
-            swaprows(i, index);
-            //after we've swapped the rows, we check if the current row is in its
-            //original state
-            index = array[1][i];
-            if(index != i)
-                originalState = false;
-        }
+bool ThreeColsArray::reset(){
+    bool originalState = true;
+    for(int i = 0; i < nrows; i++){
+        int index = array[1][i];
+        if(index == i)
+            continue;
+        swaprows(i, index);
+        //after we've swapped the rows, we check if the current row is in its
+        //original state
+        index = array[1][i];
+        if(index != i)
+            originalState = false;
     }
     resetThirdColumn();
+    return originalState;
 }
 
 int& ThreeColsArray::operator()(int i, int j){

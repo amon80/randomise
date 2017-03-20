@@ -24,6 +24,7 @@ void PermutationTreeBlock::setValue(int v){
 }
 
 //rowToUse can be 1 -> reset or 2 -> next permutation
+//not sure if BUG
 void PermutationTreeBlock::permuteTreeUsingThreeColsArray(int rowToUse){
     int numsons = sons.size();
     std::map<int, int> swappings;
@@ -31,7 +32,6 @@ void PermutationTreeBlock::permuteTreeUsingThreeColsArray(int rowToUse){
         int index = threecolsarray(rowToUse,i);
         if(index == i)
             continue;
-        //BUG! Elements gets swapped twice (third row) <- Seems to be corrected by using a swappings map
         if(!swappings.count(index)){
             swappings[i] = index;
             swapSons(i, index);
@@ -51,6 +51,7 @@ void PermutationTreeBlock::applyLAlgorithm(){
 
 void PermutationTreeBlock::randomSwapSons(){
     threecolsarray.randomSwapping();
+    //BUG? Not sure if third col has a meaning with random shufflings
     permuteTreeUsingThreeColsArray(2);
 }
 
@@ -62,8 +63,9 @@ void PermutationTreeBlock::swapSons(int index1, int index2){
 }
 
 void PermutationTreeBlock::resetNodePermutationState(){
-    permuteTreeUsingThreeColsArray(1);
-    threecolsarray.reset();
+    do
+        permuteTreeUsingThreeColsArray(1);
+    while(threecolsarray.reset());
 }
 
 void PermutationTreeBlock::incrementCounter(){
