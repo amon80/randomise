@@ -321,6 +321,35 @@ bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<Per
     }
 }
 
+void PermutationTree::randomShuffle(PermutationTreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return;
+    if(block->isPermutable()){
+        block->randomSwapSons();
+    }
+    for(int i = 0; i < numSons; i++)
+        randomShuffle(block->getSon(i));
+    return;
+}
+
+void PermutationTree::randomSignFlip(PermutationTreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return;
+    if(block->isPermutable()){
+       block->setRandomCounter();
+    }
+    for(int i = 0; i < numSons; i++)
+        randomSignFlip(block->getSon(i));
+    return;
+}
+
+//probable BUG, especially with random perturbations
 void PermutationTree::resetTreePermutationState(PermutationTreeBlock * block){
     if(block == nullptr)
         block = root;
