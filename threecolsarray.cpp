@@ -40,13 +40,13 @@ ThreeColsArray::ThreeColsArray(int nrows)
 bool ThreeColsArray::isLAlgorithmApplicable(){
     //L2
 
-    std::vector<int> list = array[0];
+    int n = array[0].size() - 1;
 
-    int jplus1 = list.size() - 1;
+    int jplus1 = n;
     int j = jplus1 -1;
 
     while(j >= 0){
-        if(list[j] < list[jplus1])
+        if(array[0][j] < array[0][jplus1])
             break;
          --j;
          --jplus1;
@@ -73,12 +73,12 @@ void ThreeColsArray::randomSwapping(){
 
     std::mt19937 g1 (seed1);  // mt19937 is a standard mersenne_twister_engine
 
-    for (int i = nrows-1; i >= 0; --i) {
+    for (int i = nrows-1; i > 0; --i) {
         std::uniform_int_distribution<int> d(0,i);
         int target = d(g1);
         if(target == i)
             continue;
-        swaprows(i, d(g1));
+        swaprows(i, target);
     }
 }
 
@@ -88,22 +88,22 @@ void ThreeColsArray::lalgorithm1iteration(){
 
     //L2
 
-    std::vector<int> list = array[0];
+    int n = array[0].size() - 1;
 
-    int jplus1 = list.size() - 1;
+    int jplus1 = n;
     int j = jplus1 -1;
 
     while(j >= 0){
-        if(list[j] < list[jplus1])
+        if(array[0][j] < array[0][jplus1])
             break;
          --j;
          --jplus1;
     }
 
     //L3
-    int l = list.size() - 1;
+    int l = n;
     while(l > j){
-        if(list[j] < list[l]){
+        if(array[0][j] < array[0][l]){
             swaprows(j, l);
             break;
         }
@@ -113,20 +113,30 @@ void ThreeColsArray::lalgorithm1iteration(){
     //L4
 
     int k = jplus1;
-    l = list.size()-1;
+    l = n;
 
     while(k < l){
         swaprows(l, k);
         k += 1;
+        l -= 1;
     }
 }
 
 void ThreeColsArray::reset(){
-    for(int i = 0; i < nrows; i++){
-        int index = array[1][i];
-        if(index == i)
-            continue;
-        swaprows(i, index);
+    bool originalState = false;
+    while(!originalState){
+        originalState = true;
+        for(int i = 0; i < nrows; i++){
+            int index = array[1][i];
+            if(index == i)
+                continue;
+            swaprows(i, index);
+            //after we've swapped the rows, we check if the current row is in its
+            //original state
+            index = array[1][i];
+            if(index != i)
+                originalState = false;
+        }
     }
     resetThirdColumn();
 }
