@@ -92,42 +92,82 @@ int main(int argc, char *argv[])
     X2(8,0) = 5;
     X2(8,1) = 6;
 
-    std::vector<std::vector<int>> multyRowArrayUnrestriced(3);
+    std::vector<std::vector<int>> multyRowArray1(3);
 
     //first row
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
-    multyRowArrayUnrestriced[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
+    multyRowArray1[0].push_back(1);
     //second row
-    multyRowArrayUnrestriced[1].push_back(-1);
-    multyRowArrayUnrestriced[1].push_back(-1);
-    multyRowArrayUnrestriced[1].push_back(-1);
-    multyRowArrayUnrestriced[1].push_back(-2);
-    multyRowArrayUnrestriced[1].push_back(-2);
-    multyRowArrayUnrestriced[1].push_back(-2);
-    multyRowArrayUnrestriced[1].push_back(3);
-    multyRowArrayUnrestriced[1].push_back(3);
-    multyRowArrayUnrestriced[1].push_back(3);
+    multyRowArray1[1].push_back(-1);
+    multyRowArray1[1].push_back(-1);
+    multyRowArray1[1].push_back(-1);
+    multyRowArray1[1].push_back(-2);
+    multyRowArray1[1].push_back(-2);
+    multyRowArray1[1].push_back(-2);
+    multyRowArray1[1].push_back(-3);
+    multyRowArray1[1].push_back(-3);
+    multyRowArray1[1].push_back(-3);
     //third row
-    multyRowArrayUnrestriced[2].push_back(1);
-    multyRowArrayUnrestriced[2].push_back(2);
-    multyRowArrayUnrestriced[2].push_back(3);
-    multyRowArrayUnrestriced[2].push_back(4);
-    multyRowArrayUnrestriced[2].push_back(5);
-    multyRowArrayUnrestriced[2].push_back(6);
-    multyRowArrayUnrestriced[2].push_back(7);
-    multyRowArrayUnrestriced[2].push_back(8);
-    multyRowArrayUnrestriced[2].push_back(9);
+    multyRowArray1[2].push_back(1);
+    multyRowArray1[2].push_back(2);
+    multyRowArray1[2].push_back(3);
+    multyRowArray1[2].push_back(4);
+    multyRowArray1[2].push_back(5);
+    multyRowArray1[2].push_back(6);
+    multyRowArray1[2].push_back(7);
+    multyRowArray1[2].push_back(8);
+    multyRowArray1[2].push_back(9);
 
 
-    //testLAlgorithmTree(X1, multyRowArrayUnrestriced);
-    testBinaryCounterTree(X1, multyRowArrayUnrestriced);
+    std::vector<std::vector<int>> multyRowArray2(2);
+
+    //first row
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    multyRowArray2[0].push_back(1);
+    //third row
+    multyRowArray2[1].push_back(1);
+    multyRowArray2[1].push_back(2);
+    multyRowArray2[1].push_back(3);
+    multyRowArray2[1].push_back(4);
+    multyRowArray2[1].push_back(5);
+    multyRowArray2[1].push_back(6);
+    multyRowArray2[1].push_back(7);
+    multyRowArray2[1].push_back(8);
+    multyRowArray2[1].push_back(9);
+
+
+    //testLAlgorithmTree(X1, multyRowArray1);
+    //testBinaryCounterTree(X1, multyRowArray1);
+
+    //testRandomSwapping(X1, multyRowArray2, 10);
+    //testRandomSignFlipping(X1, multyRowArray2, 10);
+
+    int numrows = 10;
+
+    ThreeColsArray t(numrows);
+
+    for(int i = 0; i < numrows; i++)
+        t(0, i) = i;
+
+
+    int numrandomswappings = 20;
+    //lalgorithmtest(t);
+    randomSwappingTest(t, numrandomswappings);
+
 
     return 0;
 }

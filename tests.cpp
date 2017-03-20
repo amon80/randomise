@@ -1,9 +1,8 @@
 #include <iostream>
-#include <Eigen/Dense>
-#include <vector>
 #include "permutationtree.h"
 #include "binarystring.h"
 #include "threecolsarray.h"
+#include "matrices.h"
 
 //-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
 
@@ -16,18 +15,23 @@ void testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multy
     std::cout << "Number of possible shufflings:" << numPermutations << std::endl;
     int currentPermutation = 1;
     while(true){
-        std::vector<int> currentPerm = t.getPermutationVector();
-        std::cout << currentPermutation++ << " permutation is: " << std::endl;
+        //std::vector<int> currentPerm = t.getPermutationVector();
+        std::vector<int> currentPerm = t.getSignVector();
+        Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
+        std::cout << currentPermutation << " permutation vector is: " << std::endl;
         for(int a: currentPerm)
             std::cout << a << " ";
         std::cout << std::endl;
+        std::cout << currentPermutation++ << " permutation matrix is: " << std::endl;
+        std::cout << P << std::endl;
         if(!t.LAlgorithm())
             break;
     }
 
     std::cout << "Finished permutations! Restoring the tree to its original state" << std::endl;
     t.resetTreePermutationState();
-    std::vector<int> currentPerm = t.getPermutationVector();
+    //std::vector<int> currentPerm = t.getPermutationVector();
+    std::vector<int> currentPerm = t.getSignVector();
     std::cout << "Original permutation is: " << std::endl;
     for(int a: currentPerm)
         std::cout << a << " ";
@@ -45,17 +49,20 @@ void testBinaryCounterTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& mu
     int currentPermutation = 1;
     while(true){
         std::vector<int> currentPerm = t.getSignVector();
-        std::cout << currentPermutation++ << " sign flipping is: " << std::endl;
+        Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
+        std::cout << currentPermutation << " sign flipping vector is: " << std::endl;
         for(int a: currentPerm)
             std::cout << a << " ";
         std::cout << std::endl;
+        std::cout << currentPermutation++ << " sign flipping matrix is: " << std::endl;
+        std::cout << P << std::endl;
         if(!t.signFlipping())
             break;
     }
 
     std::cout << "Finished sign flippings! Restoring the tree to its original state" << std::endl;
     t.resetTreeSignState();
-    std::vector<int> currentPerm = t.getPermutationVector();
+    std::vector<int> currentPerm = t.getSignVector();
     std::cout << "Original sign flipping is: " << std::endl;
     for(int a: currentPerm)
         std::cout << a << " ";
@@ -87,12 +94,81 @@ void lalgorithmtest(ThreeColsArray& t){
 }
 
 void randomSwappingTest(ThreeColsArray& t, int num_iteration){
-    for(int i = 0; i < num_iteration; i++){
+    std::cout << "Iteration 0 - array status:" << std::endl;
+    std::cout << t << std::endl;
+    for(int i = 1; i <= num_iteration; i++){
+        t.randomSwapping();
         std::cout << "Iteration " << i << " - array status:" << std::endl;
         std::cout << t << std::endl;
-        t.randomSwapping();
     }
     std::cout << "Finished permutations, trying reset" << std::endl;
     t.reset();
     std::cout << t << std::endl;
 }
+
+void testRandomSwapping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n){
+    PermutationTree t(multyRowArray);
+    t.initializeThreeColsArray();
+    t.initializeBinaryCounters();
+    int numPermutations = t.calculatePermutations(X, true, false);
+    std::cout << "Number of possible permutations:" << numPermutations << std::endl;
+    std::vector<int> originalPerm = t.getSignVector();
+    Eigen::MatrixXd O = buildShufflingMatrix(originalPerm);
+    std::cout << " Original permutation is: " << std::endl;
+    for(int a: originalPerm)
+        std::cout << a << " ";
+    std::cout << std::endl;
+    std::cout << "Original shuffling matrix is: " << std::endl;
+    std::cout << O << std::endl;
+    std::cout << std::endl;
+    for(int currentPermutation = 1; currentPermutation <= n; currentPermutation++){
+        t.randomShuffle();
+        std::vector<int> currentPerm = t.getSignVector();
+        Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
+        std::cout << currentPermutation << " Shuffling vector is: " << std::endl;
+        for(int a: currentPerm)
+            std::cout << a << " ";
+        std::cout << std::endl;
+        std::cout << currentPermutation << " shuffling matrix is: " << std::endl;
+        std::cout << P << std::endl;
+    }
+
+    std::cout << "Finished required random shufflings! Restoring the tree to its original state" << std::endl;
+    //BUG!!!
+    t.resetTreePermutationState();
+    std::vector<int> currentPerm = t.getSignVector();
+    std::cout << "Original permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a << " ";
+    std::cout << std::endl;
+    std::cout << "Finished!" << std::endl;
+}
+
+void testRandomSignFlipping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n){
+    PermutationTree t(multyRowArray);
+    t.initializeThreeColsArray();
+    t.initializeBinaryCounters();
+    int numPermutations = t.calculatePermutations(X, false, true);
+    std::cout << "Number of possible sign flippings:" << numPermutations << std::endl;
+    for(int currentPermutation = 1; currentPermutation <= n; currentPermutation++){
+        std::vector<int> currentPerm = t.getSignVector();
+        Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
+        std::cout << currentPermutation << " sign flipping vector is: " << std::endl;
+        for(int a: currentPerm)
+            std::cout << a << " ";
+        std::cout << std::endl;
+        std::cout << currentPermutation << " sign flipping matrix is: " << std::endl;
+        std::cout << P << std::endl;
+        t.randomSignFlip();
+    }
+
+    std::cout << "Finished required random sign flippings! Restoring the tree to its original state" << std::endl;
+    t.resetTreeSignState();
+    std::vector<int> currentPerm = t.getSignVector();
+    std::cout << "Original permutation is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a << " ";
+    std::cout << std::endl;
+    std::cout << "Finished!" << std::endl;
+}
+
