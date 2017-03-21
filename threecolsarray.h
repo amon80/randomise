@@ -14,7 +14,7 @@ public:
     void swaprows(int index1, int index2);
     void randomSwapping();
     void lalgorithm1iteration();
-    bool reset();
+    void reset();
     int& operator()(int i, int j);
     int& at(int i, int j);
     void resetThirdColumn();

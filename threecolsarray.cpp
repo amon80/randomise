@@ -5,9 +5,8 @@
 
 std::ostream& operator<<(std::ostream& os, const ThreeColsArray& obj){
     for(int i = 0; i < 3; i++){
-        for(int j = 0; j < obj.nrows; j++){
+        for(int j = 0; j < obj.nrows; j++)
             os << obj.array[i][j] << "\t";
-        }
         os << std::endl;
     }
     return os;
@@ -121,22 +120,24 @@ void ThreeColsArray::lalgorithm1iteration(){
     }
 }
 
-bool ThreeColsArray::reset(){
-    bool originalState = true;
-    for(int i = 0; i < nrows; i++){
-        int index = array[1][i];
-        if(index == i)
-            continue;
-        swaprows(i, index);
-    }
-    for(int i = 0; i < nrows; i++){
-        if(array[1][i] != i){
-            originalState = false;
-            break;
+void ThreeColsArray::reset(){
+    bool originalState = false;
+    while(originalState){
+        originalState = true;
+        for(int i = 0; i < nrows; i++){
+            int index = array[1][i];
+            if(index == i)
+                continue;
+            swaprows(i, index);
+        }
+        for(int i = 0; i < nrows; i++){
+            if(array[1][i] != i){
+                originalState = false;
+                break;
+            }
         }
     }
     resetThirdColumn();
-    return originalState;
 }
 
 int& ThreeColsArray::operator()(int i, int j){

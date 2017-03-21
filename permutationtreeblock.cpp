@@ -59,7 +59,7 @@ void PermutationTreeBlock::resetNodePermutationState(){
         int index = threecolsarray(1,i);
         sons[index] = originalOrder[i];
     }
-    while(!threecolsarray.reset());
+    threecolsarray.reset();
 }
 
 void PermutationTreeBlock::incrementCounter(){
