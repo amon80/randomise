@@ -1,5 +1,7 @@
 #include "threecolsarray.h"
 #include <algorithm>
+#include <random>
+#include <chrono>
 
 //-------FRIEND FUNCTIONS--------
 
@@ -67,16 +69,18 @@ void ThreeColsArray::randomSwapping(){
     //just before any swapping is performed third column is regenerated
     resetThirdColumn();
 
-    //copying the third column
-    std::vector<int> secondColumn(array[2]);
+    // obtain a time-based seed:
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
-    //performing the shuffling on the copy
-    std::random_shuffle(secondColumn.begin(), secondColumn.end());
+    std::mt19937 g1 (seed);
+    int n = array[0].size()-1;
 
-    //perform swaps according to the shuffled copy
-    for(int i = 0; i < nrows; i++){
-        swaprows(i, secondColumn[i]);
-        //TO TEST!!!
+    for (int i= n ; i > 0; --i) {
+        std::uniform_int_distribution<int> d(0,i);
+        int target = d(g1);
+        if(i == target)
+            continue;
+        swaprows(i, target);
     }
 }
 
