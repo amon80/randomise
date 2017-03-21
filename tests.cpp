@@ -151,7 +151,6 @@ void testRandomSwapping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multy
     }
 
     std::cout << "Finished required random shufflings! Restoring the tree to its original state" << std::endl;
-    //BUG!!!
     t.resetTreePermutationState();
     std::vector<int> currentPerm = t.getSignVector();
     std::cout << "Original permutation is: " << std::endl;

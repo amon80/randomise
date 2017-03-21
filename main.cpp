@@ -149,24 +149,24 @@ int main(int argc, char *argv[])
     multyRowArray2[1].push_back(8);
     multyRowArray2[1].push_back(9);
 
-
-    //testLAlgorithmTree(X1, multyRowArray1);
+    //testLAlgorithmTree(X1, multyRowArray2);
     //testBinaryCounterTree(X1, multyRowArray1);
 
-    //testRandomSwapping(X1, multyRowArray2, 10);
-    //testRandomSignFlipping(X1, multyRowArray2, 10);
-
-    int numrows = 10;
-
-    ThreeColsArray t(numrows);
-
-    for(int i = 0; i < numrows; i++)
-        t(0, i) = i;
-
-
     int numrandomswappings = 20;
+
+    testRandomSwapping(X1, multyRowArray2, numrandomswappings);
+    //testRandomSignFlipping(X1, multyRowArray2, numrandomswappings);
+
+    //int numrows = 6;
+
+    //ThreeColsArray t(numrows);
+
+    //for(int i = 0; i < numrows; i++)
+        //t(0, i) = i;
+
+
     //lalgorithmtest(t);
-    randomSwappingTest(t, numrandomswappings);
+    //randomSwappingTest(t, numrandomswappings);
 
 
     return 0;
