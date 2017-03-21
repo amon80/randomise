@@ -9,6 +9,7 @@ QT       += widgets testlib
 QT       -= core gui
 
 CONFIG += c++11
+CONFIG += testcase
 
 TARGET = Randomise
 TEMPLATE = lib
