@@ -4,9 +4,8 @@
 //friend functions
 std::ostream & operator<<(std::ostream &os, const BinaryString& p){
     int i;
-    for(i = 0; i < p.n_bits; i++){
+    for(i = 0; i < p.n_bits; i++)
         os << p.string[i];
-    }
     return os;
 }
 
@@ -45,10 +44,9 @@ bool operator>(const BinaryString& first, const BinaryString& second){
 bool operator==(const BinaryString& first, const BinaryString& second){
     if(first.n_bits != second.n_bits)
         return false;
-    for (int i = 0; i < first.n_bits; i++) {
+    for (int i = 0; i < first.n_bits; i++)
         if (first.string[i] != second.string[i])
             return false;
-    }
     return true;
 }
 
@@ -89,9 +87,8 @@ BinaryString::BinaryString(const BinaryString& rhs)
     :n_bits(rhs.n_bits),
     string(new int[rhs.n_bits])
 {
-	for(int i = 0; i < n_bits; i++){
+    for(int i = 0; i < n_bits; i++)
 	    string[i] = rhs.string[i];
-	}
 }
 
 BinaryString& BinaryString::operator=(const BinaryString& rhs){
@@ -153,9 +150,8 @@ void BinaryString::generateRandomly(){
     std::mt19937 e2(rd());
     std::uniform_int_distribution<int> dist(0, 1);
 
-    for (int i = 0; i < n_bits; ++i) {
+    for (int i = 0; i < n_bits; ++i)
         string[i] = dist(e2);
-    }
 }
 
 

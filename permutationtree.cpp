@@ -85,10 +85,9 @@ bool confrontBranch(PermutationTreeBlock * b1, PermutationTreeBlock * b2, Eigen:
             return false;
     }
     //recursion case
-    for(int i = 0; i < b1sons; i++){
+    for(int i = 0; i < b1sons; i++)
         if(!confrontBranch(b1->getSon(i), b2->getSon(i), X))
             return false;
-    }
     //if the function arrives here, means that all sub branches are equal, so the branches
     //are equal
     return true;
@@ -105,9 +104,8 @@ PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
     int n = multyRowArray[0].size();
     numleaves = n;
     std::vector<int> indices(n);
-    for(int i = 0; i < n; i++){
+    for(int i = 0; i < n; i++)
         indices[i] = i;
-    }
     root = new PermutationTreeBlock(indices, permutable);
     buildTreeRecursively(root, 1, multyRowArray);
 }
@@ -151,10 +149,9 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
     if(numSons == 0)
         return numPermutation;
 
-    if(ISE){
+    if(ISE)
         if(permutable)
             numPermutation <<= numSons;
-    }
     if(EE){
         if(permutable){
             //in the EE hypothesis, if block is permutable, a check for equal branches
@@ -188,9 +185,8 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
         }
     }
 
-    for(int i = 0; i < numSons; i++){
+    for(int i = 0; i < numSons; i++)
         numPermutation *= calculatePermutations(X, EE, ISE, block->getSon(i));
-    }
 
     return numPermutation;
 }
@@ -241,9 +237,8 @@ bool PermutationTree::LAlgorithm(PermutationTreeBlock * block, std::vector<Permu
         alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
     }
     //base case #1: block is not permutable. In this case it shall not be added to the list
-    if(!block->isPermutable()){
+    if(!block->isPermutable())
         return false;
-    }
     //base case #2: block is permutable, let's check if L algorithm is appliable
     //"The tree is swept from the top node [...] stopping when a single pairwise permutation of branches can be performed"
     if(block->isLAlgorithmApplicable()){
@@ -284,9 +279,8 @@ bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<Per
         alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
     }
     //base case #1: block is not permutable. In this case it shall not be added to the list
-    if(!block->isPermutable()){
+    if(!block->isPermutable())
         return false;
-    }
     //base case #2: block is permutable, let's check if counter is incrementable
     //"The tree is swept from the top node [...] stopping when a single sign flipping can be performed
     if(block->isIncrementable()){
@@ -327,9 +321,8 @@ void PermutationTree::randomShuffle(PermutationTreeBlock * block){
     int numSons = block->getNumSons();
     if(numSons == 0)
         return;
-    if(block->isPermutable()){
+    if(block->isPermutable())
         block->randomSwapSons();
-    }
     for(int i = 0; i < numSons; i++)
         randomShuffle(block->getSon(i));
     return;
@@ -341,15 +334,13 @@ void PermutationTree::randomSignFlip(PermutationTreeBlock * block){
     int numSons = block->getNumSons();
     if(numSons == 0)
         return;
-    if(block->isPermutable()){
+    if(block->isPermutable())
        block->setRandomCounter();
-    }
     for(int i = 0; i < numSons; i++)
         randomSignFlip(block->getSon(i));
     return;
 }
 
-//probable BUG, especially with random perturbations
 void PermutationTree::resetTreePermutationState(PermutationTreeBlock * block){
     if(block == nullptr)
         block = root;
@@ -358,9 +349,8 @@ void PermutationTree::resetTreePermutationState(PermutationTreeBlock * block){
         return;
     if(block->isPermutable())
         block->resetNodePermutationState();
-    for(int i = 0; i < numSons; i++){
+    for(int i = 0; i < numSons; i++)
         resetTreePermutationState(block->getSon(i));
-    }
 }
 
 void PermutationTree::resetTreeSignState(PermutationTreeBlock * block){
@@ -371,9 +361,8 @@ void PermutationTree::resetTreeSignState(PermutationTreeBlock * block){
         return;
     if(block->isPermutable())
         block->resetCounter();
-    for(int i = 0; i < numSons; i++){
-        resetTreePermutationState(block->getSon(i));
-    }
+    for(int i = 0; i < numSons; i++)
+        resetTreeSignState(block->getSon(i));
 }
 
 

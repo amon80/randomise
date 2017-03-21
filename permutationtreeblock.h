@@ -16,7 +16,6 @@ public:
     void setValue(int value);
     void applyLAlgorithm();
     void randomSwapSons();
-    void swapSons(int index1, int index2);
     void resetNodePermutationState();
     void incrementCounter();
     void resetCounter();

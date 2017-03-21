@@ -23,17 +23,12 @@ void PermutationTreeBlock::setValue(int v){
     this->value = v;
 }
 
-//rowToUse can be 1 -> reset or 2 -> next permutation
-//BUG ON RANDOM SWAPPINGS.
-
-//FOUND THE BUG!!! Here things must not be swapped at all!!!
 void PermutationTreeBlock::permuteTreeUsingThreeColsArray(){
     int numsons = sons.size();
     //Copy the original order of the tree.
     std::vector<PermutationTreeBlock*> originalOrder(numsons);
-    for(int i = 0; i < numsons; i++){
+    for(int i = 0; i < numsons; i++)
         originalOrder[i] = sons[i];
-    }
     //Now, let's build the new shuffling.
     for(int i = 0; i < numsons; i++){
         int index = threecolsarray(2,i);
@@ -52,22 +47,14 @@ void PermutationTreeBlock::randomSwapSons(){
     permuteTreeUsingThreeColsArray();
 }
 
-
-void PermutationTreeBlock::swapSons(int index1, int index2){
-    using std::swap;
-
-    swap(sons[index1], sons[index2]);
-}
-
 void PermutationTreeBlock::resetNodePermutationState(){
     int numsons = sons.size();
     //Copy the original order of the tree.
     std::vector<PermutationTreeBlock*> originalOrder(numsons);
-    for(int i = 0; i < numsons; i++){
+    for(int i = 0; i < numsons; i++)
         originalOrder[i] = sons[i];
-    }
-    //Now, let's build the new shuffling.
-    //NOTE: we can't use the same method as before, as here is reverse indexing
+    //Now, let's restore the original shuffling.
+    //NOTE: we can't use the same method as before, as here is REVERSE INDEXING
     for(int i = 0; i < numsons; i++){
         int index = threecolsarray(1,i);
         sons[index] = originalOrder[i];
