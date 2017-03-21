@@ -1,0 +1,12 @@
+#ifndef RANDOMISE_GLOBAL_H
+#define RANDOMISE_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(RANDOMISE_LIBRARY)
+#  define RANDOMISESHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define RANDOMISESHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // RANDOMISE_GLOBAL_H
