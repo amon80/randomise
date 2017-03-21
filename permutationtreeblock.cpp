@@ -24,34 +24,30 @@ void PermutationTreeBlock::setValue(int v){
 }
 
 //rowToUse can be 1 -> reset or 2 -> next permutation
-//not sure if BUG
+//BUG ON RANDOM SWAPPINGS.
+
+//FOUND THE BUG!!! Here things must not be swapped at all!!!
 void PermutationTreeBlock::permuteTreeUsingThreeColsArray(int rowToUse){
     int numsons = sons.size();
-    std::map<int, int> swappings;
+    //Copy the original order of the tree.
+    std::vector<PermutationTreeBlock*> originalOrder(numsons);
+    for(int i = 0; i < numsons; i++){
+        originalOrder[i] = sons[i];
+    }
+    //Now, let's build the new shuffling.
     for(int i = 0; i < numsons; i++){
         int index = threecolsarray(rowToUse,i);
-        if(index == i)
-            continue;
-        if(!swappings.count(index)){
-            swappings[i] = index;
-            swapSons(i, index);
-        }
-        else{
-            if(swappings[index] != i)
-                swapSons(i, index);
-        }
+        sons[i] = originalOrder[index];
     }
 }
 
 void PermutationTreeBlock::applyLAlgorithm(){
     threecolsarray.lalgorithm1iteration();
-    //The third column is the one that effectively permutes branches
     permuteTreeUsingThreeColsArray(2);
 }
 
 void PermutationTreeBlock::randomSwapSons(){
     threecolsarray.randomSwapping();
-    //BUG? Not sure if third col has a meaning with random shufflings
     permuteTreeUsingThreeColsArray(2);
 }
 
@@ -63,9 +59,8 @@ void PermutationTreeBlock::swapSons(int index1, int index2){
 }
 
 void PermutationTreeBlock::resetNodePermutationState(){
-    do
-        permuteTreeUsingThreeColsArray(1);
-    while(threecolsarray.reset());
+    permuteTreeUsingThreeColsArray(1);
+    threecolsarray.reset();
 }
 
 void PermutationTreeBlock::incrementCounter(){
