@@ -226,6 +226,26 @@ std::vector<int> PermutationTree::getSignVector(PermutationTreeBlock * block){
     return toReturn;
 }
 
+std::vector<int> PermutationTree::getMinimumSetOfVarianceGroups(PermutationTreeBlock * block = nullptr, int counter){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    //base case: leaf
+    if(numSons == 0)
+        return (std::vector<int>(1, counter));
+    //check if its permutable?
+    std::vector<int> toReturn;
+    for(int i = 0; i < numSons; i++){
+        std::vector<int> toReturnI = getMinimumSetOfVarianceGroups(block->getSon(i), counter);
+        if(!block->isPermutable())
+            counter++;
+        for(int a: toReturnI)
+            toReturn.push_back(a);
+    }
+    return toReturn;
+}
+
+
 
 int PermutationTree::getNumLeaves(){
     return numleaves;
