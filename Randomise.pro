@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += testlib
+QT       += widgets testlib
 
 QT       -= core gui
 
@@ -34,7 +34,8 @@ SOURCES += \
     threecolsarray.cpp \
     permutationtreeblock.cpp \
     matrices.cpp \
-    randomise.cpp
+    randomise.cpp \
+    binarycountertester.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
