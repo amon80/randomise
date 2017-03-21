@@ -3,8 +3,19 @@
 #include "binarystring.h"
 #include "threecolsarray.h"
 #include "matrices.h"
+#include <set>
+#include <string>
 
 //-----------------TESTS FOR MULTY LEVEL PERMUTATION-------------------
+
+//NOTE: this only works when the permutation is made up of all numbers with
+//1 digit
+std::string createStringFromVector(std::vector<int>& permutation){
+    std::string toReturn;
+    for(int a: permutation)
+        toReturn.append(std::to_string(a));
+    return toReturn;
+}
 
 void testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray) {
 
@@ -14,9 +25,15 @@ void testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multy
     int numPermutations = t.calculatePermutations(X, true, false);
     std::cout << "Number of possible shufflings:" << numPermutations << std::endl;
     int currentPermutation = 1;
+    std::set<std::string> generatedPermutations;
     while(true){
         //std::vector<int> currentPerm = t.getPermutationVector();
         std::vector<int> currentPerm = t.getSignVector();
+        std::string currentPermString = createStringFromVector(currentPerm);
+        if(generatedPermutations.count(currentPermString))
+            std::cout << "Warning! " << currentPermString << " already generated!" << std::endl;
+        else
+            generatedPermutations.insert(currentPermString);
         Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
         std::cout << currentPermutation << " permutation vector is: " << std::endl;
         for(int a: currentPerm)
