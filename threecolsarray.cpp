@@ -128,11 +128,12 @@ bool ThreeColsArray::reset(){
         if(index == i)
             continue;
         swaprows(i, index);
-        //after we've swapped the rows, we check if the current row is in its
-        //original state
-        index = array[1][i];
-        if(index != i)
+    }
+    for(int i = 0; i < nrows; i++){
+        if(array[1][i] != i){
             originalState = false;
+            break;
+        }
     }
     resetThirdColumn();
     return originalState;

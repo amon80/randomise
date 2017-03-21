@@ -37,7 +37,7 @@ public:
     void initializeBinaryCounter();
     BinaryString& getBinaryCounter();
 private:
-    void permuteTreeUsingThreeColsArray(int rowToUse);
+    void permuteTreeUsingThreeColsArray();
     std::vector<int> indices;
     bool permutable;
     ThreeColsArray threecolsarray;
