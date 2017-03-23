@@ -226,7 +226,7 @@ std::vector<int> PermutationTree::getSignVector(PermutationTreeBlock * block){
     return toReturn;
 }
 
-std::vector<int> PermutationTree::getMinimumSetOfVarianceGroups(PermutationTreeBlock * block = nullptr, int counter){
+std::vector<int> PermutationTree::getMinimumSetOfVarianceGroups(PermutationTreeBlock * block, int counter){
     if(block == nullptr)
         block = root;
     int numSons = block->getNumSons();
