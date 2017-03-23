@@ -16,6 +16,7 @@ std::ostream& operator<<(std::ostream& os, const ThreeColsArray& obj){
 
 //----------METHODS---------------
 
+//---------CONSTRUCTORS-----------
 
 ThreeColsArray::ThreeColsArray()
 {
@@ -57,6 +58,12 @@ bool ThreeColsArray::isLAlgorithmApplicable(){
     else
         return true;
 }
+
+int ThreeColsArray::getNumRows(){
+    return nrows;
+}
+
+//-------------MODIFIERS-----------------
 
 void ThreeColsArray::swaprows(int index1, int index2){
     using std::swap;
@@ -126,7 +133,7 @@ void ThreeColsArray::lalgorithm1iteration(){
 
 void ThreeColsArray::reset(){
     bool originalState = false;
-    while(originalState){
+    while(!originalState){
         originalState = true;
         for(int i = 0; i < nrows; i++){
             int index = array[1][i];

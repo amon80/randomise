@@ -8,9 +8,12 @@
 class ThreeColsArray
 {
 public:
+    //-----CONSTRUCTORS-----
     ThreeColsArray();
     ThreeColsArray(int nrows);
     bool isLAlgorithmApplicable();
+    int getNumRows();
+    //-----MODIFIERS--------
     void swaprows(int index1, int index2);
     void randomSwapping();
     void lalgorithm1iteration();
