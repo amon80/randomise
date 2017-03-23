@@ -41,23 +41,8 @@ ThreeColsArray::ThreeColsArray(int nrows)
 //-------------ACCESS METHODS-----------------
 
 bool ThreeColsArray::isReverseLAlgorithmApplicable(){
-    //REVERSE L2
-    int j = 1;
-    int jminus1 = j-1;
-
-    int n = array[0].size() - 1;
-
-    while(j <= n){
-        if(array[0][jminus1] > array[0][j])
-            break;
-        ++j;
-        ++jminus1;
-    }
-
-    if(j == n+1)
-        return false;
-    else
-        return true;
+    //TODO REVERSE L2
+    return false;
 }
 
 bool ThreeColsArray::isLAlgorithmApplicable(){
@@ -155,21 +140,8 @@ void ThreeColsArray::lalgorithm1iteration(){
 
 
 void ThreeColsArray::reverselalgorithm1iteration(){
-    //just before l algorithm application(in this case, reverse application), third column is regenerated
-    resetThirdColumn();
 
-    //REVERSE L2
-    int j = 1;
-    int jminus1 = j-1;
-
-    int n = array[0].size() - 1;
-
-    while(j <= n){
-        if(array[0][jminus1] > array[0][j])
-            break;
-        ++j;
-        ++jminus1;
-    }
+    //TODO REVERSE L2
 
     //TODO: REVERSE L3 - REVERSE L4
 }

@@ -42,6 +42,11 @@ void PermutationTreeBlock::applyLAlgorithm(){
     permuteTreeUsingThreeColsArray();
 }
 
+void PermutationTreeBlock::applyReverseLAlgorithm(){
+    threecolsarray.reverselalgorithm1iteration();
+    permuteTreeUsingThreeColsArray();
+}
+
 void PermutationTreeBlock::randomSwapSons(){
     threecolsarray.randomSwapping();
     permuteTreeUsingThreeColsArray();
@@ -94,6 +99,11 @@ bool PermutationTreeBlock::isPermutable(){
 bool PermutationTreeBlock::isLAlgorithmApplicable(){
     return permutable && threecolsarray.isLAlgorithmApplicable();
 }
+
+bool PermutationTreeBlock::isReverseLAlgorithmApplicable(){
+    return permutable && threecolsarray.isReverseLAlgorithmApplicable();
+}
+
 
 bool PermutationTreeBlock::isIncrementable(){
     return permutable && counter.isIncrementable();

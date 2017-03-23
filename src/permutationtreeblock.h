@@ -15,6 +15,7 @@ public:
     void addSon(PermutationTreeBlock * son);
     void setValue(int value);
     void applyLAlgorithm();
+    void applyReverseLAlgorithm();
     void randomSwapSons();
     void resetNodePermutationState();
     void incrementCounter();
@@ -27,6 +28,7 @@ public:
     int getIndicesSize();
     bool isPermutable();
     bool isLAlgorithmApplicable();
+    bool isReverseLAlgorithmApplicable();
     bool isIncrementable();
     PermutationTreeBlock * getSon(int i);
     //-------THREECOLS ARRAY METHODS----
