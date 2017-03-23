@@ -1,3 +1,5 @@
 TEMPLATE = subdirs
 
-SUBDIRS += binarycounter
+SUBDIRS += binarycounter \
+           threecolsarray \
+           permutationtree

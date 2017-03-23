@@ -1,5 +1,5 @@
 #include <QtTest>
-#include "../../../src/binarystring.h"
+#include "binarystring.h"
 
 class TestBinaryCounter : public QObject
 {
@@ -17,8 +17,8 @@ private:
 
 private slots:
     void initTestCase();
-    void test_case1();
-    void test_case2();
+    void comparetestcase();
+    void incrementtestcase();
     void cleanUpTestCase();
 };
 
@@ -42,7 +42,7 @@ void TestBinaryCounter::initTestCase(){
 
 }
 
-void TestBinaryCounter::test_case1()
+void TestBinaryCounter::comparetestcase()
 {
     BinaryString c(b);
     QCOMPARE(false, bplus1 < bplus1);
@@ -50,17 +50,26 @@ void TestBinaryCounter::test_case1()
     QCOMPARE(true, ++c == bplus1);
 }
 
-void TestBinaryCounter::test_case2(){
+void TestBinaryCounter::incrementtestcase(){
     BinaryString c(b);
+    //testing copy constructor
     QCOMPARE(c, b);
     std::cout << c << std::endl;
+    int nbits = c.size();
+    int expected_increments = 1;
+    expected_increments <<= nbits;
+    int actual_increments_performed = 1;
     while(c.isIncrementable()){
+        actual_increments_performed++;
         std::cout << ++c << std::endl;
     }
-    int nbits = c.size();
+    QCOMPARE(expected_increments, actual_increments_performed);
     for(int i = 0; i < nbits; i++){
-        int current_bit = c[i];
-        QCOMPARE(current_bit, 1);
+        QCOMPARE(c[i], 1);
+    }
+    c.reset();
+    for(int i = 0; i < nbits; i++){
+        QCOMPARE(c[i], 0);
     }
 }
 

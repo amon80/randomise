@@ -8,5 +8,7 @@ TEMPLATE = app
 
 INCLUDEPATH += ../../../src
 
-SOURCES +=  testbinarycounter.cpp \
-            ../../../src/binarystring.cpp
+SOURCES +=  testthreecolsarray.cpp \
+            ../../../src/threecolsarray.cpp \
+            ../../../src/mymath.cpp
+

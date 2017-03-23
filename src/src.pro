@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets testlib
-
-QT       -= core gui
+QT -= gui
 
 CONFIG += c++11
 
@@ -28,14 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     permutationtree.cpp \
-    tests.cpp \
     mymath.cpp \
     binarystring.cpp \
     threecolsarray.cpp \
     permutationtreeblock.cpp \
     matrices.cpp \
-    randomise.cpp \
-    binarycountertester.cpp
+    randomise.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -310,7 +306,6 @@ HEADERS += \
     Eigen/src/SVD/UpperBidiagonalization.h \
     Eigen/src/UmfPackSupport/UmfPackSupport.h \
     permutationtree.h \
-    tests.h \
     mymath.h \
     binarystring.h \
     threecolsarray.h \
