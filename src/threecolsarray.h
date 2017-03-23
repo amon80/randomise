@@ -11,12 +11,15 @@ public:
     //-----CONSTRUCTORS-----
     ThreeColsArray();
     ThreeColsArray(int nrows);
+    //-----ACCESS METHODS---
+    bool isReverseLAlgorithmApplicable();
     bool isLAlgorithmApplicable();
     int getNumRows();
     //-----MODIFIERS--------
     void swaprows(int index1, int index2);
     void randomSwapping();
     void lalgorithm1iteration();
+    void reverselalgorithm1iteration();
     void reset();
     int& operator()(int i, int j);
     int& at(int i, int j);

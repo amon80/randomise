@@ -38,6 +38,28 @@ ThreeColsArray::ThreeColsArray(int nrows)
             array[i][j] = j;
 }
 
+//-------------ACCESS METHODS-----------------
+
+bool ThreeColsArray::isReverseLAlgorithmApplicable(){
+    //REVERSE L2
+    int j = 1;
+    int jminus1 = j-1;
+
+    int n = array[0].size() - 1;
+
+    while(j <= n){
+        if(array[0][jminus1] > array[0][j])
+            break;
+        ++j;
+        ++jminus1;
+    }
+
+    if(j == n+1)
+        return false;
+    else
+        return true;
+}
+
 bool ThreeColsArray::isLAlgorithmApplicable(){
     //L2
 
@@ -119,6 +141,49 @@ void ThreeColsArray::lalgorithm1iteration(){
         --l;
     }
 
+    //L4
+
+    int k = jplus1;
+    l = n;
+
+    while(k < l){
+        swaprows(l, k);
+        k += 1;
+        l -= 1;
+    }
+}
+
+
+void ThreeColsArray::reverselalgorithm1iteration(){
+    //just before l algorithm application(in this case, reverse application), third column is regenerated
+    resetThirdColumn();
+
+    //REVERSE L2
+    int j = 1;
+    int jminus1 = j-1;
+
+    int n = array[0].size() - 1;
+
+    while(j <= n){
+        if(array[0][jminus1] > array[0][j])
+            break;
+        ++j;
+        ++jminus1;
+    }
+
+    //TODO: REVERSE L3 - REVERSE L4
+    //TO BE REVERSED!!!!!
+    //L3
+    int l = 0;
+    while(l < j){
+        if(array[0][j] < array[0][l]){
+            swaprows(j, l);
+            break;
+        }
+        --l;
+    }
+
+    //MUST BE REVERSED
     //L4
 
     int k = jplus1;
