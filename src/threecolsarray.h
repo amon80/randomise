@@ -23,6 +23,7 @@ public:
     void reset();
     int& operator()(int i, int j);
     int& at(int i, int j);
+    void resetSecondColumn();
     void resetThirdColumn();
 private:
     friend std::ostream& operator<<(std::ostream& os, const ThreeColsArray& obj);

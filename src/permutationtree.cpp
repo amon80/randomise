@@ -335,6 +335,32 @@ bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<Per
     }
 }
 
+//NOTE: This method should be used once, at the beginning
+//when exhaustive search through permutation is required
+void PermutationTree::reverseLAlgorithm(PermutationTreeBlock * block){
+    if(block == nullptr)
+        block = root;
+    int numSons = block->getNumSons();
+    if(numSons == 0)
+        return;
+    while(block->isReverseLAlgorithmApplicable()){
+        block->applyReverseLAlgorithm();
+    }
+    //In this case, we are resetting the three cols array
+    //without shuffling the branches.
+    //In this way successive call of L algorithm
+    //will see this state as the original
+    //NOTE: If the reverse L Algorithm is not applied
+    //these two resets make no harm.
+    if(block->isPermutable()){
+        block->getThreeColsArray().resetSecondColumn();
+        block->getThreeColsArray().resetThirdColumn();
+    }
+    for(int i = 0; i < numSons; i++)
+        reverseLAlgorithm(block->getSon(i));
+}
+
+
 void PermutationTree::randomShuffle(PermutationTreeBlock * block){
     if(block == nullptr)
         block = root;

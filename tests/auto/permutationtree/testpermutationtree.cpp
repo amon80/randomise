@@ -58,6 +58,7 @@ void TestPermutationTree::testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std
     std::cout << "Number of possible shufflings:" << numPermutations << std::endl;
     int currentPermutation = 0;
     std::set<std::vector<int>, classcomp> generatedPermutations;
+    t.reverseLAlgorithm();
     while(true){
         //std::vector<int> currentPerm = t.getPermutationVector();
         std::vector<int> currentPerm = t.getSignVector();
@@ -328,19 +329,19 @@ void TestPermutationTree::initTestCase(){
 }
 
 void TestPermutationTree::lAlgorithmtest1(){
-    testLAlgorithmTree(X1, multyRowArray1);
-}
-
-void TestPermutationTree::lAlgorithmtest2(){
-    testLAlgorithmTree(X1, multyRowArray2);
-}
-
-void TestPermutationTree::lAlgorithmtest3(){
     testLAlgorithmTree(X2, multyRowArray1);
 }
 
-void TestPermutationTree::lAlgorithmtest4(){
+void TestPermutationTree::lAlgorithmtest2(){
     testLAlgorithmTree(X2, multyRowArray2);
+}
+
+void TestPermutationTree::lAlgorithmtest3(){
+    testLAlgorithmTree(X1, multyRowArray1);
+}
+
+void TestPermutationTree::lAlgorithmtest4(){
+    testLAlgorithmTree(X1, multyRowArray2);
 }
 
 void TestPermutationTree::cleanUpTestCase(){

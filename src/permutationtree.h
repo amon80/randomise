@@ -26,6 +26,8 @@ public:
     //shufflings/sign flipping
     bool LAlgorithm(PermutationTreeBlock * block = nullptr, std::vector<PermutationTreeBlock*> * alreadyVisited = nullptr);
     bool signFlipping(PermutationTreeBlock * block = nullptr, std::vector<PermutationTreeBlock *> *alreadyVisited = nullptr);
+    //NOTE: this method should be invoked once, at the beginning
+    void reverseLAlgorithm(PermutationTreeBlock * block = nullptr);
     //----------RANDOM SHUFFLINGS METHODS--------
     void randomShuffle(PermutationTreeBlock * block = nullptr);
     void randomSignFlip(PermutationTreeBlock * block = nullptr);
