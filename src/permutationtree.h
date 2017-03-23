@@ -19,6 +19,7 @@ public:
     //NOTE: getSignVector gets a permutation vector as well.
     std::vector<int> getPermutationVector(PermutationTreeBlock * block = nullptr);
     std::vector<int> getSignVector(PermutationTreeBlock * block = nullptr);
+    std::vector<int> getMinimumSetOfVarianceGroups(PermutationTreeBlock * block = nullptr, int counter = 0);
     int getNumLeaves();
     //----------SEQUENTIAL SHUFFLINGS METHODS----
     //NOTE: this two function have sense only when listing all the possible
