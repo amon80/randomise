@@ -161,18 +161,6 @@ void TestThreeColsArray::initTestCase(){
     checkInitializationAndReset(t3);
 }
 
-void TestThreeColsArray::makereadyforlalgorithmtest1(){
-    testMakeReadyForLAlgorithm(t1);
-}
-
-void TestThreeColsArray::makereadyforlalgorithmtest2(){
-    testMakeReadyForLAlgorithm(t2);
-}
-
-void TestThreeColsArray::makereadyforlalgorithmtest3(){
-    testMakeReadyForLAlgorithm(t3);
-}
-
 void TestThreeColsArray::lalgorithmtest1(){
     testLAlgorithm(t1);
 }

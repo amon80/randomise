@@ -172,28 +172,6 @@ void ThreeColsArray::reverselalgorithm1iteration(){
     }
 
     //TODO: REVERSE L3 - REVERSE L4
-    //TO BE REVERSED!!!!!
-    //L3
-    int l = 0;
-    while(l < j){
-        if(array[0][j] < array[0][l]){
-            swaprows(j, l);
-            break;
-        }
-        --l;
-    }
-
-    //MUST BE REVERSED
-    //L4
-
-    int k = jplus1;
-    l = n;
-
-    while(k < l){
-        swaprows(l, k);
-        k += 1;
-        l -= 1;
-    }
 }
 
 void ThreeColsArray::reset(){
