@@ -36,10 +36,19 @@ private:
     std::vector<std::vector<int>> multyRowArray2;
     void testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray);
     void testAllSignFlippingsTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray);
+    void testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray);
     void testRandomSwapping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n);
     void testRandomSignFlipping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n);
+    void computeShuffling(PermutationTree &t, std::set<std::vector<int>, classcomp> &generatedPermutations, int &currentPermutation);
+
 private slots:
     void initTestCase();
+    void allSignFlippingsAndPermutationsTest1();
+    void allSignFlippingsAndPermutationsTest2();
+    //Binary Flippings only need two tests since they don't care about
+    //repetitions in the design matrix
+    void allSignFlippingsTest1();
+    void allSignFlippingsTest2();
     void lAlgorithmtest1();
     void lAlgorithmtest2();
     void lAlgorithmtest3();
@@ -140,6 +149,63 @@ void TestPermutationTree::testAllSignFlippingsTree(Eigen::MatrixXd& X, std::vect
     std::cout << "Finished!" << std::endl;
 
 }
+
+void TestPermutationTree::computeShuffling(PermutationTree& t, std::set<std::vector<int>, classcomp>& generatedPermutations, int& currentPermutation)
+{
+    std::vector<int> currentPerm = t.getSignVector();
+    if(generatedPermutations.count(currentPerm)){
+        std::cout << "Warning! Shuffling:" << std::endl;
+        for(int a: currentPerm)
+            std::cout << a << " ";
+        std::cout << std::endl;
+        std::cout << " already generated!" << std::endl;
+        //the test fails if we generate twice the same permutation
+        QCOMPARE(false, true);
+    }
+    else
+        generatedPermutations.insert(currentPerm);
+    Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
+    std::cout << currentPermutation << " shuffling is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a << " ";
+    std::cout << std::endl;
+    std::cout << currentPermutation++ << " shuffling matrix is: " << std::endl;
+    std::cout << P << std::endl;
+}
+
+void TestPermutationTree::testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray){
+    PermutationTree t(multyRowArray);
+    t.initializeThreeColsArray();
+    t.initializeBinaryCounters();
+    int numPermutations = t.calculatePermutations(X, true, true);
+    std::cout << "Number of possible shufflings:" << numPermutations << std::endl;
+    int currentPermutation = 0;
+    std::set<std::vector<int>, classcomp> generatedPermutations;
+    t.reverseLAlgorithm();
+    computeShuffling(t, generatedPermutations, currentPermutation);
+    while(t.signFlipping()){
+        computeShuffling(t, generatedPermutations, currentPermutation);
+    }
+    t.resetTreeSignState();
+    while(t.LAlgorithm()){
+        t.resetTreeSignState();
+        computeShuffling(t, generatedPermutations, currentPermutation);
+        while(t.signFlipping()){
+            computeShuffling(t, generatedPermutations, currentPermutation);
+        }
+    }
+    QCOMPARE(currentPermutation, numPermutations);
+    std::cout << "Finished all shufflings! Restoring the tree to its original state" << std::endl;
+    t.resetTreeSignState();
+    t.resetTreePermutationState();
+    std::vector<int> currentPerm = t.getSignVector();
+    std::cout << "Original shuffling is: " << std::endl;
+    for(int a: currentPerm)
+        std::cout << a << " ";
+    std::cout << std::endl;
+    std::cout << "Finished!" << std::endl;
+}
+
 
 void TestPermutationTree::testRandomSwapping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n){
     PermutationTree t(multyRowArray);
@@ -324,6 +390,8 @@ TestPermutationTree::~TestPermutationTree()
 
 }
 
+//-----------TEST CASES------------------
+
 void TestPermutationTree::initTestCase(){
 
 }
@@ -342,6 +410,26 @@ void TestPermutationTree::lAlgorithmtest3(){
 
 void TestPermutationTree::lAlgorithmtest4(){
     testLAlgorithmTree(X1, multyRowArray2);
+}
+
+//For both EE and ISE assumptions, we use only multyRowArray1 since
+//otherwise exhaustive approach won't end
+void TestPermutationTree::allSignFlippingsAndPermutationsTest1(){
+    testAllSignFlippingsAndPermutation(X1, multyRowArray1);
+}
+
+void TestPermutationTree::allSignFlippingsAndPermutationsTest2(){
+    testAllSignFlippingsAndPermutation(X2, multyRowArray1);
+}
+
+void TestPermutationTree::allSignFlippingsTest1(){
+    //We could also have used X2, doesn't really matter for sign flips
+    testAllSignFlippingsTree(X1, multyRowArray1);
+}
+
+void TestPermutationTree::allSignFlippingsTest2(){
+    //We could also have used X2, doesn't really matter for sign flips
+    testAllSignFlippingsTree(X1, multyRowArray2);
 }
 
 void TestPermutationTree::cleanUpTestCase(){
