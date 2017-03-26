@@ -31,7 +31,9 @@ SOURCES += \
     threecolsarray.cpp \
     permutationtreeblock.cpp \
     matrices.cpp \
-    randomise.cpp
+    randomise.cpp \
+    statisticalmap4d.cpp \
+    statisticalmap3d.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -312,7 +314,9 @@ HEADERS += \
     permutationtreeblock.h \
     matrices.h \
     randomise_global.h \
-    randomise.h
+    randomise.h \
+    statisticalmap4d.h \
+    statisticalmap3d.h
 
 unix {
     target.path = /usr/lib
