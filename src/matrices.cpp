@@ -14,15 +14,11 @@ Eigen::MatrixXd buildShufflingMatrix(std::vector<int>& perm){
     return toReturn;
 }
 
-//NOTE: maybe can be done better
-void partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd& C, Eigen::MatrixXd& X, Eigen::MatrixXd& Z){
-   Eigen::MatrixXd D = (M.transpose() * M).inverse();
-   Eigen::MatrixXd Ctrasp = C.transpose();
 
-   X = M*D*C*((Ctrasp*D*C).inverse());
-   //Cu is a matrix whose columns span in the null space of C
-   Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
-   Eigen::MatrixXd Cu = lu.kernel();
-   Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse());
-   Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
+template<typename _Matrix_Type_>
+_Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, double epsilon)
+{
+    Eigen::JacobiSVD< _Matrix_Type_ > svd(a ,Eigen::ComputeThinU | Eigen::ComputeThinV);
+    double tolerance = epsilon * std::max(a.cols(), a.rows()) *svd.singularValues().array().abs()(0);
+    return svd.matrixV() *  (svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix().asDiagonal() * svd.matrixU().adjoint();
 }
