@@ -139,8 +139,17 @@ StatisticalMap3D& StatisticalMap3D::operator=(StatisticalMap3D&& rhs){
     return *this;
 }
 
+//---------- MODIFIERS -----------------
+
 float& StatisticalMap3D::operator[](const std::size_t idx){
     return map[idx];
+}
+
+StatisticalMap3D& StatisticalMap3D::operator/=(const float number){
+    for (int i = 0; i < dim; ++i) {
+        this->map[i] /= number;
+    }
+    return *this; // return the result by reference
 }
 
 //------------- ACCESS METHODS

@@ -23,6 +23,7 @@ public:
     StatisticalMap3D& operator=(StatisticalMap3D&& rhs);
     //modifiers
     float& operator[](const std::size_t idx);
+    StatisticalMap3D& operator/=(const float number);
     //access methods
     int size();
     int sizeX();
