@@ -6,7 +6,7 @@ StatisticalMap4D::StatisticalMap4D(int dim, int N)
      voxels(std::vector<Eigen::VectorXd>(dim))
 {
     for (int i = 0; i < dim; ++i)
-        voxels[i] = Eigen::VectorXd(N);
+        voxels[i] = Eigen::VectorXd::Zero(N);
 }
 
 StatisticalMap4D::StatisticalMap4D(int dimX, int dimY, int dimZ, int N)

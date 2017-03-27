@@ -7,11 +7,10 @@
 QT -= gui
 
 CONFIG += c++11
+CONFIG += unversioned_libname unversioned_soname
 
-TARGET = Randomise
+TARGET = RandomisePlugin
 TEMPLATE = lib
-
-DEFINES += RANDOMISE_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -31,10 +30,12 @@ SOURCES += \
     threecolsarray.cpp \
     permutationtreeblock.cpp \
     matrices.cpp \
-    randomise.cpp \
     statisticalmap4d.cpp \
     statisticalmap3d.cpp \
-    mystat.cpp
+    mystat.cpp \
+    BVQXPluginInterface.cpp \
+    randomiseplugin.cpp \
+    randomise.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -314,11 +315,28 @@ HEADERS += \
     threecolsarray.h \
     permutationtreeblock.h \
     matrices.h \
-    randomise_global.h \
-    randomise.h \
     statisticalmap4d.h \
     statisticalmap3d.h \
-    mystat.h
+    mystat.h \
+    BVQXPluginInterface.h \
+    dlfcn.h \
+    global.h \
+    Plugin_AR_VMP_Header.h \
+    Plugin_DMR_Header.h \
+    Plugin_FMR_Header.h \
+    Plugin_GLM_Header.h \
+    Plugin_MTC_Header.h \
+    Plugin_NR_VMP_Header.h \
+    Plugin_POI_Header.h \
+    Plugin_PRT_Header.h \
+    Plugin_SMP_Header.h \
+    Plugin_SRF_Header.h \
+    Plugin_SSM_Header.h \
+    Plugin_VMR_Header.h \
+    Plugin_VOI_Header.h \
+    Plugin_VTC_Header.h \
+    randomiseplugin.h \
+    randomise.h
 
 unix {
     target.path = /usr/lib

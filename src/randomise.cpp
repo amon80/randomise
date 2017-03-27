@@ -1,30 +1,10 @@
 #include "randomise.h"
 #include "permutationtree.h"
 #include "matrices.h"
-#include "mystat.h"
 #include <random>
-#include <tuple>
+#include <limits>
 
-Randomise::Randomise()
-{
-
-}
-
-//PARTITIONING NOTE
-// Partion the design matrix M basing on the contrast C as indicated on the paper
-//X contains the design for the regressors of interest and Z for nuisance variable
-//Variables dimensionality:
-//M is N x r
-//C is r x s
-//X is N x s
-//Z is N x (r-s)
-//with 1 <= s <=r
-
-//NOTE: Question with no answer: what happens in the partitioning when there are no nuisance variables?
-//We'll only have the answer with the tests
-
-//Model for one contrast
-RandomiseResult Randomise::randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool EE, bool ISE, int J){
+RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool EE, bool ISE, int J){
     //Building the permutation tree
     PermutationTree t(MultyRowArray);
     t.initializeBinaryCounters();
@@ -46,8 +26,10 @@ RandomiseResult Randomise::randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Ei
 
 
     //"For semplicity, replace M"
-    M(X.rows(), X.cols()+Z.cols());
-    M << X, Z;
+    Eigen::MatrixXd tmp(X.rows(), X.cols()+Z.cols());
+    tmp << X, Z;
+
+    M = tmp;
 
     //Storing the identity matrix for convenience
     Eigen::MatrixXd I = Eigen::MatrixXd::Identity(N, N);
@@ -151,8 +133,9 @@ RandomiseResult Randomise::randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Ei
     StatisticalMap4D epsilonZetas(numVoxels, N);
 
     //Computing utility matrices
-    Eigen::MatrixXd Mplus = pseudoInverse(M);
-    Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*pseudoInverse(Z));
+    double epsilon = std::numeric_limits<double>::epsilon();
+    Eigen::MatrixXd Mplus = pseudoInverse(M, epsilon);
+    Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*pseudoInverse(Z, epsilon));
     Eigen::MatrixXd ResidualFormingMatrixM = (I - M*Mplus);
 
     //Computing statistics on original model
@@ -173,7 +156,7 @@ RandomiseResult Randomise::randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Ei
         //utility matrices
         Eigen::MatrixXd Pj = vectorToUse->at(j);
         Eigen::MatrixXd Mj = Pj*M;
-        Eigen::MatrixXd Mjplus = pseudoInverse(Mj);
+        Eigen::MatrixXd Mjplus = pseudoInverse(Mj, epsilon);
         Eigen::MatrixXd ResidualFormingMatrixMj = (I - Mj*Mjplus);
 
         //Initialize values to find max statistic value in all permutations
