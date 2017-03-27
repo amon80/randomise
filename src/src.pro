@@ -33,7 +33,8 @@ SOURCES += \
     matrices.cpp \
     randomise.cpp \
     statisticalmap4d.cpp \
-    statisticalmap3d.cpp
+    statisticalmap3d.cpp \
+    mystat.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -316,7 +317,8 @@ HEADERS += \
     randomise_global.h \
     randomise.h \
     statisticalmap4d.h \
-    statisticalmap3d.h
+    statisticalmap3d.h \
+    mystat.h
 
 unix {
     target.path = /usr/lib
