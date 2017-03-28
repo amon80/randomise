@@ -24,3 +24,19 @@ Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon)
     double tolerance = epsilon * std::max(a.cols(), a.rows()) *svd.singularValues().array().abs()(0);
     return svd.matrixV() *  (svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix().asDiagonal() * svd.matrixU().adjoint();
 }
+
+PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C){
+    //Partition the model
+    PartitioningResult toReturn;
+    Eigen::MatrixXd D = (M.transpose() * M).inverse();
+    Eigen::MatrixXd Ctrasp = C.transpose();
+    toReturn.X = M*D*C*((Ctrasp*D*C).inverse());
+    //"Cu is a matrix whose columns span in the null space of C"
+    Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
+    toReturn.contrastRank = lu.rank();
+    Eigen::MatrixXd Cu = lu.kernel();
+    Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse());
+    toReturn.Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
+    return toReturn;
+}
+

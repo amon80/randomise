@@ -13,22 +13,15 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
-    //Partitioning the model
-    Eigen::MatrixXd D = (M.transpose() * M).inverse();
-    Eigen::MatrixXd Ctrasp = C.transpose();
-    Eigen::MatrixXd X = M*D*C*((Ctrasp*D*C).inverse());
-    //"Cu is a matrix whose columns span in the null space of C"
-    Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
-    int s = lu.rank();
-    Eigen::MatrixXd Cu = lu.kernel();
-    Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse());
-    Eigen::MatrixXd Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
-
+    //Partitioning the model and computing the rank of the contrast
+    PartitioningResult partitioning = partitionModel(M, C);
+    int s = partitioning.contrastRank;
+    Eigen::MatrixXd X = partitioning.X;
+    Eigen::MatrixXd Z = partitioning.Z;
 
     //"For semplicity, replace M"
     Eigen::MatrixXd tmp(X.rows(), X.cols()+Z.cols());
     tmp << X, Z;
-
     M = tmp;
 
     //Storing the identity matrix for convenience
@@ -135,7 +128,8 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
     //Computing utility matrices
     double epsilon = std::numeric_limits<double>::epsilon();
     Eigen::MatrixXd Mplus = pseudoInverse(M, epsilon);
-    Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*pseudoInverse(Z, epsilon));
+    Eigen::MatrixXd Zplus = pseudoInverse(Z, epsilon);
+    Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*Zplus);
     Eigen::MatrixXd ResidualFormingMatrixM = (I - M*Mplus);
 
     //Computing statistics on original model
@@ -165,7 +159,7 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
 
         //Computing statistic on the permuted model
         for(int v = 0; v < numVoxels; v++){
-            Eigen::VectorXd phijv = Mplus*epsilonZetas[v];
+            Eigen::VectorXd phijv = Mjplus*epsilonZetas[v];
             Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
             float tjv = pivotal(phijv, epsilonjv, Mj, C, s, VGS);
             if(tjv >= toReturn.originalStatistic[v])
