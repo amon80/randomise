@@ -35,7 +35,7 @@ PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C){
     Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
     toReturn.contrastRank = lu.rank();
     Eigen::MatrixXd Cu = lu.kernel();
-    Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse());
+    Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse())*Ctrasp*D*Cu;
     toReturn.Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
     return toReturn;
 }
