@@ -127,7 +127,7 @@ bool RandomisePlugin::execute()
 
         //Go with the math!
         //NOTE: 1 permutation is set to test F statistic correctness
-        RandomiseResult r = randomise(Y, M, C1, multyRowArray, FStatistic, false, true, 1);
+        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, true, 1);
 
         //Finished permutations! Now let's show the results
         qxDeleteNRVMPsOfCurrentVMR();
@@ -138,6 +138,10 @@ bool RandomisePlugin::execute()
         vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
         for(int i = 0; i < dim; i++)
             vv[i] = r.originalStatistic[i];
+        vmp_header.NameOfMap = "Mean effect";
+        vmp_header.MapType = 1;
+        vmp_header.OverlayMap = 1;
+        qxUpdateActiveWindow();
         //TODO: threshold with p-values
     }
     else{
