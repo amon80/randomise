@@ -10,11 +10,23 @@ float TStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd
     return sgn(beta)*sqrt(FValue);
 }
 
-float FStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS){
+float FStatisticForUnpartitionedModel(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS){
     Eigen::MatrixXd Ctrasp = C.transpose();
-    //M's rank is it's number of columns since the design matrix is full rank
+    int rankM = M.cols();
+    int N = M.rows();
+    Eigen::MatrixXd denominatorMatrix = (epsilon.transpose()*epsilon)/(N - rankM);
+    Eigen::MatrixXd numeratorMatrix = phi.transpose()*C*(((Ctrasp*(M.transpose()*M).inverse())*C).inverse())*Ctrasp*phi;
+    float denominator = denominatorMatrix(0,0);
+    float numerator = numeratorMatrix(0,0);
+    numerator /= s;
+    if(denominator == 0)
+        return 0;
+    else
+        return numerator/denominator;
+}
+
+float FStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS){
     int r = M.cols();
-    int rankM = r;
     int rankZ = r - s;
     int N = M.rows();
     Eigen::MatrixXd X = Eigen::MatrixXd::Zero(N, s);
@@ -26,7 +38,8 @@ float FStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd
     }
     for(int i = 0; i < s; i++)
         beta(i) = phi(i);
-    Eigen::MatrixXd denominatorMatrix = (epsilon.transpose()*epsilon)/(N - rankM - rankZ);
+    int rankX = X.cols();
+    Eigen::MatrixXd denominatorMatrix = (epsilon.transpose()*epsilon)/(N - rankX - rankZ);
     Eigen::MatrixXd numeratorMatrix = beta.transpose()*(X.transpose()*X)*beta;
     float denominator = denominatorMatrix(0,0);
     float numerator = numeratorMatrix(0,0);
