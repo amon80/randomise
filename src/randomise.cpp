@@ -3,6 +3,8 @@
 #include "matrices.h"
 #include <random>
 #include <limits>
+#include <algorithm>
+#include <vector>
 #include <omp.h>
 
 RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool EE, bool ISE, int J){
@@ -154,6 +156,8 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
     //How many permutations are we using
     int actualPermutationSize = vectorToUse->size();
 
+    toReturn.maxDistribution = std::vector<float>(actualPermutationSize);
+
 #pragma omp parallel for num_threads(8)
     for(int j = 0; j < actualPermutationSize; j++){
         //For each permutation, we must calculate
@@ -189,6 +193,7 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
 
         //NOTE: Instead of computing pvalues in this way
         //a vector of maxes can be used to assest inference
+        toReturn.maxDistribution[j] = maxTj;
 
         //Using the maximum to compute FWER
         for(int v = 0; v < numVoxels; v++){
@@ -201,6 +206,7 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
 
     toReturn.uncorrected /= actualPermutationSize;
     toReturn.corrected /= actualPermutationSize;
+    std::sort(toReturn.maxDistribution.begin(), toReturn.maxDistribution.end());
 
     return toReturn;
 }

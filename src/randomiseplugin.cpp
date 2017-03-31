@@ -85,6 +85,10 @@ bool RandomisePlugin::execute()
         //Getting number of vmps
         int num_of_maps = vmps_header.NrOfMaps;
 
+        //Getting desired significance level
+        //NOTE: This should be asked to the user, so GUI controls are need in the future
+        float alpha = 0.05;
+
         //TODO: if there are few maps (i.e. low degrees of freedom),
         //variance can be pooled together
         //by smoothing the maps with a gaussian kernel of 5mm
@@ -132,35 +136,40 @@ bool RandomisePlugin::execute()
         //NOTE: set to 1 permutation is set to test F/T statistic correctness
         RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, true, 5000);
 
+        int perforemdPermutations = r.maxDistribution.size();
+        int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
+        float criticalThreshold = r.maxDistribution[criticalThresholdIndex];
+
         //Finished permutations! Now let's show the results
+        //BUG? Informations are not used :(
         qxDeleteNRVMPsOfCurrentVMR();
         qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         num_of_maps = vmps_header.NrOfMaps;
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
-        for(int i = 0; i < dim; i++)
-            vv[i] = r.originalStatistic[i];
         strcpy(vmp_header.NameOfMap, "Mean effect");
         vmp_header.MapType = 1;
         vmp_header.OverlayMap = 1;
-        vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
+        vmp_header.ThreshMin = criticalThreshold;
         for(int i = 0; i < dim; i++)
-            vv[i] = r.uncorrected[i];
+            vv[i] = r.originalStatistic[i];
+        vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
         vmp_header.MapType = 1;
         vmp_header.OverlayMap = 0;
         vmp_header.ThreshMin = 0;
         vmp_header.ThreshMax = 0.05;
-        vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
         for(int i = 0; i < dim; i++)
-            vv[i] = r.corrected[i];
+            vv[i] = r.uncorrected[i];
+        vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Corrected p-values");
         vmp_header.MapType = 1;
         vmp_header.OverlayMap = 0;
         vmp_header.ThreshMin = 0;
         vmp_header.ThreshMax = 0.05;
-        //TODO: threshold with p-values
+        for(int i = 0; i < dim; i++)
+            vv[i] = r.corrected[i];
     }
     else{
         qxLogText("Plugin>  VMP not found");
