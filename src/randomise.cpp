@@ -3,6 +3,7 @@
 #include "matrices.h"
 #include <random>
 #include <limits>
+#include <omp.h>
 
 RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool EE, bool ISE, int J){
     //Building the permutation tree
@@ -15,14 +16,20 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
 
     //Partitioning the model and computing the rank of the contrast
     PartitioningResult partitioning = partitionModel(M, C);
-    int s = partitioning.contrastRank;
     Eigen::MatrixXd X = partitioning.X;
     Eigen::MatrixXd Z = partitioning.Z;
+    int s = C.cols();
+    int r = C.rows();
 
     //"For semplicity, replace M"
-    Eigen::MatrixXd tmp(X.rows(), X.cols()+Z.cols());
-    tmp << X, Z;
-    M = tmp;
+    if(r != s){
+        Eigen::MatrixXd tmp(X.rows(), X.cols()+Z.cols());
+        tmp << X, Z;
+        M = tmp;
+    }
+    else{
+        M = X;
+    }
 
     //Storing the identity matrix for convenience
     Eigen::MatrixXd I = Eigen::MatrixXd::Identity(N, N);
@@ -140,11 +147,14 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
         toReturn.originalStatistic[v] = pivotal(phiv, epsilonv, M, C, s, VGS);
     }
 
+    //NOTE (OPTIONAL TO USE BUT NOT TO IMPLEMENT): Calculate a space statistic on the original statistic map like TFCE
+
     //Computing statistics on permuted models
 
     //How many permutations are we using
     int actualPermutationSize = vectorToUse->size();
 
+#pragma omp parallel for num_threads(8)
     for(int j = 0; j < actualPermutationSize; j++){
         //For each permutation, we must calculate
         //utility matrices
@@ -154,29 +164,38 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
         Eigen::MatrixXd ResidualFormingMatrixMj = (I - Mj*Mjplus);
 
         //Initialize values to find max statistic value in all permutations
-        bool firstMaxFound = false;
-        float maxTj = 0;
+        StatisticalMap3D permutedStatistic(numVoxels);
 
         //Computing statistic on the permuted model
         for(int v = 0; v < numVoxels; v++){
             Eigen::VectorXd phijv = Mjplus*epsilonZetas[v];
             Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
-            float tjv = pivotal(phijv, epsilonjv, Mj, C, s, VGS);
-            if(tjv >= toReturn.originalStatistic[v])
-                toReturn.uncorrected[v] += 1;
-            if(!firstMaxFound){
-                firstMaxFound = true;
-                maxTj = tjv;
-            }
-            else{
-                if(tjv > maxTj)
-                    maxTj = tjv;
+            permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, C, s, VGS);
+            if(permutedStatistic[v] >= toReturn.originalStatistic[v]){
+                #pragma omp atomic
+                    toReturn.uncorrected[v] += 1;
             }
         }
 
+        //NOTE (OPTIONAL TO USE BUT NOT TO IMPLEMENT): Calculate a space statistic on the permuted statistic map like TFCE
+
+        //Find the maximum
+        float maxTj = permutedStatistic[0];
+        for(int v = 1; v < numVoxels; v++){
+            if(permutedStatistic[v] > maxTj){
+                maxTj = permutedStatistic[v];
+            }
+        }
+
+        //NOTE: Instead of computing pvalues in this way
+        //a vector of maxes can be used to assest inference
+
+        //Using the maximum to compute FWER
         for(int v = 0; v < numVoxels; v++){
-            if(maxTj >= toReturn.originalStatistic[v])
-                toReturn.corrected[v] += 1;
+            if(maxTj >= toReturn.originalStatistic[v]){
+                #pragma omp atomic
+                    toReturn.corrected[v] += 1;
+            }
         }
     }
 
