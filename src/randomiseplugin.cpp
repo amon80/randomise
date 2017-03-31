@@ -85,6 +85,10 @@ bool RandomisePlugin::execute()
         //Getting number of vmps
         int num_of_maps = vmps_header.NrOfMaps;
 
+        //TODO: if there are few maps (i.e. low degrees of freedom),
+        //variance can be pooled together
+        //by smoothing the maps with a gaussian kernel of 5mm
+
         //Initializing 4D map of data
         StatisticalMap4D Y(dim, num_of_maps);
 
@@ -98,20 +102,19 @@ bool RandomisePlugin::execute()
         }
 
         //Initializing the design matrix
+        //No nuisance effect for this tests
         //NOTE: GUI controls can be made in the future
-        Eigen::MatrixXd M(num_of_maps, 2);
+        Eigen::MatrixXd M(num_of_maps, 1);
         //Filling the design matrix
         for(int i = 0; i < num_of_maps; i++){
             M(i,0) = 1;
-            M(i,1) = i+1*10;
         }
 
         //Initializing the contrast
         //NOTE: GUI controls can be made in the future
-        Eigen::MatrixXd C1(2,1);
+        Eigen::MatrixXd C1(1,1);
         //Filling the contrasts
         C1(0,0) = 1;
-        C1(1,0) = 0;
 
         //Initializing multyrow array
         //NOTE: GUI controls can be made in the future
@@ -126,22 +129,37 @@ bool RandomisePlugin::execute()
             multyRowArray[1][i] = i+1;
 
         //Go with the math!
-        //NOTE: 1 permutation is set to test F statistic correctness
-        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, true, 1);
+        //NOTE: set to 1 permutation is set to test F/T statistic correctness
+        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, true, 5000);
 
         //Finished permutations! Now let's show the results
         qxDeleteNRVMPsOfCurrentVMR();
-        qxCreateNRVMPsForCurrentVMR(1, 0, 0, NULL);
+        qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         num_of_maps = vmps_header.NrOfMaps;
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
         for(int i = 0; i < dim; i++)
             vv[i] = r.originalStatistic[i];
-        vmp_header.NameOfMap = "Mean effect";
+        strcpy(vmp_header.NameOfMap, "Mean effect");
         vmp_header.MapType = 1;
         vmp_header.OverlayMap = 1;
-        qxUpdateActiveWindow();
+        vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
+        for(int i = 0; i < dim; i++)
+            vv[i] = r.uncorrected[i];
+        strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
+        vmp_header.MapType = 1;
+        vmp_header.OverlayMap = 0;
+        vmp_header.ThreshMin = 0;
+        vmp_header.ThreshMax = 0.05;
+        vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
+        for(int i = 0; i < dim; i++)
+            vv[i] = r.corrected[i];
+        strcpy(vmp_header.NameOfMap, "Corrected p-values");
+        vmp_header.MapType = 1;
+        vmp_header.OverlayMap = 0;
+        vmp_header.ThreshMin = 0;
+        vmp_header.ThreshMax = 0.05;
         //TODO: threshold with p-values
     }
     else{
