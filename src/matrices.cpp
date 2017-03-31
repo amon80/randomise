@@ -31,12 +31,19 @@ PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C){
     Eigen::MatrixXd D = (M.transpose() * M).inverse();
     Eigen::MatrixXd Ctrasp = C.transpose();
     toReturn.X = M*D*C*((Ctrasp*D*C).inverse());
-    //"Cu is a matrix whose columns span in the null space of C"
-    Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
-    toReturn.contrastRank = lu.rank();
-    Eigen::MatrixXd Cu = lu.kernel();
-    Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse())*Ctrasp*D*Cu;
-    toReturn.Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
+
+    int r = C.rows();
+    int s = C.cols();
+    if(r == s){
+        toReturn.Z = Eigen::MatrixXd::Zero(M.rows(), 1);
+    }
+    else{
+        //"Cu is a matrix whose columns span in the null space of C"
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
+        Eigen::MatrixXd Cu = lu.kernel();
+        Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse())*Ctrasp*D*Cu;
+        toReturn.Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
+    }
     return toReturn;
 }
 

@@ -7,7 +7,6 @@
 struct PartitioningResult{
     Eigen::MatrixXd X;
     Eigen::MatrixXd Z;
-    int contrastRank;
 };
 
 //builds a shuffling matrix starting from a vector
