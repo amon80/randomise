@@ -167,25 +167,25 @@ bool RandomisePlugin::execute()
         sprintf(buffer, "Critical threshold for %f inference level: %f", alpha, criticalThreshold);
         qxLogText(buffer);
 
+		float min, max, range;
+		r.originalStatistic.findMinMax(min, max, range);
+
         //Finished permutations! Now let's show the results
         qxDeleteNRVMPsOfCurrentVMR();
         qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
-        num_of_maps = vmps_header.NrOfMaps;
         vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Mean effect");
         vmp_header.MapType = 1;
+		vmp_header.df1 = num_of_maps - 1;
         vmp_header.OverlayMap = 1;
-        vmp_header.ThreshMin = criticalThreshold;
-        float min, max, range;
-        r.originalStatistic.findMinMax(min, max,range);
+        vmp_header.ThreshMin = criticalThreshold;        
         vmp_header.ThreshMax = max;
         for(int i = 0; i < dim; i++)
             vv[i] = r.originalStatistic[i];
         qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
-        vmp_header.MapType = 1;
         vmp_header.OverlayMap = 0;
         vmp_header.ThreshMin = 0;
         vmp_header.ThreshMax = 0.05;
@@ -194,13 +194,12 @@ bool RandomisePlugin::execute()
         qxSetNRVMPParametersOfCurrentVMR(1, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Corrected p-values");
-        vmp_header.MapType = 1;
         vmp_header.OverlayMap = 0;
         vmp_header.ThreshMin = 0;
         vmp_header.ThreshMax = 0.05;
         for(int i = 0; i < dim; i++)
             vv[i] = r.corrected[i];
-        qxSetNRVMPParametersOfCurrentVMR(3, &vmp_header);
+        qxSetNRVMPParametersOfCurrentVMR(2, &vmp_header);
     }
     else{
         qxLogText("Plugin>  VMP not found");
