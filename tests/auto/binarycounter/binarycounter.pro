@@ -6,7 +6,12 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
+QMAKE_CXXFLAGS += -fopenmp
+LIBS += -fopenmp
+
 INCLUDEPATH += ../../../src
 
 SOURCES +=  testbinarycounter.cpp \
-            ../../../src/binarystring.cpp
+            ../../../src/binarystring.cpp \
+            ../../../src/statisticalmap3d.cpp \
+            ../../../src/findclusters3d.cpp

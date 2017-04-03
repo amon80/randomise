@@ -68,6 +68,7 @@ bool RandomisePlugin::execute()
     struct NR_VMP_Header vmp_header;
     int dim;
 
+    char buffer[100];
 
 
     if (!qxGetMainHeaderOfCurrentVMR(&vmr_header)){
@@ -133,12 +134,16 @@ bool RandomisePlugin::execute()
             multyRowArray[1][i] = i+1;
 
         //Go with the math!
-        //NOTE: set to 1 permutation is set to test F/T statistic correctness
-        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, true, 5000);
+        //DEBUG NOTE: set to 1 permutation is set to test F/T statistic correctness
+        //NOTE: Using also TFCE by default, specify explicitely if not interested
+        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, false, true, 10000);
 
         int perforemdPermutations = r.maxDistribution.size();
         int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
         float criticalThreshold = r.maxDistribution[criticalThresholdIndex];
+
+        sprintf(buffer, "Critical threshold for %f inference level: %f\n", alpha, criticalThreshold);
+        qxLogText(buffer);
 
         //Finished permutations! Now let's show the results
         //BUG? Informations are not used :(
@@ -207,7 +212,7 @@ PLUGIN_ACCESS const char *getPluginName()
 //   (the potentially lengthy string needs then not be created repeatedly in successive calls)
 //   Note that you may use simple HTML tags to format the string, such as <b></b>, <i></i> and <br>
 //
-static const char *PluginDescription = "This plugin implements the randomise tecnique.<br>";
+static const char *PluginDescription = "This plugin implements the permutation tests for the GLM.<br>";
 
 PLUGIN_ACCESS const char *getPluginDescription() 
 {

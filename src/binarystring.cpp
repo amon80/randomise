@@ -1,4 +1,5 @@
 #include "binarystring.h"
+#include "statisticalmap3d.h"
 #include <random>
 
 //friend functions
@@ -81,6 +82,17 @@ BinaryString::BinaryString(int num_bits, bool random)
     if(random)
         generateRandomly();
 }
+
+BinaryString::BinaryString(StatisticalMap3D& map, bool (*confront)(const float, const float), const float value)
+    :n_bits(map.size()),
+     string(new int[n_bits])
+{
+    reset();
+    for(int i = 0; i < n_bits; i++)
+        if(confront(map[i], value))
+            string[i] = 1;
+}
+
 
 //----------- COPY SEMANTICS --------------
 BinaryString::BinaryString(const BinaryString& rhs)
@@ -172,5 +184,13 @@ bool BinaryString::isIncrementable(){
         return false;
     else
         return true;
+}
+
+bool moreThan(float a, float b){
+    return a > b;
+}
+
+bool lessThan(float a, float b){
+    return a < b;
 }
 

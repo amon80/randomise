@@ -7,7 +7,7 @@
 #include <vector>
 #include <omp.h>
 
-RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool EE, bool ISE, int J){
+RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::MatrixXd& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J){
     //Building the permutation tree
     PermutationTree t(MultyRowArray);
     t.initializeBinaryCounters();
@@ -149,9 +149,8 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
         toReturn.originalStatistic[v] = pivotal(phiv, epsilonv, M, C, s, VGS);
     }
 
-    //NOTE (OPTIONAL TO USE BUT NOT TO IMPLEMENT): Calculate a space statistic on the original statistic map like TFCE
-
-    //Computing statistics on permuted models
+    if(useTfce)
+        toReturn.originalStatistic.tfce();
 
     //How many permutations are we using
     int actualPermutationSize = vectorToUse->size();
@@ -181,7 +180,8 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
             }
         }
 
-        //NOTE (OPTIONAL TO USE BUT NOT TO IMPLEMENT): Calculate a space statistic on the permuted statistic map like TFCE
+        if(useTfce)
+            permutedStatistic.tfce();
 
         //Find the maximum
         float maxTj = permutedStatistic[0];
