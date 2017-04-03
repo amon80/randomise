@@ -14,9 +14,16 @@ public:
     //MODIFIERS
     Eigen::VectorXd& operator[](const std::size_t idx);
     //ACCESS METHODS
+    int getDimX();
+    int getDimY();
+    int getDimZ();
     int getNumVoxels();
     int getNumMaps();
 private:
+    //3d map dimensions
+    int dimX;
+    int dimY;
+    int dimZ;
     //# of voxels
     int dim;
     //# of maps

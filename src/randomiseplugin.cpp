@@ -94,7 +94,7 @@ bool RandomisePlugin::execute()
         //by smoothing the maps with a gaussian kernel of 5mm
 
         //Initializing 4D map of data
-        StatisticalMap4D Y(dim, num_of_maps);
+        StatisticalMap4D Y(dimX, dimY, dimZ, num_of_maps);
 
         //Filling the initialized 4D map
         for(int v = 0; v < dim; v++){

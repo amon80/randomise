@@ -119,20 +119,23 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
     //Now, a vector of shufflings is available through the variable
     //vector to use. Let's risolve the original model.
 
-    //First, we get the number of voxels
+    //First, we get the informations that we need from the 4D map
     int numVoxels = Y.getNumVoxels();
+    int dimX = Y.getDimX();
+    int dimY = Y.getDimY();
+    int dimZ = Y.getDimZ();
 
     //Then, we inizialize counters for uncorrected and corrected pvalues
     RandomiseResult toReturn;
-    toReturn.corrected = StatisticalMap3D(numVoxels);
-    toReturn.uncorrected = StatisticalMap3D(numVoxels);
+    toReturn.corrected = StatisticalMap3D(dimX, dimY, dimZ);
+    toReturn.uncorrected = StatisticalMap3D(dimX, dimY, dimZ);
 
     //Also, we inizialize a 3dmap to store the statistic on the
     //original permutation
-    toReturn.originalStatistic = StatisticalMap3D(numVoxels);
+    toReturn.originalStatistic = StatisticalMap3D(dimX, dimY, dimZ);
 
     //And a 4d map for nuisance residuals vectors in every voxel
-    StatisticalMap4D epsilonZetas(numVoxels, N);
+    StatisticalMap4D epsilonZetas(dimX, dimY, dimZ, N);
 
     //Computing utility matrices
     double epsilon = std::numeric_limits<double>::epsilon();
@@ -167,7 +170,7 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
         Eigen::MatrixXd ResidualFormingMatrixMj = (I - Mj*Mjplus);
 
         //Initialize values to find max statistic value in all permutations
-        StatisticalMap3D permutedStatistic(numVoxels);
+        StatisticalMap3D permutedStatistic(dimX, dimY, dimZ);
 
         //Computing statistic on the permuted model
         for(int v = 0; v < numVoxels; v++){
