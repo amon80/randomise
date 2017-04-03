@@ -211,6 +211,7 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
     toReturn.uncorrected /= actualPermutationSize;
     toReturn.corrected /= actualPermutationSize;
     std::sort(toReturn.maxDistribution.begin(), toReturn.maxDistribution.end());
-
+    //maximum are now sorted from the lowest to the highest, we need the opposite (Do we?)
+    std::reverse(toReturn.maxDistribution.begin(), toReturn.maxDistribution.end());
     return toReturn;
 }
