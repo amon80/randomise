@@ -88,7 +88,6 @@ bool RandomisePlugin::execute()
 
         //Getting desired significance level
         //NOTE: This should be asked to the user, so GUI controls are need in the future
-        float alpha = 0.05;
 
         //TODO: if there are few maps (i.e. low degrees of freedom),
         //variance can be pooled together
@@ -135,8 +134,23 @@ bool RandomisePlugin::execute()
 
         //Go with the math!
         //DEBUG NOTE: set to 1 permutation is set to test F/T statistic correctness
-        //NOTE: Using also TFCE by default, specify explicitely if not interested
-        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, false, false, true, 10000);
+
+        float alpha = qxGetFloatInput("Enter desired alpha inference level:", 0.05, 0.01, 0.05);
+
+        int J = qxGetIntegerInput("How many permutations would you like to perform maximum?", 10000, 0, 50000);
+
+        int useTfceInt = qxYesNoMessageBox("Do you want to use TFCE?");
+        bool useTfce = false;
+        if(useTfceInt)
+            useTfce = true;
+
+        //Setting values hardcoded for this small example
+        bool EE = false;
+        bool ISE = true;
+
+        qxShowBusyCursor();
+        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, useTfce, EE, ISE, J);
+        qxStopBusyCursor();
 
         int perforemdPermutations = r.maxDistribution.size();
         int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
