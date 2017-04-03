@@ -153,15 +153,21 @@ bool RandomisePlugin::execute()
         qxStopBusyCursor();
 
         int perforemdPermutations = r.maxDistribution.size();
-        int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
-        float criticalThreshold = r.maxDistribution[criticalThresholdIndex];
 
-        sprintf(buffer, "Critical threshold for %f inference level: %f\n", alpha, criticalThreshold);
+        sprintf(buffer, "Maximal distribution");
+        qxLogText(buffer);
+        for(int i = 0; i < perforemdPermutations; i++){
+            sprintf(buffer, "%d - %f", i, r.maxDistribution[i]);
+            qxLogText(buffer);
+        }
+        int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
+        sprintf(buffer, "Critical Threshold index for %f inference level: %d", alpha, criticalThresholdIndex);
+        qxLogText(buffer);
+        float criticalThreshold = r.maxDistribution[criticalThresholdIndex];
+        sprintf(buffer, "Critical threshold for %f inference level: %f", alpha, criticalThreshold);
         qxLogText(buffer);
 
         //Finished permutations! Now let's show the results
-        //BUG? Informations are not used :(
-
         qxDeleteNRVMPsOfCurrentVMR();
         qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
@@ -171,6 +177,9 @@ bool RandomisePlugin::execute()
         vmp_header.MapType = 1;
         vmp_header.OverlayMap = 1;
         vmp_header.ThreshMin = criticalThreshold;
+        float min, max, range;
+        r.originalStatistic.findMinMax(min, max,range);
+        vmp_header.ThreshMax = max;
         for(int i = 0; i < dim; i++)
             vv[i] = r.originalStatistic[i];
         qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
