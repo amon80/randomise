@@ -161,11 +161,11 @@ bool RandomisePlugin::execute()
 
         //Finished permutations! Now let's show the results
         //BUG? Informations are not used :(
+
         qxDeleteNRVMPsOfCurrentVMR();
         qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         num_of_maps = vmps_header.NrOfMaps;
-        qxGetNRVMPsOfCurrentVMR(&vmps_header);
         vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Mean effect");
         vmp_header.MapType = 1;
@@ -173,6 +173,7 @@ bool RandomisePlugin::execute()
         vmp_header.ThreshMin = criticalThreshold;
         for(int i = 0; i < dim; i++)
             vv[i] = r.originalStatistic[i];
+        qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
         vmp_header.MapType = 1;
@@ -181,6 +182,7 @@ bool RandomisePlugin::execute()
         vmp_header.ThreshMax = 0.05;
         for(int i = 0; i < dim; i++)
             vv[i] = r.uncorrected[i];
+        qxSetNRVMPParametersOfCurrentVMR(1, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Corrected p-values");
         vmp_header.MapType = 1;
@@ -189,6 +191,7 @@ bool RandomisePlugin::execute()
         vmp_header.ThreshMax = 0.05;
         for(int i = 0; i < dim; i++)
             vv[i] = r.corrected[i];
+        qxSetNRVMPParametersOfCurrentVMR(3, &vmp_header);
     }
     else{
         qxLogText("Plugin>  VMP not found");
