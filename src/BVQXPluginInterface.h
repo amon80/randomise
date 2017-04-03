@@ -577,7 +577,7 @@ bool InitQXAccess()
 {
 #ifdef OS_WIN32
 
-	HMODULE hndl = GetModuleHandleA("BrainVoyagerQX.exe");
+	HMODULE hndl = GetModuleHandleA("BrainVoyager.exe");
 
 	if(hndl == 0)
 		return false;
