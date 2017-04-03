@@ -16,7 +16,7 @@
 #include "matrices.h"
 #include "mystat.h"
 #include "randomise.h"
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 
 // constructor of your plugin class

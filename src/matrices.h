@@ -1,7 +1,7 @@
 #ifndef MATRICES_H
 #define MATRICES_H
 
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 #include <vector>
 
 struct PartitioningResult{

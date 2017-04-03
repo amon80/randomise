@@ -3,7 +3,7 @@
 
 #include "statisticalmap3d.h"
 #include "statisticalmap4d.h"
-#include <Eigen/Dense>
+#include "Eigen\Dense"
 
 struct RandomiseResult{
     StatisticalMap3D uncorrected;

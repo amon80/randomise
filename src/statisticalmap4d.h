@@ -2,7 +2,7 @@
 #define STATISTICALMAP4D_H
 
 #include <vector>
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 class StatisticalMap4D
 {

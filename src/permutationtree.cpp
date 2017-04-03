@@ -7,9 +7,9 @@
 
 int findMax(std::vector<int>& v, PermutationTreeBlock * block){
     int n = block->getIndicesSize();
-    int max = abs(v[block->getIndex(0)]);
+    int max = myabs(v[block->getIndex(0)]);
     for(int i = 1; i < n; i++){
-        int currentNumber = abs(v[block->getIndex(i)]);
+        int currentNumber = myabs(v[block->getIndex(i)]);
         if(currentNumber > max)
             max = currentNumber;
     }
@@ -20,7 +20,7 @@ std::vector<int> findIndices(std::vector<int>& row, int block_number, Permutatio
     std::vector<int> indices;
     int n = block->getIndicesSize();
     for(int i = 0; i < n; i++){
-        if(abs(row[block->getIndex(i)]) == block_number)
+        if(myabs(row[block->getIndex(i)]) == block_number)
             indices.push_back(block->getIndex(i));
     }
     return indices;

@@ -46,14 +46,13 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
     std::vector<Eigen::MatrixXd> shufflings;
     std::vector<Eigen::MatrixXd> permutations;
     std::vector<Eigen::MatrixXd> signflippings;
-    std::vector<Eigen::MatrixXd> * vectorToUse;
+    std::vector<Eigen::MatrixXd> * vectorToUse = nullptr;
 
     //NOTE: if J >= Jmax then we're going exhaustively
 
     if(ISE){
         if(J >= Jmax){
-            //in both cases, first iteration ensures the including of the original
-            //model
+            //in both cases, first iteration ensures the including of the original model
             do{
                 std::vector<int> currentPerm = t.getSignVector();
                 Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
@@ -160,6 +159,8 @@ RandomiseResult randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, Eigen::Matrix
 
     toReturn.maxDistribution = std::vector<float>(actualPermutationSize);
 
+	//NOTE: parallelism on permutations, may not be the best choice
+	//Have to test on voxel level
 #pragma omp parallel for num_threads(8)
     for(int j = 0; j < actualPermutationSize; j++){
         //For each permutation, we must calculate

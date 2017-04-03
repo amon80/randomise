@@ -2,7 +2,7 @@
 #define PERMUTATIONTREE_H
 
 #include <vector>
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 
 class PermutationTreeBlock;
 
