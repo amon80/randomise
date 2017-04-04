@@ -11,6 +11,8 @@ class PermutationTree
 public:
     //----------CONSTRUCTOR------------
     PermutationTree(std::vector<std::vector<int>>& multyRowArray);
+    //----------DESTRUCTOR-------------
+    ~PermutationTree();
     //----------INITIALIZERS-----------
     void initializeThreeColsArray(PermutationTreeBlock *block = nullptr);
     void initializeBinaryCounters(PermutationTreeBlock *block = nullptr);

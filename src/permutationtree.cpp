@@ -112,6 +112,13 @@ PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
     buildTreeRecursively(root, 1, multyRowArray);
 }
 
+
+//-------------DESTRUCTOR------------------------
+
+PermutationTree::~PermutationTree(){
+    delete root;
+}
+
 //---------------INITIALIZERS--------------------
 
 void PermutationTree::initializeThreeColsArray(PermutationTreeBlock * block){

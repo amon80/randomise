@@ -1,6 +1,7 @@
 #include "permutationtreeblock.h"
 #include <utility>
-#include <map>
+
+//-----------CONSTRUCTORS-----------------
 
 PermutationTreeBlock::PermutationTreeBlock(std::vector<int>& indices, bool permutable)
     :indices(indices),
@@ -13,6 +14,13 @@ PermutationTreeBlock::PermutationTreeBlock(bool permutable)
     :permutable(permutable)
 {
 
+}
+
+//-------------DESTRUCTOR-------------
+PermutationTreeBlock::~PermutationTreeBlock(){
+    int numsons = sons.size();
+    for(int i = 0; i < numsons; i++)
+        delete sons[i];
 }
 
 void PermutationTreeBlock::addSon(PermutationTreeBlock * son){

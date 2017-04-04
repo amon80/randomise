@@ -11,6 +11,8 @@ public:
     //--------CONSTRUCTORS-----------
     PermutationTreeBlock(std::vector<int>& indices, bool permutable);
     PermutationTreeBlock(bool permutable);
+    //--------DESTRUCTOR-------------
+    ~PermutationTreeBlock();
     //--------MODIFIERS--------------
     void addSon(PermutationTreeBlock * son);
     void setValue(int value);
