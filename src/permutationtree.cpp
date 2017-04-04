@@ -96,6 +96,8 @@ bool confrontBranch(PermutationTreeBlock * b1, PermutationTreeBlock * b2, Eigen:
 
 //----------------METHODS-----------------------
 
+//----------------CONSTRUCTOR-------------------
+
 PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
 {
     bool permutable = false;
@@ -110,6 +112,7 @@ PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
     buildTreeRecursively(root, 1, multyRowArray);
 }
 
+//---------------INITIALIZERS--------------------
 
 void PermutationTree::initializeThreeColsArray(PermutationTreeBlock * block){
     if(block == nullptr)
@@ -191,6 +194,8 @@ int PermutationTree::calculatePermutations(Eigen::MatrixXd &X, bool EE, bool ISE
     return numPermutation;
 }
 
+//--------------------ACCESS METHODS-----------------------
+
 std::vector<int> PermutationTree::getPermutationVector(PermutationTreeBlock *block){
     if(block == nullptr)
         block = root;
@@ -245,11 +250,11 @@ std::vector<int> PermutationTree::getMinimumSetOfVarianceGroups(PermutationTreeB
     return toReturn;
 }
 
-
-
 int PermutationTree::getNumLeaves(){
     return numleaves;
 }
+
+//----------SEQUENTIAL SHUFFLINGS METHODS--------
 
 bool PermutationTree::LAlgorithm(PermutationTreeBlock * block, std::vector<PermutationTreeBlock*> * alreadyVisited){
     if(block == nullptr){
@@ -360,6 +365,7 @@ void PermutationTree::reverseLAlgorithm(PermutationTreeBlock * block){
         reverseLAlgorithm(block->getSon(i));
 }
 
+//----------RANDOM SHUFFLINGS METHODS--------
 
 void PermutationTree::randomShuffle(PermutationTreeBlock * block){
     if(block == nullptr)
@@ -386,6 +392,8 @@ void PermutationTree::randomSignFlip(PermutationTreeBlock * block){
         randomSignFlip(block->getSon(i));
     return;
 }
+
+//-------------RESET METHODS--------------------------
 
 void PermutationTree::resetTreePermutationState(PermutationTreeBlock * block){
     if(block == nullptr)

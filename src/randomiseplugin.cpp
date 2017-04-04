@@ -116,12 +116,13 @@ bool RandomisePlugin::execute()
 
         //Initializing the contrast
         //NOTE: GUI controls can be made in the future
-        Eigen::MatrixXd C1(1,1);
-        //Filling the contrasts
-        C1(0,0) = 1;
+        std::vector<Eigen::MatrixXd> C(1);
+        C[0] = Eigen::MatrixXd::Zero(1,1);
+        C[0](0,0) = 1;
 
         //Initializing multyrow array
         //NOTE: GUI controls can be made in the future
+        //And maybe also a class since the last row is always the same
         std::vector<std::vector<int>> multyRowArray(2);
         for(int i = 0; i < 2; i++)
             multyRowArray[i] = std::vector<int>(num_of_maps);
@@ -149,21 +150,21 @@ bool RandomisePlugin::execute()
         bool ISE = true;
 
         qxShowBusyCursor();
-        RandomiseResult r = randomise(Y, M, C1, multyRowArray, TStatistic, useTfce, EE, ISE, J);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, multyRowArray, TStatistic, useTfce, EE, ISE, J);
         qxStopBusyCursor();
 
-        int perforemdPermutations = r.maxDistribution.size();
+        int perforemdPermutations = r[0].maxDistribution.size();
 
         sprintf(buffer, "Maximal distribution");
         qxLogText(buffer);
         for(int i = 0; i < perforemdPermutations; i++){
-            sprintf(buffer, "%d - %f", i, r.maxDistribution[i]);
+            sprintf(buffer, "%d - %f", i, r[0].maxDistribution[i]);
             qxLogText(buffer);
         }
         int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
         sprintf(buffer, "Critical Threshold index for %f inference level: %d", alpha, criticalThresholdIndex);
         qxLogText(buffer);
-        float criticalThreshold = r.maxDistribution[criticalThresholdIndex];
+        float criticalThreshold = r[0].maxDistribution[criticalThresholdIndex];
         sprintf(buffer, "Critical threshold for %f inference level: %f", alpha, criticalThreshold);
         qxLogText(buffer);
 
@@ -178,10 +179,10 @@ bool RandomisePlugin::execute()
         vmp_header.OverlayMap = 1;
         vmp_header.ThreshMin = criticalThreshold;
         float min, max, range;
-        r.originalStatistic.findMinMax(min, max,range);
+        r[0].originalStatistic.findMinMax(min, max,range);
         vmp_header.ThreshMax = max;
         for(int i = 0; i < dim; i++)
-            vv[i] = r.originalStatistic[i];
+            vv[i] = r[0].originalStatistic[i];
         qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
@@ -193,7 +194,7 @@ bool RandomisePlugin::execute()
         vmp_header.ThreshMin = 0;
         vmp_header.ThreshMax = alpha;
         for(int i = 0; i < dim; i++)
-            vv[i] = r.uncorrected[i];
+            vv[i] = r[0].uncorrected[i];
         qxSetNRVMPParametersOfCurrentVMR(1, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Corrected p-values");
@@ -205,7 +206,7 @@ bool RandomisePlugin::execute()
         vmp_header.ThreshMin = 0;
         vmp_header.ThreshMax = alpha;
         for(int i = 0; i < dim; i++)
-            vv[i] = r.corrected[i];
+            vv[i] = r[0].corrected[i];
         qxSetNRVMPParametersOfCurrentVMR(2, &vmp_header);
     }
     else{
