@@ -185,22 +185,28 @@ bool RandomisePlugin::execute()
         qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
+        //this has little since since it's not a tmap
         vmp_header.MapType = 1;
+        //showing only positives since pvalues are between 0 and 1
+        vmp_header.ShowPosOrNegOrBoth = 1;
         vmp_header.OverlayMap = 0;
         vmp_header.ThreshMin = 0;
-        vmp_header.ThreshMax = 0.05;
+        vmp_header.ThreshMax = alpha;
         for(int i = 0; i < dim; i++)
             vv[i] = r.uncorrected[i];
         qxSetNRVMPParametersOfCurrentVMR(1, &vmp_header);
         vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Corrected p-values");
+        //this has little since since it's not a tmap
         vmp_header.MapType = 1;
+        //showing only positives since pvalues are between 0 and 1
+        vmp_header.ShowPosOrNegOrBoth = 1;
         vmp_header.OverlayMap = 0;
         vmp_header.ThreshMin = 0;
-        vmp_header.ThreshMax = 0.05;
+        vmp_header.ThreshMax = alpha;
         for(int i = 0; i < dim; i++)
             vv[i] = r.corrected[i];
-        qxSetNRVMPParametersOfCurrentVMR(3, &vmp_header);
+        qxSetNRVMPParametersOfCurrentVMR(2, &vmp_header);
     }
     else{
         qxLogText("Plugin>  VMP not found");
