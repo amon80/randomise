@@ -8,11 +8,6 @@
 #include <omp.h>
 
 std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J){
-    //Building the permutation tree
-    PermutationTree t(MultyRowArray);
-    t.initializeBinaryCounters();
-    t.initializeThreeColsArray();
-
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -21,6 +16,14 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
     int index = 0;
     for(Eigen::MatrixXd c: C){
+        //NOTE: This has to be done here
+        //since the partitioning changes with each
+        //contrast.
+        //Building the permutation tree
+        PermutationTree t(MultyRowArray);
+        t.initializeBinaryCounters();
+        t.initializeThreeColsArray();
+
         //Partitioning the model and computing the rank of the contrast
         PartitioningResult partitioning = partitionModel(M, c);
         Eigen::MatrixXd X = partitioning.X;
@@ -47,82 +50,19 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         //Computing the minimum set of VGS
         std::vector<int> VGS = t.getMinimumSetOfVarianceGroups();
 
-        //Initializing shufflings vectors
-        std::vector<Eigen::MatrixXd> shufflings;
-        std::vector<Eigen::MatrixXd> permutations;
-        std::vector<Eigen::MatrixXd> signflippings;
-        std::vector<Eigen::MatrixXd> * vectorToUse = nullptr;
-
         //NOTE: if J >= Jmax then we're going exhaustively
-
-        if(ISE){
-            if(J >= Jmax){
-                //in both cases, first iteration ensures the including of the original model
-                do{
-                    std::vector<int> currentPerm = t.getSignVector();
-                    Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
-                    signflippings.push_back(P);
-                }while(t.signFlipping());
-            }else{
-                for(int i = 0; i < J; i++){
-                    std::vector<int> currentPerm = t.getSignVector();
-                    Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
-                    signflippings.push_back(P);
-                    t.randomSignFlip();
-                }
-            }
-            vectorToUse = &signflippings;
-            t.resetTreeSignState();
-        }
-        if(EE){
-            if(J >= Jmax){
-                //If we're going exhaustivly, then we must assure
-                //that the tree is ready for L Algorithm.
-                t.reverseLAlgorithm();
-                //in both cases, first iteration ensures the including of the original model
-                do{
-                    std::vector<int> currentPerm = t.getPermutationVector();
-                    Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
-                    permutations.push_back(P);
-                }while(t.LAlgorithm());
-            }else{
-                for(int i = 0; i < J; i++){
-                    std::vector<int> currentPerm = t.getSignVector();
-                    Eigen::MatrixXd P = buildShufflingMatrix(currentPerm);
-                    permutations.push_back(P);
-                    t.randomShuffle();
-                }
-            }
-            vectorToUse = &permutations;
-            t.resetTreePermutationState();
-        }
-        if(EE && ISE){
-            int numOfSignFlippings = signflippings.size();
-            int numOfPermutations = permutations.size();
-            if(J >= Jmax){
-                for(int i = 0; i < numOfPermutations; i++){
-                    for(int j = 0; i < numOfSignFlippings; j++){
-                        shufflings.push_back(permutations[i]*signflippings[j]);
-                    }
-                }
-            }else{
-                //ensure that original model is added in the random drawing case
-                shufflings.push_back(I);
-                //setting up uniform distributions for random drawing
-                std::random_device rd;
-                std::mt19937 gen(rd());
-                std::uniform_int_distribution<int> d1(0, numOfPermutations-1);
-                std::uniform_int_distribution<int> d2(0, numOfSignFlippings-1);
-                for(int i = 1; i < J; i++){
-                    shufflings.push_back(permutations[d1(gen)]*signflippings[d2(gen)]);
-                }
-            }
-            vectorToUse = &shufflings;
+        bool exhaustively = false;
+        int actualPermutationSize = 0;
+        if(J >= Jmax){
+            exhaustively = true;
+            actualPermutationSize = Jmax;
+            t.reverseLAlgorithm();
+        }else{
+            actualPermutationSize = J;
         }
 
-        //Now, a vector of shufflings is available through the variable
-        //vector to use. Let's risolve the original model.
 
+        //Let's risolve the original model.
         //First, we get the informations that we need from the 4D map
         int numVoxels = Y.getNumVoxels();
         int dimX = Y.getDimX();
@@ -158,18 +98,11 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         if(useTfce)
             toReturn[index].originalStatistic.tfce();
 
-        //How many permutations are we using
-        int actualPermutationSize = vectorToUse->size();
-
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
-        //NOTE: parallelism on permutations, may not be the best choice
-        //Have to test on voxel level
-    #pragma omp parallel for num_threads(8)
         for(int j = 0; j < actualPermutationSize; j++){
-            //For each permutation, we must calculate
-            //utility matrices
-            Eigen::MatrixXd Pj = vectorToUse->at(j);
+            std::vector<int> currentPerm = t.getSignVector();
+            Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
             Eigen::MatrixXd Mj = Pj*M;
             Eigen::MatrixXd Mjplus = pseudoInverse(Mj, epsilon);
             Eigen::MatrixXd ResidualFormingMatrixMj = (I - Mj*Mjplus);
@@ -183,8 +116,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
                 permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, c, s, VGS);
                 if(permutedStatistic[v] >= toReturn[index].originalStatistic[v]){
-                    #pragma omp atomic
-                        toReturn[index].uncorrected[v] += 1;
+                    toReturn[index].uncorrected[v] += 1;
                 }
             }
 
@@ -206,12 +138,36 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             //Using the maximum to compute FWER
             for(int v = 0; v < numVoxels; v++){
                 if(maxTj >= toReturn[index].originalStatistic[v]){
-                    #pragma omp atomic
-                        toReturn[index].corrected[v] += 1;
+                    toReturn[index].corrected[v] += 1;
+                }
+            }
+
+            if(!exhaustively){
+                if(EE)
+                    t.randomShuffle();
+                if(ISE)
+                    t.randomSignFlip();
+            }
+            else{
+                //both hypothesis
+                if(EE && ISE){
+                    if(!t.signFlipping()){
+                        t.resetTreeSignState();
+                        t.LAlgorithm();
+                    }
+                }
+                //error only exchangeable
+                else if(EE){
+                    t.LAlgorithm();
+                }
+                //error indipendent and simmetric
+                else{
+                    t.signFlipping();
                 }
             }
         }
-
+        t.resetTreePermutationState();
+        t.resetTreeSignState();
         toReturn[index].uncorrected /= actualPermutationSize;
         toReturn[index].corrected /= actualPermutationSize;
         std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());

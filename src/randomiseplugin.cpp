@@ -114,11 +114,13 @@ bool RandomisePlugin::execute()
             M(i,0) = 1;
         }
 
-        //Initializing the contrast
+        //Initializing the contrasts
         //NOTE: GUI controls can be made in the future
-        std::vector<Eigen::MatrixXd> C(1);
+        std::vector<Eigen::MatrixXd> C(2);
         C[0] = Eigen::MatrixXd::Zero(1,1);
         C[0](0,0) = 1;
+        C[2] = Eigen::MatrixXd::Zero(1,1);
+        C[0](0,0) = -1;
 
         //Initializing multyrow array
         //NOTE: GUI controls can be made in the future
@@ -153,64 +155,38 @@ bool RandomisePlugin::execute()
         std::vector<RandomiseResult> r = randomise(Y, M, C, multyRowArray, TStatistic, useTfce, EE, ISE, J);
         qxStopBusyCursor();
 
-        int perforemdPermutations = r[0].maxDistribution.size();
+        int n = C.size();
 
-        sprintf(buffer, "Maximal distribution");
-        qxLogText(buffer);
-        for(int i = 0; i < perforemdPermutations; i++){
-            sprintf(buffer, "%d - %f", i, r[0].maxDistribution[i]);
-            qxLogText(buffer);
-        }
-        int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
-        sprintf(buffer, "Critical Threshold index for %f inference level: %d", alpha, criticalThresholdIndex);
-        qxLogText(buffer);
-        float criticalThreshold = r[0].maxDistribution[criticalThresholdIndex];
-        sprintf(buffer, "Critical threshold for %f inference level: %f", alpha, criticalThreshold);
-        qxLogText(buffer);
-
-		float min, max, range;
-        r[0].originalStatistic.findMinMax(min, max, range);
-
-        //Finished permutations! Now let's show the results
         qxDeleteNRVMPsOfCurrentVMR();
-        qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
+        qxCreateNRVMPsForCurrentVMR(n, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
-        vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
-        strcpy(vmp_header.NameOfMap, "Mean effect");
-        vmp_header.MapType = 1;
-		vmp_header.df1 = num_of_maps - 1;
-        vmp_header.OverlayMap = 1;
-        vmp_header.ThreshMin = criticalThreshold;
-        r[0].originalStatistic.findMinMax(min, max,range);
-        vmp_header.ThreshMin = criticalThreshold;        
-        vmp_header.ThreshMax = max;
-        for(int i = 0; i < dim; i++)
-            vv[i] = r[0].originalStatistic[i];
-        qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-        vv = qxGetNRVMPOfCurrentVMR(1, &vmp_header);
-        strcpy(vmp_header.NameOfMap, "Uncorrected p-values");
-        //this has little since since it's not a tmap
-        vmp_header.MapType = 1;
-        //showing only positives since pvalues are between 0 and 1
-        vmp_header.ShowPosOrNegOrBoth = 1;
-        vmp_header.OverlayMap = 0;
-        vmp_header.ThreshMin = 0;
-        vmp_header.ThreshMax = alpha;
-        for(int i = 0; i < dim; i++)
-            vv[i] = r[0].uncorrected[i];
-        qxSetNRVMPParametersOfCurrentVMR(1, &vmp_header);
-        vv = qxGetNRVMPOfCurrentVMR(2, &vmp_header);
-        strcpy(vmp_header.NameOfMap, "Corrected p-values");
-        //this has little since since it's not a tmap
-        vmp_header.MapType = 1;
-        //showing only positives since pvalues are between 0 and 1
-        vmp_header.ShowPosOrNegOrBoth = 1;
-        vmp_header.OverlayMap = 0;
-        vmp_header.ThreshMin = 0;
-        vmp_header.ThreshMax = alpha;
-        for(int i = 0; i < dim; i++)
-            vv[i] = r[0].corrected[i];
-        qxSetNRVMPParametersOfCurrentVMR(2, &vmp_header);
+        for(int i = 0; i < n; i++){
+            int perforemdPermutations = r[i].maxDistribution.size();
+
+            int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
+            sprintf(buffer, "Contrast %d - Critical Threshold index for %f inference level: %d", i, alpha, criticalThresholdIndex);
+            qxLogText(buffer);
+            float criticalThreshold = r[i].maxDistribution[criticalThresholdIndex];
+            sprintf(buffer, "Contrast %d - Critical threshold for %f inference level: %f", i, alpha, criticalThreshold);
+            qxLogText(buffer);
+
+            float min, max, range;
+            r[i].originalStatistic.findMinMax(min, max, range);
+
+            vv = qxGetNRVMPOfCurrentVMR(i, &vmp_header);
+            sprintf(buffer, "Contrast %d", i);
+            strcpy(vmp_header.NameOfMap, buffer);
+            vmp_header.MapType = 1;
+            vmp_header.df1 = num_of_maps - 1;
+            vmp_header.OverlayMap = 1;
+            vmp_header.ThreshMin = criticalThreshold;
+            r[i].originalStatistic.findMinMax(min, max,range);
+            vmp_header.ThreshMin = criticalThreshold;
+            vmp_header.ThreshMax = max;
+            for(int j = 0; j < dim; j++)
+                vv[j] = r[i].originalStatistic[j];
+            qxSetNRVMPParametersOfCurrentVMR(i, &vmp_header);
+        }
     }
     else{
         qxLogText("Plugin>  VMP not found");
