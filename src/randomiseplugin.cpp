@@ -169,7 +169,7 @@ bool RandomisePlugin::execute()
         qxLogText(buffer);
 
 		float min, max, range;
-		r.originalStatistic.findMinMax(min, max, range);
+        r[0].originalStatistic.findMinMax(min, max, range);
 
         //Finished permutations! Now let's show the results
         qxDeleteNRVMPsOfCurrentVMR();
@@ -181,7 +181,6 @@ bool RandomisePlugin::execute()
 		vmp_header.df1 = num_of_maps - 1;
         vmp_header.OverlayMap = 1;
         vmp_header.ThreshMin = criticalThreshold;
-        float min, max, range;
         r[0].originalStatistic.findMinMax(min, max,range);
         vmp_header.ThreshMin = criticalThreshold;        
         vmp_header.ThreshMax = max;
