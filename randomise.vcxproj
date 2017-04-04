@@ -71,25 +71,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\</OutDir>
+    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\Documents\BVExtensions\Plugins_64\</OutDir>
     <IntDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\obj\</IntDir>
     <TargetName>RandomisePlugin</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\</OutDir>
+    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\Documents\BVExtensions\Plugins_64\</OutDir>
     <IntDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\obj\</IntDir>
     <TargetName>RandomisePlugin</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\</OutDir>
+    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\Documents\BVExtensions\Plugins_64\</OutDir>
     <IntDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\obj\</IntDir>
     <TargetName>RandomisePlugin</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\</OutDir>
+    <OutDir>$(HOMEDRIVE)$(HOMEPATH)\Documents\BVExtensions\Plugins_64\</OutDir>
     <IntDir>$(HOMEDRIVE)$(HOMEPATH)\build-$(PlatformTarget)-$(Configuration)-$(ProjectName)\obj\</IntDir>
     <TargetName>RandomisePlugin</TargetName>
   </PropertyGroup>

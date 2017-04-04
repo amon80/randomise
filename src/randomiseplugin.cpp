@@ -168,18 +168,22 @@ bool RandomisePlugin::execute()
         sprintf(buffer, "Critical threshold for %f inference level: %f", alpha, criticalThreshold);
         qxLogText(buffer);
 
+		float min, max, range;
+		r.originalStatistic.findMinMax(min, max, range);
+
         //Finished permutations! Now let's show the results
         qxDeleteNRVMPsOfCurrentVMR();
         qxCreateNRVMPsForCurrentVMR(3, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
-        num_of_maps = vmps_header.NrOfMaps;
         vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
         strcpy(vmp_header.NameOfMap, "Mean effect");
         vmp_header.MapType = 1;
+		vmp_header.df1 = num_of_maps - 1;
         vmp_header.OverlayMap = 1;
         vmp_header.ThreshMin = criticalThreshold;
         float min, max, range;
         r[0].originalStatistic.findMinMax(min, max,range);
+        vmp_header.ThreshMin = criticalThreshold;        
         vmp_header.ThreshMax = max;
         for(int i = 0; i < dim; i++)
             vv[i] = r[0].originalStatistic[i];
