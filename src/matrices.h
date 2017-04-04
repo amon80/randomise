@@ -7,6 +7,8 @@
 struct PartitioningResult{
     Eigen::MatrixXd X;
     Eigen::MatrixXd Z;
+
+    friend std::ostream & operator<<(std::ostream &os, const PartitioningResult& p);
 };
 
 //builds a shuffling matrix starting from a vector

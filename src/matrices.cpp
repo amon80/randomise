@@ -4,6 +4,14 @@
 #include "Eigen/Core"
 #include "Eigen/SVD"
 
+std::ostream & operator<<(std::ostream &os, const PartitioningResult& p){
+    os << "Matrix X:" << std::endl;
+    os << p.X << std::endl;
+    os << "Matrix Z:" << std::endl;
+    os << p.Z << std::endl;
+    return os;
+}
+
 Eigen::MatrixXd buildShufflingMatrix(std::vector<int>& perm){
     int n = perm.size();
     Eigen::MatrixXd toReturn = Eigen::MatrixXd::Zero(n,n);
