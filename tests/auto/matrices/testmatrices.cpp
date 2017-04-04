@@ -18,6 +18,7 @@ private slots:
     void partitionModelTestCase4();
     void partitionModelTestCase5();
     void example5noNuisance();
+    void exampleftests();
     void cleanUpTestCase();
 };
 
@@ -81,6 +82,27 @@ void TestMatrices::example5noNuisance(){
 
     PartitioningResult p = partitionModel(M, C);
 
+}
+
+//Example taken from the fsl FEAT user guide
+void TestMatrices::exampleftests(){
+    Eigen::MatrixXd M = Eigen::MatrixXd::Zero(15,3);
+    Eigen::MatrixXd C = Eigen::MatrixXd::Zero(3,3);
+
+    C(0,0) = 1;
+    C(1,1) = 1;
+    C(2,2) = 1;
+
+    for(int i = 0; i < 5; i++)
+        M(i, 0) = 1;
+    for(int i = 5; i < 10; i++)
+        M(i, 1) = 1;
+    for(int i = 10; i < 15; i++)
+        M(i, 2) = 1;
+
+    PartitioningResult p1 = partitionModel(M, C);
+
+    std::cout << p1 << std::endl;
 }
 
 
