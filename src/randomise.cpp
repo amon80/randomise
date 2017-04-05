@@ -100,6 +100,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
+        int max_num_threads = omp_get_num_procs();
+        omp_set_num_threads(max_num_threads);
+
+        #pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
             std::vector<int> currentPerm = t.getSignVector();
             Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
@@ -142,27 +146,30 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 }
             }
 
-            if(!exhaustively){
-                if(EE)
-                    t.randomShuffle();
-                if(ISE)
-                    t.randomSignFlip();
-            }
-            else{
-                //both hypothesis
-                if(EE && ISE){
-                    if(!t.signFlipping()){
-                        t.resetTreeSignState();
+            #pragma omp critical
+            {
+                if(!exhaustively){
+                    if(EE)
+                        t.randomShuffle();
+                    if(ISE)
+                        t.randomSignFlip();
+                }
+                else{
+                    //both hypothesis
+                    if(EE && ISE){
+                        if(!t.signFlipping()){
+                            t.resetTreeSignState();
+                            t.LAlgorithm();
+                        }
+                    }
+                    //error only exchangeable
+                    else if(EE){
                         t.LAlgorithm();
                     }
-                }
-                //error only exchangeable
-                else if(EE){
-                    t.LAlgorithm();
-                }
-                //error indipendent and simmetric
-                else{
-                    t.signFlipping();
+                    //error indipendent and simmetric
+                    else{
+                        t.signFlipping();
+                    }
                 }
             }
         }

@@ -119,8 +119,8 @@ bool RandomisePlugin::execute()
         std::vector<Eigen::MatrixXd> C(2);
         C[0] = Eigen::MatrixXd::Zero(1,1);
         C[0](0,0) = 1;
-        C[2] = Eigen::MatrixXd::Zero(1,1);
-        C[0](0,0) = -1;
+        C[1] = Eigen::MatrixXd::Zero(1,1);
+        C[1](0,0) = -1;
 
         //Initializing multyrow array
         //NOTE: GUI controls can be made in the future
@@ -178,7 +178,10 @@ bool RandomisePlugin::execute()
             strcpy(vmp_header.NameOfMap, buffer);
             vmp_header.MapType = 1;
             vmp_header.df1 = num_of_maps - 1;
-            vmp_header.OverlayMap = 1;
+            if(i == 0)
+                vmp_header.OverlayMap = 1;
+            else
+                vmp_header.OverlayMap = 0;
             vmp_header.ThreshMin = criticalThreshold;
             r[i].originalStatistic.findMinMax(min, max,range);
             vmp_header.ThreshMin = criticalThreshold;
