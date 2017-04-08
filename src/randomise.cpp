@@ -87,7 +87,12 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*Zplus);
         Eigen::MatrixXd ResidualFormingMatrixM = (I - M*Mplus);
 
+        //Setting omp variables
+        int max_num_threads = omp_get_num_procs();
+        omp_set_num_threads(max_num_threads);
+
         //Computing statistics on original model
+        #pragma omp parallel for
         for(int v = 0; v < numVoxels; v++){
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
@@ -100,12 +105,39 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
-        int max_num_threads = omp_get_num_procs();
-        omp_set_num_threads(max_num_threads);
 
         #pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
-            std::vector<int> currentPerm = t.getSignVector();
+            std::vector<int> currentPerm;
+            #pragma omp critical
+            {
+                if(j != 0){
+                    if(!exhaustively){
+                        if(EE)
+                            t.randomShuffle();
+                        if(ISE)
+                            t.randomSignFlip();
+                    }
+                    else{
+                        //both hypothesis
+                        if(EE && ISE){
+                            if(!t.signFlipping()){
+                                t.resetTreeSignState();
+                                t.LAlgorithm();
+                            }
+                        }
+                        //error only exchangeable
+                        else if(EE){
+                            t.LAlgorithm();
+                        }
+                        //error indipendent and simmetric
+                        else{
+                            t.signFlipping();
+                        }
+                    }
+                }
+                currentPerm = t.getSignVector();
+            }
             Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
             Eigen::MatrixXd Mj = Pj*M;
             Eigen::MatrixXd Mjplus = pseudoInverse(Mj, epsilon);
@@ -143,33 +175,6 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             for(int v = 0; v < numVoxels; v++){
                 if(maxTj >= toReturn[index].originalStatistic[v]){
                     toReturn[index].corrected[v] += 1;
-                }
-            }
-
-            #pragma omp critical
-            {
-                if(!exhaustively){
-                    if(EE)
-                        t.randomShuffle();
-                    if(ISE)
-                        t.randomSignFlip();
-                }
-                else{
-                    //both hypothesis
-                    if(EE && ISE){
-                        if(!t.signFlipping()){
-                            t.resetTreeSignState();
-                            t.LAlgorithm();
-                        }
-                    }
-                    //error only exchangeable
-                    else if(EE){
-                        t.LAlgorithm();
-                    }
-                    //error indipendent and simmetric
-                    else{
-                        t.signFlipping();
-                    }
                 }
             }
         }
