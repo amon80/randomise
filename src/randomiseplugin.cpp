@@ -161,16 +161,21 @@ bool RandomisePlugin::execute()
         qxCreateNRVMPsForCurrentVMR(n, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         for(int i = 0; i < n; i++){
-            int perforemdPermutations = r[i].maxDistribution.size();
+            int performedPermutations = r[i].maxDistribution.size();
+            int criticalThresholdIndex;
+            float criticalThreshold;
 
-            int criticalThresholdIndex = (int) floor(alpha*perforemdPermutations) + 1;
-            sprintf(buffer, "Contrast %d - Critical Threshold index for %f inference level: %d", i, alpha, criticalThresholdIndex);
-            qxLogText(buffer);
-            float criticalThreshold = r[i].maxDistribution[criticalThresholdIndex];
-            sprintf(buffer, "Contrast %d - Critical threshold for %f inference level: %f", i, alpha, criticalThreshold);
-            qxLogText(buffer);
+            if(performedPermutations > 0){
+                criticalThresholdIndex = (int) floor(alpha*performedPermutations) + 1;
+                sprintf(buffer, "Contrast %d - Critical Threshold index for %f inference level: %d", i, alpha, criticalThresholdIndex);
+                qxLogText(buffer);
+                criticalThreshold = r[i].maxDistribution[criticalThresholdIndex];
+                sprintf(buffer, "Contrast %d - Critical threshold for %f inference level: %f", i, alpha, criticalThreshold);
+                qxLogText(buffer);
+            }
 
             MinMaxStructure m = r[i].originalStatistic.findMinMax();
+            float min = m.min;
             float max = m.max;
 
             vv = qxGetNRVMPOfCurrentVMR(i, &vmp_header);
@@ -182,8 +187,10 @@ bool RandomisePlugin::execute()
                 vmp_header.OverlayMap = 1;
             else
                 vmp_header.OverlayMap = 0;
-            vmp_header.ThreshMin = criticalThreshold;
-            vmp_header.ThreshMin = criticalThreshold;
+            if(performedPermutations > 0)
+                vmp_header.ThreshMin = criticalThreshold;
+            else
+                vmp_header.ThreshMin = min;
             vmp_header.ThreshMax = max;
             for(int j = 0; j < dim; j++)
                 vv[j] = r[i].originalStatistic[j];

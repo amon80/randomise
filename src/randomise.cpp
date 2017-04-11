@@ -179,14 +179,17 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 }
             }
         }
+        //finished the computation for current contrast
         t.resetTreePermutationState();
         t.resetTreeSignState();
-        toReturn[index].uncorrected /= actualPermutationSize;
-        toReturn[index].corrected /= actualPermutationSize;
-        std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
-        //maximal statistic is now sorted from the lowest to the highest, we need the opposite
-        std::reverse(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
-        index++;
+        if(actualPermutationSize > 0){
+            toReturn[index].uncorrected /= actualPermutationSize;
+            toReturn[index].corrected /= actualPermutationSize;
+            std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
+            //maximal statistic is now sorted from the lowest to the highest, we need the opposite
+            std::reverse(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
+            index++;
+        }
     }
     return toReturn;
 }
