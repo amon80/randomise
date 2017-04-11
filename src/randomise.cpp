@@ -188,8 +188,8 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
             //maximal statistic is now sorted from the lowest to the highest, we need the opposite
             std::reverse(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
-            index++;
         }
+		index++;
     }
     return toReturn;
 }
