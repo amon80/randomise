@@ -85,7 +85,7 @@ void turn_into_extent_map(StatisticalMap3D& clustered_map, std::map<float, float
     clustered_map = extent_map;
 }
 
-std::vector<index3D> getNeighbours(int x, int y, int z, int dimX, int dimY, int dimZ){
+std::vector<index3D> getNeighbours(int x, int y, int z, int dimX, int dimY, int dimZ, StatisticalMap3D& map){
     std::vector<index3D> toReturn;
     for (int j = -1; j <= 1; ++j) {
         if (x+j < 0)
@@ -102,11 +102,13 @@ std::vector<index3D> getNeighbours(int x, int y, int z, int dimX, int dimY, int 
                     continue;
                 if (z+h >= dimZ)
                     continue;
-                index3D currentIndex;
-                currentIndex.x = x+j;
-                currentIndex.y = y+k;
-                currentIndex.z = z+h;
-                toReturn.push_back(currentIndex);
+				if (map(x + j, y + k, z + h) == 1) {
+					index3D currentIndex;
+					currentIndex.x = x + j;
+					currentIndex.y = y + k;
+					currentIndex.z = z + h;
+					toReturn.push_back(currentIndex);
+				}
             }
         }
     }
@@ -117,6 +119,7 @@ std::map<float, float> find_clusters_3D(StatisticalMap3D& image){
     int label = 2;
     std::queue<index3D> q;
     std::map<float, float> extensions;
+	//0 is not a cluster identifier
     extensions[0] = 0;
     StatisticalMap3D toReturn(image);
     int dimX = image.sizeX();
@@ -131,8 +134,12 @@ std::map<float, float> find_clusters_3D(StatisticalMap3D& image){
                     currentIndex.x = xindex;
                     currentIndex.y = yindex;
                     currentIndex.z = zindex;
+					//Start the exploration from here
                     q.push(currentIndex);
+					//Initializing cluster extension
                     extensions[label] = 1;
+					//Marking the voxel as belonging to cluster
+					toReturn(xindex, yindex, zindex) = label;
                     //Cluster exploration starts
                     while(!q.empty()){
                         index3D queueFront = q.front();
@@ -140,16 +147,14 @@ std::map<float, float> find_clusters_3D(StatisticalMap3D& image){
                         int y = queueFront.y;
                         int z = queueFront.z;
                         q.pop();
-                        std::vector<index3D> neighbours = getNeighbours(x, y, z, dimX, dimY, dimZ);
+                        std::vector<index3D> neighbours = getNeighbours(x, y, z, dimX, dimY, dimZ, toReturn);
                         for(index3D n: neighbours){
-                            if(toReturn(n.x, n.y, n.z) == 1){
-                                extensions[label] += 1;
-                                toReturn(n.x, n.y, n.z) = label;
-                                q.push(n);
-                            }
+                            extensions[label] += 1;
+                            toReturn(n.x, n.y, n.z) = label;
+                            q.push(n);
                         }
                     }
-                    //cluster exploration ends, updating label
+                    //cluster exploration ends, updating label for the next cluster
                     label++;
                 }
             }
