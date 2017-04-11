@@ -165,7 +165,6 @@
     <ClInclude Include="src\binarystring.h" />
     <ClInclude Include="src\BVQXPluginInterface.h" />
     <ClInclude Include="src\dlfcn.h" />
-    <ClInclude Include="src\findclusters3d.h" />
     <ClInclude Include="src\global.h" />
     <ClInclude Include="src\matrices.h" />
     <ClInclude Include="src\mymath.h" />
@@ -191,12 +190,12 @@
     <ClInclude Include="src\randomise_global.h" />
     <ClInclude Include="src\statisticalmap3d.h" />
     <ClInclude Include="src\statisticalmap4d.h" />
+    <ClInclude Include="src\tfce.h" />
     <ClInclude Include="src\threecolsarray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\binarystring.cpp" />
     <ClCompile Include="src\BVQXPluginInterface.cpp" />
-    <ClCompile Include="src\findclusters3d.cpp" />
     <ClCompile Include="src\matrices.cpp" />
     <ClCompile Include="src\mymath.cpp" />
     <ClCompile Include="src\mystat.cpp" />
@@ -206,6 +205,7 @@
     <ClCompile Include="src\randomiseplugin.cpp" />
     <ClCompile Include="src\statisticalmap3d.cpp" />
     <ClCompile Include="src\statisticalmap4d.cpp" />
+    <ClCompile Include="src\tfce.cpp" />
     <ClCompile Include="src\threecolsarray.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
