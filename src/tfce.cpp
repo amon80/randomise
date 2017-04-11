@@ -6,8 +6,10 @@
 void computeTfceIteration(StatisticalMap3D& map, StatisticalMap3D& tfce_map, float h, float increment, float E, float H){
     int i = 0;
     StatisticalMap3D binaryClusterMap = createMask(map, moreThan, h);
+	//START - Slowest functions
     std::map<float, float> extensions = find_clusters_3D(binaryClusterMap);
     turn_into_extent_map(binaryClusterMap, extensions);
+	//END - Slowest functions
     binaryClusterMap.applyOperation(elevate, E);
     binaryClusterMap.applyOperation(multiply, pow(h,H));
     binaryClusterMap.applyOperation(multiply, increment);
