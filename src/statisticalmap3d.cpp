@@ -176,7 +176,7 @@ void StatisticalMap3D::applyOperation(float (* operation) (const float a, const 
 }
 
 float& StatisticalMap3D::operator()(const std::size_t idx, const std::size_t idy, const std::size_t idz){
-    return map[idx*dimX*dimY + idy*dimY + idz];
+    return map[idz*dimX*dimY + idy*dimY + idx];
 }
 
 MinMaxStructure StatisticalMap3D::findMinMax(){
