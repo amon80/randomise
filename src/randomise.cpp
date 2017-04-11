@@ -180,8 +180,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             }
         }
         //finished the computation for current contrast
-        t.resetTreePermutationState();
-        t.resetTreeSignState();
+
+        //OPTIONAL
+        //t.resetTreePermutationState();
+        //t.resetTreeSignState();
         if(actualPermutationSize > 0){
             toReturn[index].uncorrected /= actualPermutationSize;
             toReturn[index].corrected /= actualPermutationSize;

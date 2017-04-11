@@ -179,6 +179,14 @@ float& StatisticalMap3D::operator()(const std::size_t idx, const std::size_t idy
     return map[idz*dimX*dimY + idy*dimY + idx];
 }
 
+float& StatisticalMap3D::operator()(const Point3D index){
+    return map[index.z*dimX*dimY + index.y*dimY + index.x];
+}
+
+
+
+//------------- ACCESS METHODS ----------------
+
 MinMaxStructure StatisticalMap3D::findMinMax(){
     MinMaxStructure toReturn;
     toReturn.min = map[0];
@@ -194,7 +202,30 @@ MinMaxStructure StatisticalMap3D::findMinMax(){
     return toReturn;
 }
 
-//------------- ACCESS METHODS ----------------
+std::vector<Point3D> StatisticalMap3D::getNeighbours(Point3D point, Connectivity3D * C){
+    std::vector<Point3D> toReturn;
+    std::vector<Point3D> candidates = C->getNeighboursIndex(point);
+    for(Point3D p: candidates){
+        int x = p.x;
+        int y = p.y;
+        int z = p.z;
+        if (x < 0)
+            continue;
+        if (x >= dimX)
+            continue;
+        if (y < 0)
+            continue;
+        if (y >= dimY)
+            continue;
+        if (z < 0)
+            continue;
+        if (z >= dimZ)
+            continue;
+        toReturn.push_back(p);
+    }
+    return toReturn;
+}
+
 
 int StatisticalMap3D::size(){
     return dim;

@@ -2,6 +2,9 @@
 #define STATISTICALMAP3D_H
 
 #include <iostream>
+#include <vector>
+#include "point3d.h"
+#include "connectivity3d.h"
 
 struct MinMaxStructure{
     float min;
@@ -34,8 +37,10 @@ public:
     void flipMap();
     void applyOperation(float (* operation) (const float a, const float b), const float argument);
     float& operator()(const std::size_t idx, const std::size_t idy, const std::size_t idz);
+    float& operator()(const Point3D index);
     //access methods
     MinMaxStructure findMinMax();
+    std::vector<Point3D> getNeighbours(Point3D point, Connectivity3D *C);
     int size();
     int sizeX();
     int sizeY();
