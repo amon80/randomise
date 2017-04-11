@@ -1,6 +1,7 @@
 #include "randomise.h"
 #include "permutationtree.h"
 #include "matrices.h"
+#include "tfce.h"
 #include <random>
 #include <limits>
 #include <algorithm>
@@ -101,7 +102,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         }
 
         if(useTfce)
-            toReturn[index].originalStatistic.tfce();
+            tfce(toReturn[index].originalStatistic);
 
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
@@ -157,7 +158,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             }
 
             if(useTfce)
-                permutedStatistic.tfce();
+                tfce(permutedStatistic);
 
             //Find the maximum
             float maxTj = permutedStatistic[0];

@@ -170,8 +170,8 @@ bool RandomisePlugin::execute()
             sprintf(buffer, "Contrast %d - Critical threshold for %f inference level: %f", i, alpha, criticalThreshold);
             qxLogText(buffer);
 
-            float min, max, range;
-            r[i].originalStatistic.findMinMax(min, max, range);
+            MinMaxStructure m = r[i].originalStatistic.findMinMax();
+            float max = m.max;
 
             vv = qxGetNRVMPOfCurrentVMR(i, &vmp_header);
             sprintf(buffer, "Contrast %d", i);
@@ -183,7 +183,6 @@ bool RandomisePlugin::execute()
             else
                 vmp_header.OverlayMap = 0;
             vmp_header.ThreshMin = criticalThreshold;
-            r[i].originalStatistic.findMinMax(min, max,range);
             vmp_header.ThreshMin = criticalThreshold;
             vmp_header.ThreshMax = max;
             for(int j = 0; j < dim; j++)

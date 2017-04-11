@@ -1,4 +1,5 @@
 #include "mymath.h"
+#include <cmath>
 
 int fact(int n){
     int toReturn = 1;
@@ -6,3 +7,20 @@ int fact(int n){
         toReturn *= i;
     return toReturn;
 }
+
+float elevate(float a, float b){
+    return pow(a,b);
+}
+
+float multiply(float a, float b){
+    return a*b;
+}
+
+bool moreThan(float a, float b){
+    return a > b;
+}
+
+bool lessThan(float a, float b){
+    return a < b;
+}
+

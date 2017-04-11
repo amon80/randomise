@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-class StatisticalMap3D;
-
 class BinaryString
 {
 public:
@@ -13,7 +11,6 @@ public:
     BinaryString();
     BinaryString(int num_bits, int num_to_convert);
     BinaryString(int num_bits, bool random = false);
-    BinaryString(StatisticalMap3D& map, bool (*confront)(const float, const float), const float value);
     //desturctor
     ~BinaryString();
     //copy semantics
@@ -43,9 +40,5 @@ private:
 };
 
 inline bool operator!=(const BinaryString& first, const BinaryString& second){return !(first == second);}
-
-bool moreThan(float a, float b);
-bool lessThan(float a, float b);
-
 
 #endif // BINARYSTRING_H

@@ -2,6 +2,11 @@
 #define MYMATH_H
 
 int fact(int n);
+float elevate(float a, float b);
+float multiply(float a, float b);
+bool moreThan(float a, float b);
+bool lessThan(float a, float b);
+
 inline int myabs(int n){
     return n>=0 ? n : -n;
 }

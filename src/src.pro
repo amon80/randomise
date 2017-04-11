@@ -39,7 +39,7 @@ SOURCES += \
     BVQXPluginInterface.cpp \
     randomiseplugin.cpp \
     randomise.cpp \
-    findclusters3d.cpp
+    tfce.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -341,7 +341,7 @@ HEADERS += \
     Plugin_VTC_Header.h \
     randomiseplugin.h \
     randomise.h \
-    findclusters3d.h
+    tfce.h
 
 unix {
     target.path = /usr/lib

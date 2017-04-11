@@ -1,8 +1,4 @@
 #include "statisticalmap3d.h"
-#include "binarystring.h"
-#include "findclusters3d.h"
-#include <omp.h>
-#include <cmath>
 
 // ---------- FRIEND METHODS ---------------
 std::ostream & operator<<(std::ostream &os, const StatisticalMap3D& p){
@@ -49,26 +45,6 @@ StatisticalMap3D operator+(StatisticalMap3D lhs, StatisticalMap3D& rhs){
     lhs += rhs;
     return lhs;
 }
-
-//-------------PRIVATE METHODS------------------
-
-void StatisticalMap3D::computeTfceIteration(StatisticalMap3D& tfce_map, float h, float increment, float E, float H){
-    int i = 0;
-    BinaryString clusterMap(*this, moreThan, h);
-    int num_clusters = find_clusters_3D(clusterMap, dimX, dimY, dimZ);
-    BinaryString extent_map(dim);
-    turn_into_extend_map(extent_map, clusterMap, num_clusters);
-    StatisticalMap3D clustered_map_float(extent_map, dimX, dimY, dimZ);
-    clustered_map_float.applyOperation(elevate, E);
-    clustered_map_float.applyOperation(multiply, pow(h,H));
-    clustered_map_float.applyOperation(multiply, increment);
-    for (i = 0; i < dim; ++i) {
-        #pragma omp atomic
-        tfce_map[i] += (clustered_map_float[i]);
-    }
-}
-
-
 
 //-------------- CONSTRUCTORS ------------------
 StatisticalMap3D::StatisticalMap3D()
@@ -128,35 +104,6 @@ StatisticalMap3D::StatisticalMap3D(float * map, int dim)
     for (int i = 0; i < dim; ++i) {
         this->map[i] = map[i];
     }
-}
-
-StatisticalMap3D::StatisticalMap3D(StatisticalMap3D& map, BinaryString& mask)
-    :map(new float[map.dim]),
-     dimX(map.dimX),
-     dimY(map.dimY),
-     dimZ(map.dimZ),
-     dim(map.dim)
-{
-    for (int i = 0; i < dim; ++i) {
-        if(mask[i] == 1)
-            this->map[i] = map[i];
-        else
-            this->map[i] = 0;
-    }
-
-}
-
-StatisticalMap3D::StatisticalMap3D(BinaryString& toConvert, int dimX, int dimY, int dimZ)
-    :map(new float[dimX*dimY*dimZ]),
-     dimX(dimX),
-     dimY(dimY),
-     dimZ(dimZ),
-     dim(dimX*dimY*dimZ)
-{
-    for (int i = 0; i < dim; ++i) {
-        map[i] = (float) toConvert[i];
-    }
-
 }
 
 //--------- DESTRUCTOR ----------------
@@ -228,56 +175,23 @@ void StatisticalMap3D::applyOperation(float (* operation) (const float a, const 
         map[i] = operation(map[i], argument);
 }
 
-void StatisticalMap3D::findMinMax(float& min, float& max, float& range){
-    min = map[0];
-    max = map[0];
-
-    for (int i = 1; i < dim; ++i){
-       if(min > map[i])
-           min = map[i];
-       if(max < map[i])
-           max = map[i];
-    }
-
-    range = max - min;
+float& StatisticalMap3D::operator()(const std::size_t idx, const std::size_t idy, const std::size_t idz){
+    return map[idx*dimX*dimY + idy*dimY + idz];
 }
 
-void StatisticalMap3D::tfce(float E, float H, float dh){
-    float minData = 0;
-    float maxData = 0;
-    float rangeData = 0;
-    StatisticalMap3D tfce_map(dimX, dimY, dimZ);
+MinMaxStructure StatisticalMap3D::findMinMax(){
+    MinMaxStructure toReturn;
+    toReturn.min = map[0];
+    toReturn.max = map[0];
 
-    this->findMinMax(minData, maxData, rangeData);
-    if(minData >= 0){
-        int i;
-        float precision = rangeData/dh;
-        int steps;
-        float increment;
-
-        if (precision > 200) {
-            increment = rangeData/200;
-        } else{
-            increment = dh;
-        }
-
-        steps = (int) ceil(rangeData / increment);
-        #pragma omp parallel for
-        for (i = 0; i < steps; i++) {
-            computeTfceIteration(tfce_map, minData + i*increment, increment, E, H);
-        }
-    }else{
-        BinaryString indexPosData(*this, moreThan, 0);
-        BinaryString indexNegData(*this, lessThan, 0);
-        StatisticalMap3D posData(*this, indexPosData);
-        StatisticalMap3D negData(*this, indexNegData);
-        negData.flipMap();
-        posData.tfce(E, H, dh);
-        negData.tfce(E, H, dh);
-        negData.flipMap();
-        tfce_map = posData + negData;
+    for (int i = 1; i < dim; ++i){
+       if(toReturn.min > map[i])
+           toReturn.min = map[i];
+       if(toReturn.max < map[i])
+           toReturn.max = map[i];
     }
-    (*this) = tfce_map;
+
+    return toReturn;
 }
 
 //------------- ACCESS METHODS ----------------
@@ -295,17 +209,3 @@ int StatisticalMap3D::sizeY(){
 int StatisticalMap3D::sizeZ(){
     return dimZ;
 }
-
-
-//---------- UTILITY FUNCTIONS ----------------
-
-float elevate(float a, float b){
-    return pow(a,b);
-}
-
-float multiply(float a, float b){
-    return a*b;
-}
-    
-
-

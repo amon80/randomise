@@ -3,7 +3,10 @@
 
 #include <iostream>
 
-class BinaryString;
+struct MinMaxStructure{
+    float min;
+    float max;
+};
 
 class StatisticalMap3D
 {
@@ -15,8 +18,6 @@ public:
     StatisticalMap3D(float * map, int dim);
     StatisticalMap3D(int dim);
     StatisticalMap3D(int dimX, int dimY, int dimZ);
-    StatisticalMap3D(StatisticalMap3D& map, BinaryString& mask);
-    StatisticalMap3D(BinaryString& toConvert, int dimX, int dimY, int dimZ);
     //destructor
     ~StatisticalMap3D();
     //copy semantics
@@ -32,9 +33,9 @@ public:
     void zeroMap(float(*confront)(const float));
     void flipMap();
     void applyOperation(float (* operation) (const float a, const float b), const float argument);
-    void findMinMax(float& min, float& max, float& range);
-    void tfce(float E = 0.5, float H = 2.0, float dh = 0.1);
+    float& operator()(const std::size_t idx, const std::size_t idy, const std::size_t idz);
     //access methods
+    MinMaxStructure findMinMax();
     int size();
     int sizeX();
     int sizeY();
@@ -44,7 +45,6 @@ private:
     friend void swap(StatisticalMap3D& first, StatisticalMap3D& second);
     friend std::istream& operator>>(std::istream &is, StatisticalMap3D& p);
     friend StatisticalMap3D operator+(StatisticalMap3D lhs, StatisticalMap3D& rhs);
-    void computeTfceIteration(StatisticalMap3D& tfce_map, float h, float increment, float E, float H);
     float * map;
     int dimX;
     int dimY;
@@ -52,7 +52,6 @@ private:
     int dim;
 };
 
-float elevate(float a, float b);
-float multiply(float a, float b);
+
 
 #endif // STATISTICALMAP3D_H
