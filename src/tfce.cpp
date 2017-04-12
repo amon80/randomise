@@ -74,8 +74,8 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
         StatisticalMap3D posData = createMapFromMask(map, maskPosData);
         StatisticalMap3D negData = createMapFromMask(map, maskNegData);
         negData.flipMap();
-        tfce(posData, E, H, dh);
-        tfce(negData, E, H, dh);
+        tfce(posData, E, H, dh, C);
+        tfce(negData, E, H, dh, C);
         negData.flipMap();
         tfce_map = posData + negData;
     }
@@ -84,10 +84,8 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
 
 void turn_into_extent_map(StatisticalMap3D& clustered_map, std::map<float, float>& extensions){
     int n = clustered_map.size();
-    StatisticalMap3D extent_map(clustered_map);
     for (int j = 0; j < n; ++j)
-        extent_map[j] = extensions[clustered_map[j]];
-    clustered_map = extent_map;
+        clustered_map[j] = extensions[clustered_map[j]];
 }
 
 std::map<float, float> find_clusters_3D(StatisticalMap3D& image, Connectivity3D * C){
@@ -96,7 +94,6 @@ std::map<float, float> find_clusters_3D(StatisticalMap3D& image, Connectivity3D 
     std::map<float, float> extensions;
 	//0 is not a cluster identifier
     extensions[0] = 0;
-    StatisticalMap3D toReturn(image);
     int dimX = image.sizeX();
     int dimY = image.sizeY();
     int dimZ = image.sizeZ();
@@ -104,23 +101,23 @@ std::map<float, float> find_clusters_3D(StatisticalMap3D& image, Connectivity3D 
         for (int yindex = 0; yindex < dimY; ++yindex) {
             for (int zindex = 0; zindex < dimZ; ++zindex) {
                 Point3D currentIndex(xindex, yindex, zindex);
-                if(toReturn(currentIndex) == 1) {
+                if(image(currentIndex) == 1) {
                     //Found new cluster
 					//Start the exploration from here
                     q.push(currentIndex);
 					//Initializing cluster extension
                     extensions[label] = 1;
 					//Marking the voxel as belonging to cluster
-                    toReturn(currentIndex) = label;
+                    image(currentIndex) = label;
                     //Cluster exploration starts
                     while(!q.empty()){
                         Point3D queueFront = q.front();
                         q.pop();
-                        std::vector<Point3D> neighbours = toReturn.getNeighbours(queueFront, C);
+                        std::vector<Point3D> neighbours = image.getNeighbours(queueFront, C);
                         for(Point3D n: neighbours){
-                            if(toReturn(n) == 1){
+                            if(image(n) == 1){
                                 extensions[label] += 1;
-                                toReturn(n) = label;
+                                image(n) = label;
                                 q.push(n);
                             }
                         }
@@ -131,7 +128,5 @@ std::map<float, float> find_clusters_3D(StatisticalMap3D& image, Connectivity3D 
             }
         }
     }
-
-    image = toReturn;
     return extensions;
 }
