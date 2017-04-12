@@ -164,6 +164,10 @@
   <ItemGroup>
     <ClInclude Include="src\binarystring.h" />
     <ClInclude Include="src\BVQXPluginInterface.h" />
+    <ClInclude Include="src\connectivity3d.h" />
+    <ClInclude Include="src\connectivity3d18.h" />
+    <ClInclude Include="src\connectivity3d26.h" />
+    <ClInclude Include="src\connectivity3d6.h" />
     <ClInclude Include="src\dlfcn.h" />
     <ClInclude Include="src\global.h" />
     <ClInclude Include="src\matrices.h" />
@@ -185,6 +189,7 @@
     <ClInclude Include="src\Plugin_VMR_Header.h" />
     <ClInclude Include="src\Plugin_VOI_Header.h" />
     <ClInclude Include="src\Plugin_VTC_Header.h" />
+    <ClInclude Include="src\point3d.h" />
     <ClInclude Include="src\randomise.h" />
     <ClInclude Include="src\randomiseplugin.h" />
     <ClInclude Include="src\randomise_global.h" />
@@ -196,11 +201,16 @@
   <ItemGroup>
     <ClCompile Include="src\binarystring.cpp" />
     <ClCompile Include="src\BVQXPluginInterface.cpp" />
+    <ClCompile Include="src\connectivity3d.cpp" />
+    <ClCompile Include="src\connectivity3d18.cpp" />
+    <ClCompile Include="src\connectivity3d26.cpp" />
+    <ClCompile Include="src\connectivity3d6.cpp" />
     <ClCompile Include="src\matrices.cpp" />
     <ClCompile Include="src\mymath.cpp" />
     <ClCompile Include="src\mystat.cpp" />
     <ClCompile Include="src\permutationtree.cpp" />
     <ClCompile Include="src\permutationtreeblock.cpp" />
+    <ClCompile Include="src\point3d.cpp" />
     <ClCompile Include="src\randomise.cpp" />
     <ClCompile Include="src\randomiseplugin.cpp" />
     <ClCompile Include="src\statisticalmap3d.cpp" />
