@@ -238,17 +238,18 @@ void readglm(const char * filename){
     //Ok, so all that's left now is the actual data
     float ** data = new float*[nValues];
     for(int i = 0; i < nValues; i++){
-        std::cout << "Inizio volume " << i << std::endl;
         data[i] = new float[nVoxel];
         for(int j = 0; j < nVoxel; j++){
             input.read((char*)floatBuffer,4);
             std::cout << "Volume " << i << " Voxel " << j << " - " << *floatBuffer << std::endl;
             data[i][j] = *floatBuffer;
         }
-        std::cout << "Fine volume " << i << std::endl;
     }
 
     currentPos = input.tellg();
+    input.read((char *)charBuffer, 1);
+    currentPos = input.tellg();
+
     if(input.eof())
         std::cout << "EOF" << std::endl;
 
