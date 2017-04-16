@@ -4,4 +4,5 @@ SUBDIRS += binarycounter \
            threecolsarray \
            permutationtree \
            matrices \
-           myglm
+           myglm \
+           myvmp

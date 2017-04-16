@@ -8,6 +8,6 @@ TEMPLATE = app
 
 INCLUDEPATH += ../../../src
 
-SOURCES +=  testmyglm.cpp \
-            ../../../src/myglm.cpp \
+SOURCES +=  testmyvmp.cpp \
+            ../../../src/myvmp.cpp \
             ../../../src/binaryio.cpp
