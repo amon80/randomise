@@ -1,36 +1,15 @@
 #include "myglm.h"
+#include "binaryio.h"
 #include <fstream>
-#include <cctype>
 #include <iostream>
+#include <string>
 
 MyGLM::MyGLM()
 {
 
 }
 
-
-char * readString(std::ifstream& input)
-{
-    int j = 0;
-    char * string = new char[MAXLENGTHFILENAME];
-    char * buffer = new char[1];
-    while(true){
-        input.read((char*)buffer, 1);
-        if(!iscntrl(*buffer))
-            string[j++] = *buffer;
-        else{
-            break;
-        }
-    }
-    delete[] buffer;
-    return string;
-}
-
 void readglm(const char * filename){
-    int * intBuffer = new int[1];
-    float * floatBuffer = new float[1];
-    char * charBuffer = new char[1];
-
     //Variables declaration
     int version;
     int typeGLMFlag;
@@ -45,7 +24,7 @@ void readglm(const char * filename){
     int nStudies;
 
     int nStudiesConfoundInfo;
-    int * nConfoundStudies;
+    std::vector<int> nConfoundStudies;
 
     int separatePredictorsFlag;
     int timeCourseNormalizationFlag;
@@ -69,112 +48,76 @@ void readglm(const char * filename){
 
     int cortexBasedMaskFlag;
     int nVoxelsInMask;
-    char * nameOfCortexBasedMaskfile;
+    std::string nameOfCortexBasedMaskfile;
 
     //Opening file in read only binary mode
     std::ifstream input(filename, std::ios::binary);
 
     //START READING
 
-    //Calculating lenght
-    input.seekg (0, input.end);
-    int length = input.tellg();
-    input.seekg (0, input.beg);
-
-    input.read((char *)intBuffer, 2);
-    version = *intBuffer;
-    input.read((char *)intBuffer, 1);
-    typeGLMFlag = *intBuffer;
-    input.read((char *)intBuffer, 1);
-    rfxGLMFlag = *intBuffer;
+    version = read_uint16(input);
+    typeGLMFlag = read_uint8(input);
+    rfxGLMFlag = read_uint8(input);
 
     if(rfxGLMFlag == 1){
-        input.read((char *)intBuffer, 4);
-        nSubjects = *intBuffer;
-        input.read((char*)intBuffer, 4);
-        nPredictorsForSubject = *intBuffer;
+        nSubjects = read_uint32(input);
+        nPredictorsForSubject = read_uint32(input);
     }
 
-    input.read((char*)intBuffer, 4);
-    nTimePoints = *intBuffer;
-    input.read((char*)intBuffer, 4);
-    nAllPredictors = *intBuffer;
-    input.read((char *)intBuffer, 4);
-    nConfoundPredictors = *intBuffer;
-    input.read((char *)intBuffer, 4);
-    nStudies = *intBuffer;
+    nTimePoints = read_uint32(input);
+    nAllPredictors = read_uint32(input);
+    nConfoundPredictors = read_uint32(input);
+    nStudies = read_uint32(input);
 
     if(nStudies > 1){
-        input.read((char *)intBuffer, 4);
-        nStudiesConfoundInfo = *intBuffer;
-        nConfoundStudies = new int[nStudiesConfoundInfo];
-        for(int i = 0; i < nStudiesConfoundInfo; i++){
-            input.read((char *)intBuffer, 4);
-            nConfoundStudies[i] = *intBuffer;
-        }
+        nStudiesConfoundInfo = read_uint32(input);
+        nConfoundStudies = std::vector<int>(nStudiesConfoundInfo);
+        for(int i = 0; i < nStudiesConfoundInfo; i++)
+            nConfoundStudies[i] = read_uint32(input);
     }
 
-    input.read((char *)intBuffer, 1);
-    separatePredictorsFlag = *intBuffer;
-    input.read((char *)intBuffer, 1);
-    timeCourseNormalizationFlag = *intBuffer;
-    input.read((char *)intBuffer, 2);
-    resolution = *intBuffer;
-    input.read((char *)intBuffer, 1);
-    serialCorrelationPerformedFlag = *intBuffer;
-    input.read((char *)floatBuffer, 4);
-    meanSerialCorrelationBeforeCorrection = *floatBuffer;
-    input.read((char *)floatBuffer, 4);
-    meanSerialCorrelationAfterCorrection = *floatBuffer;
+    separatePredictorsFlag = read_uint8(input);
+    timeCourseNormalizationFlag = read_uint8(input);
+    resolution = read_uint16(input);
+    serialCorrelationPerformedFlag = read_uint8(input);
+    meanSerialCorrelationBeforeCorrection = read_float(input);
+    meanSerialCorrelationAfterCorrection = read_float(input);
 
     if(typeGLMFlag == 0){
-        input.read((char *)intBuffer, 2);
-        dimX = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        dimY = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        dimZ = *intBuffer;
+        dimX = read_uint16(input);
+        dimY = read_uint16(input);
+        dimZ = read_uint16(input);
     }
     if(typeGLMFlag == 1){
-        input.read((char *)intBuffer, 2);
-        startX = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        endX = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        startY = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        endY = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        startZ = *intBuffer;
-        input.read((char *)intBuffer, 2);
-        endZ = *intBuffer;
+        startX = read_uint16(input);
+        endX = read_uint16(input);
+        startY = read_uint16(input);
+        endY = read_uint16(input);
+        startZ = read_uint16(input);
+        endZ = read_uint16(input);
     }
     if(typeGLMFlag == 2){
-        input.read((char *)intBuffer, 4);
-        nVertices = *intBuffer;
+        nVertices = read_uint32(input);
     }
 
-    input.read((char*)intBuffer, 1);
-    cortexBasedMaskFlag = *intBuffer;
-    input.read((char*)intBuffer, 4);
-    nVoxelsInMask = *intBuffer;
+    cortexBasedMaskFlag = read_uint8(input);
+    nVoxelsInMask = read_uint32(input);
 
-    nameOfCortexBasedMaskfile = readString(input);
+    nameOfCortexBasedMaskfile = read_string(input);
 
-    int * nTimePointsForStudy = new int[nStudies];
-    char ** vtcNames = new char*[nStudies];
-    char ** sdmNames = new char*[nStudies];
-    char ** ssmNames;
+    std::vector<int> nTimePointsForStudy(nStudies);
+    std::vector<std::string> vtcNames(nStudies);
+    std::vector<std::string> sdmNames(nStudies);
+    std::vector<std::string> ssmNames;
+
     if(typeGLMFlag == 2)
-        ssmNames = new char*[nStudies];
-
+        ssmNames = std::vector<std::string>(nStudies);
     for(int i = 0; i < nStudies; i++){
-        input.read((char *)intBuffer, 4);
-        nTimePointsForStudy[i] = *intBuffer;
-        vtcNames[i] = readString(input);
+        nTimePointsForStudy[i] = read_uint32(input);
+        vtcNames[i] = read_string(input);
         if(typeGLMFlag == 2)
-            ssmNames[i] = readString(input);
-        sdmNames[i] = readString(input);
+            ssmNames[i] = read_string(input);
+        sdmNames[i] = read_string(input);
     }
     /*
     for(int i = 0; i < nStudies; i++){
@@ -213,50 +156,28 @@ void readglm(const char * filename){
         nValues = 1 + nSubjects * nPredictorsForSubject;
     }
 
-    int actualDataBytes = nValues * nVoxel;
-    actualDataBytes *= 4;
     //START ------DATA not in the docs---------
-    char ** predictors = new char*[50];
-    char ** patients = new char*[50];
+    std::vector<std::string> predictors(50);
+    std::vector<std::string> patients(50);
     for(int i = 0; i < 50; i++){
-        predictors[i] = readString(input);
-        patients[i] = readString(input);
+        predictors[i] = read_string(input);
+        patients[i] = read_string(input);
         std::cout << "Predictor " << i << " - " << predictors[i] << std::endl;
         std::cout << "Patient " << i << " - " << patients[i] << std::endl;
         for(int j = 0; j < 3; j++){
-            input.read((char*)intBuffer, 4);
-            std::cout << i << " - " << j << " - " << *intBuffer << std::endl;
+            //NOTE: Maybe the commented function in binaryio?????
+            read_uint32(input);
         }
     }
     //END --------DATA not in the docs----------
 
-    //check if #bytes to read corrisponds to # of data bytes
-    int currentPos = input.tellg();
-    int toTheEndOfFile = length - currentPos;
-    std::cout << "Bytes to read until the end of the file " << toTheEndOfFile << std::endl;
-
     //Ok, so all that's left now is the actual data
-    float ** data = new float*[nValues];
+    std::vector<std::vector<float>> data(nValues);
     for(int i = 0; i < nValues; i++){
-        data[i] = new float[nVoxel];
-        for(int j = 0; j < nVoxel; j++){
-            input.read((char*)floatBuffer,4);
-            std::cout << "Volume " << i << " Voxel " << j << " - " << *floatBuffer << std::endl;
-            data[i][j] = *floatBuffer;
-        }
+        data[i] = std::vector<float>(nVoxel);
+        for(int j = 0; j < nVoxel; j++)
+            data[i][j] = read_float(input);
     }
-
-    currentPos = input.tellg();
-    input.read((char *)charBuffer, 1);
-    currentPos = input.tellg();
-
-    if(input.eof())
-        std::cout << "EOF" << std::endl;
-
-    //deleting all buffers
-    delete[] intBuffer;
-    delete[] floatBuffer;
-    delete[] charBuffer;
 
     //closing file
     input.close();

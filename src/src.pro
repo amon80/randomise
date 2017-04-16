@@ -45,7 +45,9 @@ SOURCES += \
     connectivity3d6.cpp \
     connectivity3d18.cpp \
     connectivity3d26.cpp \
-    myglm.cpp
+    binaryio.cpp \
+    myglm.cpp \
+    myvmp.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -353,7 +355,10 @@ HEADERS += \
     connectivity3d6.h \
     connectivity3d18.h \
     connectivity3d26.h \
-    myglm.h
+    binaryio.h \
+    ioerror.h \
+    myglm.h \
+    myvmp.h
 
 unix {
     target.path = /usr/lib
