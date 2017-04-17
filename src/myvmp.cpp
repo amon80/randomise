@@ -35,7 +35,6 @@ void MyVmp::readvmp(const char * filename){
 
     Resolution = read_uint32(input);
 
-    //dims are not stored since they're computed at runtime
     dimX = read_uint32(input);
     dimY = read_uint32(input);
     dimZ = read_uint32(input);
@@ -101,12 +100,34 @@ void MyVmp::readvmp(const char * filename){
         }
     }
     if(NrOfMapParams > 0){
-        //TODO
+        NamesOfComponentParameters = std::vector<std::string>(NrOfMapParams);
+        ComponentParams = std::vector<float>(NrOfMapParams);
         for(int i = 0; i < NrOfMapParams; i++){
-
+            NamesOfComponentParameters[i] = read_string(input);
+            ComponentParams[i] = read_float(input);
         }
     }
 
+    dimX = (XEnd - XStart) / Resolution;
+    dimY = (YEnd - YStart) / Resolution;
+    dimZ = (ZEnd - ZStart) / Resolution;
+
+    data = std::vector<std::vector<float>>(NrOfMaps);
+    for(int i = 0; i < NrOfMaps; i++){
+        data[i] = std::vector<float>(dimX*dimY*dimZ);
+        for(int zindex = 0; zindex < dimZ; zindex++){
+            for(int yindex = 0; yindex < dimY; yindex++){
+                for(int xindex = 0; xindex < dimX; xindex++){
+                    data[i][zindex*dimX*dimY + yindex+dimX +zindex] = read_float(input);
+                }
+            }
+        }
+    }
 
     input.close();
 }
+
+int MyVmp::getNrSubjects(){
+    return NrOfMaps;
+}
+
