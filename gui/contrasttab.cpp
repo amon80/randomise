@@ -1,7 +1,8 @@
 #include "contrasttab.h"
 
 void ContrastTab::addOrRemoveEvs(int evsNumber){
-    //TODO
+    uppermiddle->addOrRemoveEvs(evsNumber);
+    //TODO:handle the contrasts
 }
 
 ContrastTab::ContrastTab(QWidget *parent) :
@@ -11,7 +12,7 @@ ContrastTab::ContrastTab(QWidget *parent) :
     QVBoxLayout * layout = new QVBoxLayout;
     this->setLayout(layout);
 
-    //Top part (Contrasts & F-tests)
+    //Top part (Contrasts & F-tests spin boxes)
     top = new ContrastTabTopPart(this);
     layout->addWidget(top);
 

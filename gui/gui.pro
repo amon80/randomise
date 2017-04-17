@@ -29,8 +29,10 @@ SOURCES += main.cpp\
     evstabmiddlepart.cpp \
     evstabbottompart.cpp \
     evstabbottomcontent.cpp \
-    contrasttabmiddletopwidget.cpp \
-    contrasttabtoppart.cpp
+    contrasttabtoppart.cpp \
+    contrasttabuppermiddlepart.cpp \
+    evscolumnslabels.cpp \
+    ftestcolumnslabels.cpp
 
 HEADERS  += mainwindow.h \
     evstab.h \
@@ -41,4 +43,6 @@ HEADERS  += mainwindow.h \
     evstabbottompart.h \
     evstabbottomcontent.h \
     contrasttabtoppart.h \
-    contrasttabuppermiddlepart.h
+    contrasttabuppermiddlepart.h \
+    evscolumnslabels.h \
+    ftestcolumnslabels.h

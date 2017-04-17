@@ -6,7 +6,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "contrasttabtoppart.h"
-
 #include "contrasttabuppermiddlepart.h"
 
 class ContrastTab : public QWidget

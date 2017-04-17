@@ -9,7 +9,8 @@ ContrastTabTopPart::ContrastTabTopPart(QWidget *parent) : QWidget(parent)
     ftestsSpinBoxLabel = new QLabel;
     contrastSpinBoxLabel->setText(tr("Contrasts"));
     ftestsSpinBoxLabel->setText(tr("F-Tests"));
-    contrastSpinBox->setMinimum(1);
+    contrastSpinBox->setMinimum(0);
+    contrastSpinBox->setValue(0);
     ftestsSpinBox->setMinimum(0);
     ftestsSpinBox->setValue(0);
     layout->addWidget(contrastSpinBoxLabel);
