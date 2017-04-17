@@ -5,12 +5,13 @@
 #include <QSpinBox>
 #include <QVector>
 #include <QHBoxLayout>
+#include <QLabel>
 
-class BottomContent : public QWidget
+class EvsTabBottomContent : public QWidget
 {
     Q_OBJECT
 public:
-    explicit BottomContent(QWidget *parent = 0, int inputnumber = 1, int evnumber = 1);
+    explicit EvsTabBottomContent(QWidget *parent = 0, QString labelText = "");
     void addEv();
     void removeEv();
 
@@ -19,6 +20,7 @@ signals:
 public slots:
 
 private:
+    QLabel * inputLabel;
     QSpinBox * groupSpinBox;
     QVector<QSpinBox*> evs;
     QHBoxLayout * layout;

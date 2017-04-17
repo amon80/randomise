@@ -5,30 +5,30 @@
 #include <QSpinBox>
 #include <QVector>
 #include <QLabel>
-#include "bottomcontent.h"
+#include "evstabtoppart.h"
+#include "evstabuppermiddlepart.h"
+#include "evstabmiddlepart.h"
+#include "evstabbottompart.h"
+#include "evstabbottomcontent.h"
+#include "myvmp.h"
 
 class EvsTab : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EvsTab(QWidget *parent = 0, int num_of_subjects = 1);
-
+    explicit EvsTab(QWidget *parent = 0);
+    void addOrRemoveEvs(int evNumber);
 signals:
-
+    void valueChanged(int value);
 public slots:
-
+    void openVmp();
+    void clearAll();
 private slots:
-    void addOrRemoveEV(int evSpinBoxValue);
-    void openvmp();
 private:
-    QHBoxLayout * middleLayout;
-    QSpinBox * evnumberSpinbox;
-    QLineEdit * fileEdit;
-    int evnumber;
-    QWidget * labelRow;
-    QVector<BottomContent*> rows;
-    QVector<QLabel*> evLabels;
-    int num_of_subjects;
+    EvsTabTopPart * top;
+    EvsTabUpperMiddlePart * upperMiddle;
+    EvsTabMiddlePart * middle;
+    EvsTabBottomPart * bottom;
 };
 
 #endif // EVSTAB_H

@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QTabWidget>
 #include <QDialogButtonBox>
+#include "contrasttab.h"
+#include "evstab.h"
 
 class MainWindow : public QDialog
 {
@@ -12,10 +14,14 @@ class MainWindow : public QDialog
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void addOrRemoveEvs(int evsNumber);
 
 private:
     QTabWidget * tabs;
-    QDialogButtonBox * buttonBox = new QDialogButtonBox;
+    QDialogButtonBox * buttonBox;
+    EvsTab * evsTab;
+    ContrastTab * contrastTab;
 };
 
 #endif // MAINWINDOW_H
