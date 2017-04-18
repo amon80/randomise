@@ -19,6 +19,9 @@ std::uint8_t read_uint8(std::istream& stream);
 //! Read a 16-bit unsigned integer.
 std::uint16_t read_uint16(std::istream& stream);
 
+//! Read a 24-bit unsigned integer.
+int read_uint24(std::istream& stream);
+
 //! Read a 32-bit unsigned integer
 std::uint32_t read_uint32(std::istream& stream);
 
@@ -43,8 +46,11 @@ void write_uint8(std::ostream& stream, uint8_t u);
 //! Write a 16-bit unsigned integer.
 void write_uint16(std::ostream& stream, uint16_t u);
 
+//! Write a 24-bit unsigned integer.
+void write_uint24(std::ostream& stream, int u);
+
 //! Write a 32-bit unsigned integer.
-void write_uint16(std::ostream& stream, uint32_t u);
+void write_uint32(std::ostream& stream, uint32_t u);
 
 //! Write a three-element vector as 16-bit unsigned integers.
 //void write_ivec3_as_uint16_triple(std::ostream& stream, const glm::ivec3& v);

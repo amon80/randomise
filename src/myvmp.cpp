@@ -7,6 +7,123 @@ MyVmp::MyVmp()
 
 }
 
+void MyVmp::removeSubMap(int index){
+    NrOfMaps--;
+    subHeaders.erase(subHeaders.begin()+index);
+    data.erase(data.begin()+index);
+}
+
+void MyVmp::writevmp(const char * filename){
+
+    //Opening file in write only binary mode
+    std::ofstream output(filename, std::ios::binary);
+
+    write_uint32(output, magic_number);
+    write_uint16(output, version_number);
+    write_uint16(output, doctype);
+
+    write_uint32(output, NrOfMaps);
+    write_uint32(output, NrOfTimePoints);
+    write_uint32(output, NrOfMapParams);
+
+    write_uint32(output, ShowParamsFrom);
+    write_uint32(output, ShowParamsTo);
+
+    write_uint32(output, UseForICFingerprintFrom);
+    write_uint32(output, UseForICFingerprintTo);
+
+    write_uint32(output, XStart);
+    write_uint32(output, XEnd);
+    write_uint32(output, YStart);
+    write_uint32(output, YEnd);
+    write_uint32(output, ZStart);
+    write_uint32(output, ZEnd);
+
+    write_uint32(output, Resolution);
+
+    write_uint32(output, dimX);
+    write_uint32(output, dimY);
+    write_uint32(output, dimZ);
+
+    //Names: vtc, prt, voi
+    write_zstring(output, VTCFileName);
+    write_zstring(output, ProtocolFileName);
+    write_zstring(output, VOIFileName);
+
+    for(int i = 0; i < NrOfMaps; i++){
+        write_uint32(output, subHeaders[i].MapType);
+        write_float(output, subHeaders[i].ThreshMin);
+        write_float(output, subHeaders[i].ThreshMax);
+
+        write_zstring(output, subHeaders[i].NameOfMap);
+
+        //TODO:change all the reads with writes
+        //Check the writez string function
+
+        write_uint24(output, subHeaders[i].ColorPosMin);
+        write_uint24(output, subHeaders[i].ColorPosMax);
+        write_uint24(output, subHeaders[i].ColorNegMin);
+        write_uint24(output, subHeaders[i].ColorNegMax);
+
+        write_uint8(output, subHeaders[i].UseMapColor);
+        write_zstring(output, subHeaders[i].LUTFileName);
+        write_float(output, subHeaders[i].TransparentColorFactor);
+
+        if(subHeaders[i].MapType == 3){
+            write_uint32(output, subHeaders[i].NrOfCrossCorrLags);
+            write_uint32(output, subHeaders[i].CrossCorrMinLag);
+            write_uint32(output, subHeaders[i].CrossCorrMaxLag);
+            write_uint32(output, subHeaders[i].ShowCorrelations);
+        }
+
+        write_uint32(output, subHeaders[i].ClusterSize);
+        write_uint8(output, subHeaders[i].UseClusterSize);
+
+        write_uint32(output, subHeaders[i].IncludeValuesGreaterThreshMax);
+        write_uint32(output, subHeaders[i].df1);
+        write_uint32(output, subHeaders[i].df2);
+        write_uint8(output, subHeaders[i].ShowPosOrNegOrBoth);
+
+        write_uint32(output, subHeaders[i].NrOfStatVoxels);
+
+        write_uint32(output, subHeaders[i].SizeOfFdrTable);
+        for(int j = 0; j < subHeaders[i].SizeOfFdrTable; j++){
+            write_float(output, subHeaders[i].FdrTable[j].q);
+            write_float(output, subHeaders[i].FdrTable[j].crit_std);
+            write_float(output, subHeaders[i].FdrTable[j].crit_conservative);
+        }
+        write_uint32(output, subHeaders[i].FdrTableIndex);
+    }
+
+    if(NrOfTimePoints > 0){
+        for(int i = 0; i < NrOfMaps; i++){
+            for(int j = 0; j < NrOfTimePoints; j++){
+                write_float(output, subHeaders[i].TimeCourse[j]);
+            }
+        }
+    }
+    if(NrOfMapParams > 0){
+        NamesOfComponentParameters = std::vector<std::string>(NrOfMapParams);
+        ComponentParams = std::vector<float>(NrOfMapParams);
+        for(int i = 0; i < NrOfMapParams; i++){
+            write_zstring(output, NamesOfComponentParameters[i]);
+            write_float(output, ComponentParams[i]);
+        }
+    }
+
+    for(int i = 0; i < NrOfMaps; i++){
+        for(int zindex = 0; zindex < dimZ; zindex++){
+            for(int yindex = 0; yindex < dimY; yindex++){
+                for(int xindex = 0; xindex < dimX; xindex++){
+                    write_float(output, data[i][zindex*dimX*dimY + yindex+dimX +zindex]);
+                }
+            }
+        }
+    }
+
+    output.close();
+}
+
 void MyVmp::readvmp(const char * filename){
 
     //Opening file in read only binary mode
@@ -53,12 +170,10 @@ void MyVmp::readvmp(const char * filename){
 
         subHeaders[i].NameOfMap = read_string(input);
 
-        //NOTE:This shouldn't be a permanent solution
-        //3 bytes colors. There are 4 of them, so
-        //skip them we read 12 bytes.
-        read_uint32(input);
-        read_uint32(input);
-        read_uint32(input);
+        subHeaders[i].ColorPosMin = read_uint24(input);
+        subHeaders[i].ColorPosMax = read_uint24(input);
+        subHeaders[i].ColorNegMin = read_uint24(input);
+        subHeaders[i].ColorNegMax = read_uint24(input);
 
         subHeaders[i].UseMapColor = read_uint8(input);
         subHeaders[i].LUTFileName = read_string(input);
@@ -127,7 +242,7 @@ void MyVmp::readvmp(const char * filename){
     input.close();
 }
 
-int MyVmp::getNrSubjects(){
+int MyVmp::getNrMaps(){
     return NrOfMaps;
 }
 

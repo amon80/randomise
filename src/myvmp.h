@@ -53,7 +53,9 @@ class MyVmp
 public:
     MyVmp();
     void readvmp(const char * filename);
-    int getNrSubjects();
+    void writevmp(const char * filename);
+    int getNrMaps();
+    void removeSubMap(int index);
 private:
     //header
     int NrOfMaps;
