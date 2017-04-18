@@ -243,14 +243,11 @@ void MyVmp::readvmp(const char * filename){
     dimZ = (ZEnd - ZStart) / Resolution;
 
     data = std::vector<std::vector<float>>(NrOfMaps);
+    int dim = dimX*dimY*dimZ;
     for(int i = 0; i < NrOfMaps; i++){
-        data[i] = std::vector<float>(dimX*dimY*dimZ);
-        for(int zindex = 0; zindex < dimZ; zindex++){
-            for(int yindex = 0; yindex < dimY; yindex++){
-                for(int xindex = 0; xindex < dimX; xindex++){
-                    data[i][zindex*dimX*dimY + yindex+dimX +zindex] = read_float(input);
-                }
-            }
+        data[i] = std::vector<float>(dim);
+        for(int j = 0; j < dim; j++){
+            data[i][j] = read_float(input);
         }
     }
 
