@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+//TODO: Implement operator==
+
 struct fdrentry{
     float q;
     float crit_std;
@@ -30,9 +32,21 @@ struct vmp_header{
     int CrossCorrMaxLag;		// use value only if MapType "3"
     int ShowCorrelations;		// use value only if MapType "3", if "1" shows correlation value, if "0" shows lag value in overlayed map
 
-    int color1;
-    int color2;
-    int color3;
+    int RedPositiveMinValue;
+    int GreenPositiveMinValue;
+    int YellowPositiveMinValue;
+
+    int RedPositiveMaxValue;
+    int GreenPositiveMaxValue;
+    int YellowPositiveMaxValue;
+
+    int RedNegativeMinValue;
+    int GreenNegativeMinValue;
+    int YellowNegativeMinValue;
+
+    int RedNegativeMaxValue;
+    int GreenNegativeMaxValue;
+    int YellowNegativeMaxValue;
 
     int UseMapColor;
 

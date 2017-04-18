@@ -23,9 +23,11 @@ TestMyVMP::~TestMyVMP(){
 
 void TestMyVMP::testcase1(){
     MyVmp v;
-    //They are not the same. Data is fucked up
+    MyVmp v1;
+    //BUG: They are not the same. Still don't know why.
     v.readvmp("/home/marco/TestData/BetaMapsFillContrast.vmp");
     v.writevmp("/home/marco/TestData/BetaMapsFillContrastCopy.vmp");
+    v1.readvmp("/home/marco/TestData/BetaMapsFillContrastCopy.vmp");
 }
 
 void TestMyVMP::initTestCase(){

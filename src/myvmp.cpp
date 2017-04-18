@@ -14,7 +14,6 @@ void MyVmp::removeSubMap(int index){
 }
 
 void MyVmp::writevmp(const char * filename){
-
     //Opening file in write only binary mode
     std::ofstream output(filename, std::ios::binary);
 
@@ -41,11 +40,11 @@ void MyVmp::writevmp(const char * filename){
 
     write_uint32(output, Resolution);
 
-    write_uint32(output, dimX);
-    write_uint32(output, dimY);
-    write_uint32(output, dimZ);
+    //dimX, dimY, dimZ
+    write_uint32(output, 256);
+    write_uint32(output, 256);
+    write_uint32(output, 256);
 
-    //Names: vtc, prt, voi
     write_zstring(output, VTCFileName);
     write_zstring(output, ProtocolFileName);
     write_zstring(output, VOIFileName);
@@ -57,9 +56,21 @@ void MyVmp::writevmp(const char * filename){
 
         write_zstring(output, subHeaders[i].NameOfMap);
 
-        write_uint32(output, subHeaders[i].color1);
-        write_uint32(output, subHeaders[i].color2);
-        write_uint32(output, subHeaders[i].color3);
+        write_uint8(output, subHeaders[i].RedPositiveMinValue);
+        write_uint8(output, subHeaders[i].GreenPositiveMinValue);
+        write_uint8(output, subHeaders[i].YellowPositiveMinValue);
+
+        write_uint8(output, subHeaders[i].RedPositiveMaxValue);
+        write_uint8(output, subHeaders[i].GreenPositiveMaxValue);
+        write_uint8(output, subHeaders[i].YellowPositiveMaxValue);
+
+        write_uint8(output, subHeaders[i].RedNegativeMinValue);
+        write_uint8(output, subHeaders[i].GreenNegativeMinValue);
+        write_uint8(output, subHeaders[i].YellowNegativeMinValue);
+
+        write_uint8(output, subHeaders[i].RedNegativeMaxValue);
+        write_uint8(output, subHeaders[i].GreenNegativeMaxValue);
+        write_uint8(output, subHeaders[i].YellowNegativeMaxValue);
 
         write_uint8(output, subHeaders[i].UseMapColor);
         write_zstring(output, subHeaders[i].LUTFileName);
@@ -107,13 +118,10 @@ void MyVmp::writevmp(const char * filename){
         }
     }
 
+    int dim = dimX*dimY*dimZ;
     for(int i = 0; i < NrOfMaps; i++){
-        for(int zindex = 0; zindex < dimZ; zindex++){
-            for(int yindex = 0; yindex < dimY; yindex++){
-                for(int xindex = 0; xindex < dimX; xindex++){
-                    write_float(output, data[i][zindex*dimX*dimY + yindex+dimX +zindex]);
-                }
-            }
+        for(int j = 0; j < dim; j++){
+            write_float(output, data[i][j]);
         }
     }
 
@@ -166,10 +174,21 @@ void MyVmp::readvmp(const char * filename){
 
         subHeaders[i].NameOfMap = read_string(input);
 
-        //NOTE: Just to make it work
-        subHeaders[i].color1 = read_uint32(input);
-        subHeaders[i].color2 = read_uint32(input);
-        subHeaders[i].color3 = read_uint32(input);
+        subHeaders[i].RedPositiveMinValue = read_uint8(input);
+        subHeaders[i].GreenPositiveMinValue = read_uint8(input);
+        subHeaders[i].YellowPositiveMinValue = read_uint8(input);
+
+        subHeaders[i].RedPositiveMaxValue = read_uint8(input);
+        subHeaders[i].GreenPositiveMaxValue = read_uint8(input);
+        subHeaders[i].YellowPositiveMaxValue = read_uint8(input);
+
+        subHeaders[i].RedNegativeMinValue = read_uint8(input);
+        subHeaders[i].GreenNegativeMinValue = read_uint8(input);
+        subHeaders[i].YellowNegativeMinValue = read_uint8(input);
+
+        subHeaders[i].RedNegativeMaxValue = read_uint8(input);
+        subHeaders[i].GreenNegativeMaxValue = read_uint8(input);
+        subHeaders[i].YellowNegativeMaxValue = read_uint8(input);
 
         subHeaders[i].UseMapColor = read_uint8(input);
         subHeaders[i].LUTFileName = read_string(input);
