@@ -19,6 +19,6 @@ EvsTabTopPart::EvsTabTopPart(QWidget *parent)
     layout->addWidget(loadFileButton);
     layout->addWidget(clearButton);
     this->setLayout(layout);
-    QObject::connect(loadFileButton, SIGNAL(clicked(bool)), this->parentWidget(), SLOT(openVmp()));
-    QObject::connect(clearButton, SIGNAL(clicked(bool)), this->parentWidget(), SLOT(clearAll()));
+    QObject::connect(loadFileButton, SIGNAL(clicked(bool)), this->parentWidget(), SIGNAL(openVmp()));
+    QObject::connect(clearButton, SIGNAL(clicked(bool)), this->parentWidget(), SIGNAL(clearAll()));
 }

@@ -1,40 +1,41 @@
 #include <QVBoxLayout>
-#include <QFileDialog>
 #include "evstab.h"
 
-void EvsTab::openVmp(){
-    QString filepath = QFileDialog::getOpenFileName(this, tr("Open Vmp"), "/home/marco", tr("Vmp Files (*.vmp)"));
-    top->setFileName(filepath);
-    //TODO
+void EvsTab::addSubject(){
+    bottom->addRow();
 }
 
-void EvsTab::clearAll(){
-    top->setFileName("");
-    //TODO
+void EvsTab::removeSubject(){
+    bottom->removeRow();
+}
+
+void EvsTab::removeAllSubjects(){
+    int n = bottom->getNRows();
+    for(int i = 0; i < n; i++){
+        bottom->removeRow();
+    }
+}
+
+
+void EvsTab::setFileName(const QString& filename){
+    top->setFileName(filename);
 }
 
 void EvsTab::addOrRemoveEvs(int evNumber){
-    //First, take the number of previous ev
-    //can be taken by labels or design matrix
-    //equivalentely
     int oldEvNumber = middle->getNumberOfEvs();
     int difference = evNumber - oldEvNumber;
     if(difference > 0){
-        //Case #1: Adding EV
         for(int i = 0; i < difference; i++){
             middle->addEv();
             bottom->addEv();
         }
     }else{
-        //Case #2: Removing EV
         difference = -difference;
         for(int i = 0; i < difference; i++){
             middle->removeEv();
             bottom->removeEv();
         }
     }
-    //Either case, signal should be propagated to main window, so contrast tab can be fixed
-    //TODO
 }
 
 EvsTab::EvsTab(QWidget *parent)
@@ -64,5 +65,7 @@ EvsTab::EvsTab(QWidget *parent)
 
     //Propagating the signals received from the bottom layer to to upper layer
     QObject::connect(this, SIGNAL(valueChanged(int)), this->parentWidget(), SLOT(addOrRemoveEvs(int)));
+    QObject::connect(this, SIGNAL(openVmp()), this->parentWidget(), SLOT(openVmp()));
+    QObject::connect(this, SIGNAL(clearAll()), this->parentWidget(), SLOT(clearAll()));
 
 }

@@ -1,5 +1,9 @@
 #include "evstabbottompart.h"
 
+int EvsTabBottomPart::getNRows(){
+    return rows.size();
+}
+
 void EvsTabBottomPart::addEv(){
     int nrows = rows.size();
     for(int i = 0; i < nrows; i++){

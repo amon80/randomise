@@ -18,9 +18,12 @@ class EvsTab : public QWidget
 public:
     explicit EvsTab(QWidget *parent = 0);
     void addOrRemoveEvs(int evNumber);
+    void setFileName(const QString &filename);
+    void addSubject();
+    void removeSubject();
+    void removeAllSubjects();
 signals:
     void valueChanged(int value);
-public slots:
     void openVmp();
     void clearAll();
 private slots:
