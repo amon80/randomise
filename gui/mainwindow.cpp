@@ -29,7 +29,7 @@ void MainWindow::openVmp(){
     QString filepath = QFileDialog::getOpenFileName(this, tr("Open vmp"), QDir::home().absolutePath(), tr("vmp Files (*.vmp)"));
     evsTab->setFileName(filepath);
     vmp.readvmp(filepath.toStdString().c_str());
-    int n_subjects = vmp.getNrSubjects();
+    int n_subjects = vmp.getNrMaps();
     for(int i = 0; i < n_subjects; i++){
         evsTab->addSubject();
     }
