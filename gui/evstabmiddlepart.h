@@ -18,7 +18,6 @@ signals:
 
 public slots:
 private:
-    QWidget * parent;
     QLabel * emptyLabel;
     QLabel * groupLabel;
     QVector<QLabel*> evLabels;

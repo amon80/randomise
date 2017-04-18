@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QDialog(parent)
 {
    tabs = new QTabWidget;
-   //TODO: will be taken from the command line, otherwise 1
    evsTab = new EvsTab(this);
    contrastTab = new ContrastTab(this);
    tabs->addTab(evsTab, tr("EVs"));

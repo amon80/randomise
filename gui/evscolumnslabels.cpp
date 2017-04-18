@@ -1,5 +1,9 @@
 #include "evscolumnslabels.h"
 
+int EvsColumnsLabels::getNumberOfEvs(){
+    return evsLabels.size();
+}
+
 void EvsColumnsLabels::addOrRemoveEvs(int evNumber){
     int previousSize = evsLabels.size();
     int difference = evNumber - previousSize;

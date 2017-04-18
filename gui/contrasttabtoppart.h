@@ -11,9 +11,7 @@ class ContrastTabTopPart : public QWidget
     Q_OBJECT
 public:
     explicit ContrastTabTopPart(QWidget *parent = 0);
-
 signals:
-
 public slots:
 private:
     QHBoxLayout * layout;

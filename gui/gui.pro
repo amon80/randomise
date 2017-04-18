@@ -32,7 +32,11 @@ SOURCES += main.cpp\
     contrasttabtoppart.cpp \
     contrasttabuppermiddlepart.cpp \
     evscolumnslabels.cpp \
-    ftestcolumnslabels.cpp
+    ftestcolumnslabels.cpp \
+    contrasttabmiddlepart.cpp \
+    contrasttabmiddlepartcontent.cpp \
+    evsspinboxes.cpp \
+    ftestscheckboxes.cpp
 
 HEADERS  += mainwindow.h \
     evstab.h \
@@ -45,4 +49,8 @@ HEADERS  += mainwindow.h \
     contrasttabtoppart.h \
     contrasttabuppermiddlepart.h \
     evscolumnslabels.h \
-    ftestcolumnslabels.h
+    ftestcolumnslabels.h \
+    contrasttabmiddlepart.h \
+    contrasttabmiddlepartcontent.h \
+    evsspinboxes.h \
+    ftestscheckboxes.h

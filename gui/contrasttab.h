@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include "contrasttabtoppart.h"
 #include "contrasttabuppermiddlepart.h"
+#include "contrasttabmiddlepart.h"
 
 class ContrastTab : public QWidget
 {
@@ -14,13 +15,16 @@ class ContrastTab : public QWidget
 public:
     explicit ContrastTab(QWidget *parent = 0);
     void addOrRemoveEvs(int evsNumber);
+    int getNumberOfEvs();
+    int getNumberOfFTests();
 signals:
-
 public slots:
-
+    void ftestsValueChanged(int ftestsNumber);
+    void contrastsValueChanged(int);
 private:
     ContrastTabTopPart * top;
     ContrastTabMiddleUpperPart * uppermiddle;
+    ContrastTabMiddlePart * middle;
 };
 
 #endif // CONTRASTTAB_H

@@ -14,13 +14,17 @@ class ContrastTabMiddleUpperPart : public QWidget
 public:
     explicit ContrastTabMiddleUpperPart(QWidget *parent = 0);
     void addOrRemoveEvs(int evsNumber);
+    void addFTest();
+    void removeFTest();
+    int getNumberOfFTests();
+    int getNumberOfEvs();
 signals:
 
 public slots:
 private:
     QHBoxLayout * layout;
     QLabel * emptyLabel;
-    QLabel * contrastTitle;
+    QLabel * contrastTitleLabel;
     EvsColumnsLabels * evsColumnsLabels;
     FTestColumnsLabels * fTestColumnsLabels;
 };

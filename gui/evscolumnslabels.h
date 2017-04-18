@@ -12,6 +12,7 @@ class EvsColumnsLabels : public QWidget
 public:
     explicit EvsColumnsLabels(QWidget *parent = 0);
     void addOrRemoveEvs(int evNumber);
+    int getNumberOfEvs();
 signals:
 
 public slots:
