@@ -20,6 +20,8 @@ public slots:
     void addOrRemoveEvs(int evsNumber);
     void openVmp();
     void clearAll();
+    void collectDataAndFire();
+    void closeWindow();
 private:
     QVBoxLayout * mainLayout;
     QTabWidget * tabs;

@@ -1,6 +1,25 @@
 #include "mainwindow.h"
 #include <QFileDialog>
 
+void MainWindow::collectDataAndFire(){
+    //Collect data(design matrix) from the evsTab
+
+    //Collect data(contrast and ftests) from the contrastTab
+
+    //Prepare data for Randomise
+
+    //Fire Randomise
+
+    //Save results in VMP (one or more)
+
+    //Close Dialog
+    MainWindow::close();
+}
+
+void MainWindow::closeWindow(){
+    MainWindow::close();
+}
+
 void MainWindow::addOrRemoveEvs(int evsNumber){
     evsTab->addOrRemoveEvs(evsNumber);
     contrastTab->addOrRemoveEvs(evsNumber);
@@ -33,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
    //TODO: Ok button will collect data and fire randomise
-   connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-   connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(collectDataAndFire()));
+   QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(closeWindow()));
 
    mainLayout = new QVBoxLayout;
    mainLayout->addWidget(tabs);
