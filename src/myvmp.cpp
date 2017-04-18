@@ -57,13 +57,9 @@ void MyVmp::writevmp(const char * filename){
 
         write_zstring(output, subHeaders[i].NameOfMap);
 
-        //TODO:change all the reads with writes
-        //Check the writez string function
-
-        write_uint24(output, subHeaders[i].ColorPosMin);
-        write_uint24(output, subHeaders[i].ColorPosMax);
-        write_uint24(output, subHeaders[i].ColorNegMin);
-        write_uint24(output, subHeaders[i].ColorNegMax);
+        write_uint32(output, subHeaders[i].color1);
+        write_uint32(output, subHeaders[i].color2);
+        write_uint32(output, subHeaders[i].color3);
 
         write_uint8(output, subHeaders[i].UseMapColor);
         write_zstring(output, subHeaders[i].LUTFileName);
@@ -170,10 +166,10 @@ void MyVmp::readvmp(const char * filename){
 
         subHeaders[i].NameOfMap = read_string(input);
 
-        subHeaders[i].ColorPosMin = read_uint24(input);
-        subHeaders[i].ColorPosMax = read_uint24(input);
-        subHeaders[i].ColorNegMin = read_uint24(input);
-        subHeaders[i].ColorNegMax = read_uint24(input);
+        //NOTE: Just to make it work
+        subHeaders[i].color1 = read_uint32(input);
+        subHeaders[i].color2 = read_uint32(input);
+        subHeaders[i].color3 = read_uint32(input);
 
         subHeaders[i].UseMapColor = read_uint8(input);
         subHeaders[i].LUTFileName = read_string(input);

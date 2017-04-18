@@ -26,15 +26,6 @@ std::uint16_t read_uint16(std::istream& stream) {
     return u;
 }
 
-int read_uint24(std::istream& stream){
-    int u(0);
-    stream.read(reinterpret_cast<char * >(&u), 24);
-    if (stream.fail())
-        throw ReadFileError("error reading from binary file");
-    return u;
-}
-
-
 std::uint32_t read_uint32(std::istream& stream) {
     std::uint32_t u(0);
     stream.read(reinterpret_cast<char * >(&u), sizeof(u));
@@ -110,12 +101,6 @@ void write_uint32(std::ostream& stream, uint32_t u) {
 
 void write_uint16(std::ostream& stream, uint16_t u) {
     stream.write(reinterpret_cast<char * >(&u), sizeof(u));
-    if (stream.fail())
-        throw WriteFileError("error writing to binary file");
-}
-
-void write_uint24(std::ostream& stream, int u) {
-    stream.write(reinterpret_cast<char * >(&u), 24);
     if (stream.fail())
         throw WriteFileError("error writing to binary file");
 }

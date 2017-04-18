@@ -30,10 +30,10 @@ struct vmp_header{
     int CrossCorrMaxLag;		// use value only if MapType "3"
     int ShowCorrelations;		// use value only if MapType "3", if "1" shows correlation value, if "0" shows lag value in overlayed map
 
-    int ColorPosMin;
-    int ColorPosMax;
-    int ColorNegMin;
-    int ColorNegMax;
+    int color1;
+    int color2;
+    int color3;
+
     int UseMapColor;
 
     int SizeOfFdrTable;

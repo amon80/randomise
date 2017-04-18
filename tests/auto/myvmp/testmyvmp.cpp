@@ -23,7 +23,9 @@ TestMyVMP::~TestMyVMP(){
 
 void TestMyVMP::testcase1(){
     MyVmp v;
+    //They are not the same. Data is fucked up
     v.readvmp("/home/marco/TestData/BetaMapsFillContrast.vmp");
+    v.writevmp("/home/marco/TestData/BetaMapsFillContrastCopy.vmp");
 }
 
 void TestMyVMP::initTestCase(){
