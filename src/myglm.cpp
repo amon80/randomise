@@ -119,12 +119,7 @@ void readglm(const char * filename){
             ssmNames[i] = read_string(input);
         sdmNames[i] = read_string(input);
     }
-    /*
-    for(int i = 0; i < nStudies; i++){
-        std::cout << "VTC " << i << " " << vtcNames[i] << std::endl;
-        std::cout << "SDM " << i << " " << sdmNames[i] << std::endl;
-    }
-    */
+
     if(rfxGLMFlag == 0){
         //TODO
     }

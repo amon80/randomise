@@ -2,6 +2,7 @@
 #include <QFileDialog>
 
 void MainWindow::collectDataAndFire(){
+    //TODO
     //Collect data(design matrix) from the evsTab
 
     //Collect data(contrast and ftests) from the contrastTab
@@ -51,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
    tabs->addTab(contrastTab, tr("Contrasts &&& F-tests"));
    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 
-   //TODO: Ok button will collect data and fire randomise
    QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(collectDataAndFire()));
    QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(closeWindow()));
 

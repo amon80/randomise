@@ -10,6 +10,7 @@ public:
 private slots:
     void initTestCase();
     void testcase1();
+    void testcase2();
     void cleanUpTestCase();
 };
 
@@ -21,14 +22,20 @@ TestMyVMP::~TestMyVMP(){
 
 }
 
+//They're the same
 void TestMyVMP::testcase1(){
     MyVmp v;
-    MyVmp v1;
-    //BUG: They are not the same. Still don't know why.
     v.readvmp("/home/marco/TestData/BetaMapsFillContrast.vmp");
     v.writevmp("/home/marco/TestData/BetaMapsFillContrastCopy.vmp");
-    v1.readvmp("/home/marco/TestData/BetaMapsFillContrastCopy.vmp");
 }
+
+//They're the same
+void TestMyVMP::testcase2(){
+    MyVmp v;
+    v.readvmp("/home/marco/TestData/TMapFillContrast.vmp");
+    v.writevmp("/home/marco/TestData/TMapFillContrastCopy.vmp");
+}
+
 
 void TestMyVMP::initTestCase(){
 
