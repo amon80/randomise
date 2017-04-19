@@ -4,7 +4,10 @@
 #include <vector>
 #include <string>
 
-//TODO: Implement operator==
+//TODO:Add all kinds of map
+enum MapTypeEnum{
+    beta = 15, t = 1
+};
 
 struct fdrentry{
     float q;
@@ -15,7 +18,7 @@ struct fdrentry{
 struct vmp_header{
     std::string NameOfMap;			// 101 chars
 
-    int MapType;
+    MapTypeEnum MapType;
 
     float ThreshMin;
     float ThreshMax;

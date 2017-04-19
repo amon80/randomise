@@ -50,7 +50,7 @@ void MyVmp::writevmp(const char * filename){
     write_zstring(output, VOIFileName);
 
     for(int i = 0; i < NrOfMaps; i++){
-        write_uint32(output, subHeaders[i].MapType);
+        write_uint32(output, static_cast<uint32_t>(subHeaders[i].MapType));
         write_float(output, subHeaders[i].ThreshMin);
         write_float(output, subHeaders[i].ThreshMax);
 
@@ -168,7 +168,7 @@ void MyVmp::readvmp(const char * filename){
     subHeaders = std::vector<vmp_header>(NrOfMaps);
 
     for(int i = 0; i < NrOfMaps; i++){
-        subHeaders[i].MapType = read_uint32(input);
+        subHeaders[i].MapType = static_cast<MapTypeEnum>(read_uint32(input));
         subHeaders[i].ThreshMin = read_float(input);
         subHeaders[i].ThreshMax = read_float(input);
 
