@@ -160,7 +160,8 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
                 permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, c, s, VGS);
                 if(permutedStatistic[v] >= toReturn[index].originalStatistic[v]){
-                    toReturn[index].uncorrected[v] += 1;
+                    #pragma omp atomic
+                        toReturn[index].uncorrected[v] += 1;
                 }
             }
 
@@ -182,7 +183,8 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             //Using the maximum to compute FWER
             for(int v = 0; v < numVoxels; v++){
                 if(maxTj >= toReturn[index].originalStatistic[v]){
-                    toReturn[index].corrected[v] += 1;
+                    #pragma omp atomic
+                        toReturn[index].corrected[v] += 1;
                 }
             }
         }
