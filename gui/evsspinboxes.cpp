@@ -1,5 +1,9 @@
 #include "evsspinboxes.h"
 
+int EvsSpinBoxes::getContrast(int evNumber){
+    return spinBoxes[evNumber]->value();
+}
+
 int EvsSpinBoxes::getEvsNumber(){
     return spinBoxes.size();
 }

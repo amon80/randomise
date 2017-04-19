@@ -11,6 +11,7 @@ INCLUDEPATH += ../../../src
 SOURCES +=  testpermutationtree.cpp \
             ../../../src/permutationtreeblock.cpp \
             ../../../src/permutationtree.cpp \
+            ../../../src/multyrowarray.cpp \
             ../../../src/threecolsarray.cpp \
             ../../../src/binarystring.cpp \
             ../../../src/mymath.cpp \

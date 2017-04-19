@@ -16,6 +16,7 @@ public:
     void addRow(int nEvs);
     void removeRow();
     int getNRows();
+    int getEvs(int row, int col);
 signals:
 
 public slots:

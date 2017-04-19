@@ -26,33 +26,32 @@ std::vector<int> findIndices(std::vector<int>& row, int block_number, Permutatio
     return indices;
 }
 
-void buildTreeRecursively(PermutationTreeBlock * block, unsigned int currentRow, std::vector<std::vector<int>>& multyRowArray){
+void buildTreeRecursively(PermutationTreeBlock * block, int currentRow, MultyRowArray& a){
     //base case
-    if(currentRow == multyRowArray.size()-1){
+    if(currentRow == a.size()-1){
         int n = block->getIndicesSize();
         for(int i = 0; i < n; i++){
             //last row are actual observations, so indices don't make really sense
             PermutationTreeBlock * element = new PermutationTreeBlock(false);
-            element->setValue(multyRowArray[currentRow][block->getIndex(i)]);
+            element->setValue(a[currentRow][block->getIndex(i)]);
             block->addSon(element);
         }
         return;
     }
     //recursion
-    int numSons = findMax(multyRowArray[currentRow], block);
-    //for(int i = 0; i < numSons; i++)
+    int numSons = findMax(a[currentRow], block);
     //of course depends on how block are enumerated
     //here is assumed from 1 to numSons(included)
     for(int i = 1; i <= numSons; i++){
-        std::vector<int> indices = findIndices(multyRowArray[currentRow], i, block);
+        std::vector<int> indices = findIndices(a[currentRow], i, block);
         bool permutable = false;
-        if(multyRowArray[currentRow][indices[0]] > 0)
+        if(a[currentRow][indices[0]] > 0)
             permutable = true;
         if(indices.size() == 1)
             permutable = false;
         PermutationTreeBlock * sonI = new PermutationTreeBlock(indices, permutable);
         block->addSon(sonI);
-        buildTreeRecursively(sonI, currentRow+1, multyRowArray);
+        buildTreeRecursively(sonI, currentRow+1, a);
     }
 }
 
@@ -98,18 +97,18 @@ bool confrontBranch(PermutationTreeBlock * b1, PermutationTreeBlock * b2, Eigen:
 
 //----------------CONSTRUCTOR-------------------
 
-PermutationTree::PermutationTree(std::vector<std::vector<int>>& multyRowArray)
+PermutationTree::PermutationTree(MultyRowArray &a)
 {
     bool permutable = false;
-    if(multyRowArray[0][0] > 0)
+    if(a[0][0] > 0)
         permutable = true;
-    int n = multyRowArray[0].size();
+    int n = a[0].size();
     numleaves = n;
     std::vector<int> indices(n);
     for(int i = 0; i < n; i++)
         indices[i] = i;
     root = new PermutationTreeBlock(indices, permutable);
-    buildTreeRecursively(root, 1, multyRowArray);
+    buildTreeRecursively(root, 1, a);
 }
 
 

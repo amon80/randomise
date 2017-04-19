@@ -2,6 +2,7 @@
 #define PERMUTATIONTREE_H
 
 #include <vector>
+#include "multyrowarray.h"
 #include "Eigen/Dense"
 
 class PermutationTreeBlock;
@@ -10,7 +11,7 @@ class PermutationTree
 {
 public:
     //----------CONSTRUCTOR------------
-    PermutationTree(std::vector<std::vector<int>>& multyRowArray);
+    PermutationTree(MultyRowArray& a);
     //----------DESTRUCTOR-------------
     ~PermutationTree();
     //----------INITIALIZERS-----------

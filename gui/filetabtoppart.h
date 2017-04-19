@@ -1,5 +1,5 @@
-#ifndef EVSTABTOPPART_H
-#define EVSTABTOPPART_H
+#ifndef FILETABTOPPART_H
+#define FILETABTOPPART_H
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -7,11 +7,11 @@
 #include <QPushButton>
 #include <QString>
 
-class EvsTabTopPart : public QWidget
+class FileTabTopPart : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EvsTabTopPart(QWidget *parent = 0);
+    explicit FileTabTopPart(QWidget *parent = 0);
     void setFileName(const QString &fileName);
 signals:
 
@@ -24,4 +24,4 @@ private:
     QPushButton * clearButton;
 };
 
-#endif // EVSTABTOPPART_H
+#endif // FILETABTOPPART_H

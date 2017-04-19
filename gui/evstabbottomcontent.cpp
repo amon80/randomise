@@ -1,5 +1,9 @@
 #include "evstabbottomcontent.h"
 
+int EvsTabBottomContent::getCol(int col){
+    return evs[col]->value();
+}
+
 EvsTabBottomContent::EvsTabBottomContent(QWidget *parent, QString labelText, int nEvs)
     : QWidget(parent)
 {

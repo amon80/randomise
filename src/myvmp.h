@@ -72,7 +72,12 @@ public:
     void readvmp(const char * filename);
     void writevmp(const char * filename);
     int getNrMaps();
+    int getDimX();
+    int getDimY();
+    int getDimZ();
+    std::vector<float>& operator[](const std::size_t idx);
     void removeSubMap(int index);
+    void removeAllSubMaps();
 private:
     //header
     int NrOfMaps;

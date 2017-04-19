@@ -1,5 +1,10 @@
 #include "contrasttabmiddlepart.h"
 
+int ContrastTabMiddlePart::getContrast(int contrastNumber, int evNumber){
+    return rows[contrastNumber]->getContrast(evNumber);
+}
+
+
 void ContrastTabMiddlePart::addFTest(){
     int n = rows.size();
     for(int i = 0; i < n; i++){

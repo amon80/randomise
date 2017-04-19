@@ -4,7 +4,7 @@
 #include "statisticalmap3d.h"
 #include "statisticalmap4d.h"
 #include "Eigen/Dense"
-
+#include "multyrowarray.h"
 
 struct RandomiseResult{
     StatisticalMap3D uncorrected;
@@ -13,6 +13,6 @@ struct RandomiseResult{
     std::vector<float> maxDistribution;
 };
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce = true, bool EE = true, bool ISE = false, int J = 10000);
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, MultyRowArray &a, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce = true, bool EE = true, bool ISE = false, int J = 10000);
 
 #endif // RANDOMISE_H

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     contrasttab.cpp \
     ../src/myvmp.cpp \
     ../src/binaryio.cpp \
-    evstabtoppart.cpp \
+    ../src/statisticalmap4d.cpp \
+    ../src/multyrowarray.cpp \
     evstabuppermiddlepart.cpp \
     evstabmiddlepart.cpp \
     evstabbottompart.cpp \
@@ -36,12 +37,17 @@ SOURCES += main.cpp\
     contrasttabmiddlepart.cpp \
     contrasttabmiddlepartcontent.cpp \
     evsspinboxes.cpp \
-    ftestscheckboxes.cpp
+    ftestscheckboxes.cpp \
+    filetab.cpp \
+    optionstab.cpp \
+    filetabtoppart.cpp \
+    optionstabnumberpermutationpart.cpp \
+    optionstabinferencelevelpart.cpp \
+    optionstabusetfcepart.cpp
 
 HEADERS  += mainwindow.h \
     evstab.h \
     contrasttab.h \
-    evstabtoppart.h \
     evstabuppermiddlepart.h \
     evstabmiddlepart.h \
     evstabbottompart.h \
@@ -53,4 +59,10 @@ HEADERS  += mainwindow.h \
     contrasttabmiddlepart.h \
     contrasttabmiddlepartcontent.h \
     evsspinboxes.h \
-    ftestscheckboxes.h
+    ftestscheckboxes.h \
+    filetab.h \
+    optionstab.h \
+    filetabtoppart.h \
+    optionstabnumberpermutationpart.h \
+    optionstabinferencelevelpart.h \
+    optionstabusetfcepart.h

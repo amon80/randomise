@@ -5,8 +5,10 @@
 #include <QTabWidget>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
+#include "filetab.h"
 #include "contrasttab.h"
 #include "evstab.h"
+#include "optionstab.h"
 #include "myvmp.h"
 
 class MainWindow : public QDialog
@@ -26,8 +28,10 @@ private:
     QVBoxLayout * mainLayout;
     QTabWidget * tabs;
     QDialogButtonBox * buttonBox;
+    FileTab * fileTab;
     EvsTab * evsTab;
     ContrastTab * contrastTab;
+    OptionsTab * optionsTab;
     MyVmp vmp;
 };
 

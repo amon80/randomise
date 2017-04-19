@@ -1,10 +1,16 @@
 #include <QVBoxLayout>
 #include "evstab.h"
 
+int EvsTab::getEv(int row, int col){
+    return bottom->getEvs(row, col);
+}
+
+int EvsTab::getNumEvs(){
+    return middle->getNumberOfEvs();
+}
+
 void EvsTab::addSubject(){
-    //TODO: must be modified to include n_predictors
-    int nEvs = middle->getNumberOfEvs();
-    bottom->addRow(nEvs);
+    bottom->addRow(middle->getNumberOfEvs());
 }
 
 void EvsTab::removeSubject(){
@@ -16,11 +22,6 @@ void EvsTab::removeAllSubjects(){
     for(int i = 0; i < n; i++){
         bottom->removeRow();
     }
-}
-
-
-void EvsTab::setFileName(const QString& filename){
-    top->setFileName(filename);
 }
 
 void EvsTab::addOrRemoveEvs(int evNumber){
@@ -45,11 +46,7 @@ EvsTab::EvsTab(QWidget *parent)
 {
     //Main layout
     QVBoxLayout * layout = new QVBoxLayout;
-    this->setLayout(layout);
-
-    //Top part (Load file)
-    top = new EvsTabTopPart(this);
-    layout->addWidget(top);
+    this->setLayout(layout);;
 
     //Top part (EV spinbox)
     upperMiddle = new EvsTabUpperMiddlePart(this);
@@ -67,7 +64,5 @@ EvsTab::EvsTab(QWidget *parent)
 
     //Propagating the signals received from the bottom layer to to upper layer
     QObject::connect(this, SIGNAL(valueChanged(int)), this->parentWidget(), SLOT(addOrRemoveEvs(int)));
-    QObject::connect(this, SIGNAL(openVmp()), this->parentWidget(), SLOT(openVmp()));
-    QObject::connect(this, SIGNAL(clearAll()), this->parentWidget(), SLOT(clearAll()));
 
 }

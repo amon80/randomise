@@ -17,6 +17,8 @@ public:
     void addOrRemoveEvs(int evsNumber);
     int getNumberOfEvs();
     int getNumberOfFTests();
+    int getNumberOfContrasts();
+    int getContrast(int contrastNumber, int evNumber);
 signals:
 public slots:
     void ftestsValueChanged(int ftestsNumber);

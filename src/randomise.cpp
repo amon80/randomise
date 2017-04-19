@@ -2,13 +2,14 @@
 #include "permutationtree.h"
 #include "matrices.h"
 #include "tfce.h"
+#include "mystat.h"
 #include <random>
 #include <limits>
 #include <algorithm>
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, std::vector<std::vector<int>>& MultyRowArray, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -21,7 +22,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         //since the partitioning changes with each
         //contrast.
         //Building the permutation tree
-        PermutationTree t(MultyRowArray);
+        PermutationTree t(a);
         t.initializeBinaryCounters();
         t.initializeThreeColsArray();
 
@@ -31,6 +32,12 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         Eigen::MatrixXd Z = partitioning.Z;
         int s = c.cols();
         int r = c.rows();
+
+        //Automatically switching to TStatistic if we are using F statistic and
+        //rank C == 1
+        if(pivotal == FStatistic && s == 1){
+            pivotal = TStatistic;
+        }
 
         //"For semplicity, replace M"
         if(r != s){

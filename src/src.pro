@@ -47,7 +47,8 @@ SOURCES += \
     connectivity3d26.cpp \
     binaryio.cpp \
     myglm.cpp \
-    myvmp.cpp
+    myvmp.cpp \
+    multyrowarray.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -358,7 +359,8 @@ HEADERS += \
     binaryio.h \
     ioerror.h \
     myglm.h \
-    myvmp.h
+    myvmp.h \
+    multyrowarray.h
 
 unix {
     target.path = /usr/lib

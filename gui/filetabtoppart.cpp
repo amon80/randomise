@@ -1,11 +1,11 @@
-#include "evstabtoppart.h"
+#include "filetabtoppart.h"
 
-void EvsTabTopPart::setFileName(const QString& fileName){
+void FileTabTopPart::setFileName(const QString& fileName){
     fileLabel->setText(fileName);
 }
 
 
-EvsTabTopPart::EvsTabTopPart(QWidget *parent)
+FileTabTopPart::FileTabTopPart(QWidget *parent)
     : QWidget(parent)
 {
     layout = new QHBoxLayout;

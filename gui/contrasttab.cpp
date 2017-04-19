@@ -8,6 +8,15 @@ int ContrastTab::getNumberOfFTests(){
     return uppermiddle->getNumberOfFTests();
 }
 
+int ContrastTab::getNumberOfContrasts(){
+    return middle->getNumberOfContrasts();
+}
+
+int ContrastTab::getContrast(int contrastNumber, int evNumber){
+    return middle->getContrast(contrastNumber, evNumber);
+}
+
+
 void ContrastTab::ftestsValueChanged(int ftestsNumber){
     int previousFTests = uppermiddle->getNumberOfFTests();
     int difference = ftestsNumber - previousFTests;
@@ -62,7 +71,7 @@ ContrastTab::ContrastTab(QWidget *parent) :
     uppermiddle = new ContrastTabMiddleUpperPart(this);
     layout->addWidget(uppermiddle);
 
-    //Middle part: contrasts and Ftests spin boxes
+    //Middle part: contrasts spin boxes and Ftests checkboxes
     middle = new ContrastTabMiddlePart(this);
     layout->addWidget(middle);
 }

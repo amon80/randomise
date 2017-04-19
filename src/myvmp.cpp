@@ -7,6 +7,30 @@ MyVmp::MyVmp()
 
 }
 
+
+int MyVmp::getDimX(){
+    return dimX;
+}
+
+int MyVmp::getDimY(){
+    return dimY;
+}
+
+int MyVmp::getDimZ(){
+    return dimZ;
+}
+
+std::vector<float>& MyVmp::operator[](const std::size_t idx){
+    return data[idx];
+}
+
+void MyVmp::removeAllSubMaps(){
+    int nSubMaps = data.size();
+    for(int i = 0; i < nSubMaps; i++){
+        removeSubMap(data.size()-1);
+    }
+}
+
 void MyVmp::removeSubMap(int index){
     NrOfMaps--;
     subHeaders.erase(subHeaders.begin()+index);

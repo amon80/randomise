@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include "permutationtree.h"
+#include "multyrowarray.h"
 #include "matrices.h"
 #include "mystat.h"
 #include "randomise.h"
@@ -125,15 +126,12 @@ bool RandomisePlugin::execute()
         //Initializing multyrow array
         //NOTE: GUI controls can be made in the future
         //And maybe also a class since the last row is always the same
-        std::vector<std::vector<int>> multyRowArray(2);
+        MultyRowArray a(num_of_maps,2);
         for(int i = 0; i < 2; i++)
-            multyRowArray[i] = std::vector<int>(num_of_maps);
+            a[i] = std::vector<int>(num_of_maps);
         //Filling first row
         for(int i = 0; i < num_of_maps; i++)
-            multyRowArray[0][i] = 1;
-        //Filling second row
-        for(int i = 0; i < num_of_maps; i++)
-            multyRowArray[1][i] = i+1;
+            a[0][i] = 1;
 
         //Go with the math!
         //DEBUG NOTE: set to 1 permutation is set to test F/T statistic correctness
@@ -152,7 +150,7 @@ bool RandomisePlugin::execute()
         bool ISE = true;
 
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, multyRowArray, TStatistic, useTfce, EE, ISE, J);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, a, TStatistic, useTfce, EE, ISE, J);
         qxStopBusyCursor();
 
         int n = C.size();

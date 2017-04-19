@@ -14,7 +14,7 @@ public:
     explicit EvsTabBottomContent(QWidget *parent = 0, QString labelText = "", int nEvs = 0);
     void addEv();
     void removeEv();
-
+    int getCol(int col);
 signals:
 
 public slots:

@@ -14,6 +14,7 @@ public:
     int getEvsNumber();
     void addEv();
     void removeEv();
+    int getContrast(int evNumber);
 signals:
 
 public slots:

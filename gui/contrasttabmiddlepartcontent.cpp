@@ -1,5 +1,10 @@
 #include "contrasttabmiddlepartcontent.h"
 
+int ContrastTabMiddlePartContent::getContrast(int evNumber){
+    return evsSpinBoxes->getContrast(evNumber);
+}
+
+
 void ContrastTabMiddlePartContent::addFTest(){
     fTestsCheckBoxes->addFTest();
 }

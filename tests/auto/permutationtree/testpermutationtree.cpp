@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include "permutationtree.h"
+#include "multyrowarray.h"
 #include "matrices.h"
 
 //Utility class used to compare generated permutations
@@ -32,13 +33,13 @@ public:
 private:
     Eigen::MatrixXd X1;
     Eigen::MatrixXd X2;
-    std::vector<std::vector<int>> multyRowArray1;
-    std::vector<std::vector<int>> multyRowArray2;
-    void testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray);
-    void testAllSignFlippingsTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray);
-    void testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray);
-    void testRandomSwapping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n);
-    void testRandomSignFlipping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n);
+    MultyRowArray a1;
+    MultyRowArray a2;
+    void testLAlgorithmTree(Eigen::MatrixXd& X, MultyRowArray& a);
+    void testAllSignFlippingsTree(Eigen::MatrixXd& X, MultyRowArray& a);
+    void testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X, MultyRowArray& a);
+    void testRandomSwapping(Eigen::MatrixXd& X, MultyRowArray& a, int n);
+    void testRandomSignFlipping(Eigen::MatrixXd& X, MultyRowArray& a, int n);
     void computeShuffling(PermutationTree &t, std::set<std::vector<int>, classcomp> &generatedPermutations, int &currentPermutation);
 
 private slots:
@@ -58,9 +59,9 @@ private slots:
 
 //--------------PRIVATE METHODS------------------
 
-void TestPermutationTree::testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray) {
+void TestPermutationTree::testLAlgorithmTree(Eigen::MatrixXd& X, MultyRowArray& a) {
 
-    PermutationTree t(multyRowArray);
+    PermutationTree t(a);
     t.initializeThreeColsArray();
     t.initializeBinaryCounters();
     int numPermutations = t.calculatePermutations(X, true, false);
@@ -105,9 +106,9 @@ void TestPermutationTree::testLAlgorithmTree(Eigen::MatrixXd& X, std::vector<std
     std::cout << "Finished!" << std::endl;
 }
 
-void TestPermutationTree::testAllSignFlippingsTree(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray) {
+void TestPermutationTree::testAllSignFlippingsTree(Eigen::MatrixXd& X, MultyRowArray& a) {
 
-    PermutationTree t(multyRowArray);
+    PermutationTree t(a);
     t.initializeThreeColsArray();
     t.initializeBinaryCounters();
     int numPermutations = t.calculatePermutations(X, false, true);
@@ -173,8 +174,8 @@ void TestPermutationTree::computeShuffling(PermutationTree& t, std::set<std::vec
     std::cout << P << std::endl;
 }
 
-void TestPermutationTree::testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray){
-    PermutationTree t(multyRowArray);
+void TestPermutationTree::testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X, MultyRowArray &a){
+    PermutationTree t(a);
     t.initializeThreeColsArray();
     t.initializeBinaryCounters();
     int numPermutations = t.calculatePermutations(X, true, true);
@@ -207,8 +208,8 @@ void TestPermutationTree::testAllSignFlippingsAndPermutation(Eigen::MatrixXd& X,
 }
 
 
-void TestPermutationTree::testRandomSwapping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n){
-    PermutationTree t(multyRowArray);
+void TestPermutationTree::testRandomSwapping(Eigen::MatrixXd& X, MultyRowArray &a, int n){
+    PermutationTree t(a);
     t.initializeThreeColsArray();
     t.initializeBinaryCounters();
     int numPermutations = t.calculatePermutations(X, true, false);
@@ -244,8 +245,8 @@ void TestPermutationTree::testRandomSwapping(Eigen::MatrixXd& X, std::vector<std
     std::cout << "Finished!" << std::endl;
 }
 
-void TestPermutationTree::testRandomSignFlipping(Eigen::MatrixXd& X, std::vector<std::vector<int>>& multyRowArray, int n){
-    PermutationTree t(multyRowArray);
+void TestPermutationTree::testRandomSignFlipping(Eigen::MatrixXd& X, MultyRowArray &a, int n){
+    PermutationTree t(a);
     t.initializeThreeColsArray();
     t.initializeBinaryCounters();
     int numPermutations = t.calculatePermutations(X, false, true);
@@ -328,61 +329,38 @@ TestPermutationTree::TestPermutationTree()
     X2(8,0) = 5;
     X2(8,1) = 6;
 
-    multyRowArray1 = std::vector<std::vector<int>>(3);
+    a1 = MultyRowArray(9,3);
+    a1[0][0] = 1;
+    a1[0][1] = 1;
+    a1[0][2] = 1;
+    a1[0][3] = 1;
+    a1[0][4] = 1;
+    a1[0][5] = 1;
+    a1[0][6] = 1;
+    a1[0][7] = 1;
+    a1[0][8] = 1;
 
-    //first row
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    multyRowArray1[0].push_back(1);
-    //second row
-    multyRowArray1[1].push_back(-1);
-    multyRowArray1[1].push_back(-1);
-    multyRowArray1[1].push_back(-1);
-    multyRowArray1[1].push_back(-2);
-    multyRowArray1[1].push_back(-2);
-    multyRowArray1[1].push_back(-2);
-    multyRowArray1[1].push_back(-3);
-    multyRowArray1[1].push_back(-3);
-    multyRowArray1[1].push_back(-3);
-    //third row
-    multyRowArray1[2].push_back(1);
-    multyRowArray1[2].push_back(2);
-    multyRowArray1[2].push_back(3);
-    multyRowArray1[2].push_back(4);
-    multyRowArray1[2].push_back(5);
-    multyRowArray1[2].push_back(6);
-    multyRowArray1[2].push_back(7);
-    multyRowArray1[2].push_back(8);
-    multyRowArray1[2].push_back(9);
+    a1[1][0] = -1;
+    a1[1][1] = -1;
+    a1[1][2] = -1;
+    a1[1][3] = -2;
+    a1[1][4] = -2;
+    a1[1][5] = -2;
+    a1[1][6] = -3;
+    a1[1][7] = -3;
+    a1[1][8] = -3;
 
-    multyRowArray2 = std::vector<std::vector<int>>(2);
+    a2 = MultyRowArray(9,2);
 
-    //first row
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    multyRowArray2[0].push_back(1);
-    //third row
-    multyRowArray2[1].push_back(1);
-    multyRowArray2[1].push_back(2);
-    multyRowArray2[1].push_back(3);
-    multyRowArray2[1].push_back(4);
-    multyRowArray2[1].push_back(5);
-    multyRowArray2[1].push_back(6);
-    multyRowArray2[1].push_back(7);
-    multyRowArray2[1].push_back(8);
-    multyRowArray2[1].push_back(9);
+    a2[0][0] = 1;
+    a2[0][1] = 1;
+    a2[0][2] = 1;
+    a2[0][3] = 1;
+    a2[0][4] = 1;
+    a2[0][5] = 1;
+    a2[0][6] = 1;
+    a2[0][7] = 1;
+    a2[0][8] = 1;
 }
 
 TestPermutationTree::~TestPermutationTree()
@@ -397,39 +375,39 @@ void TestPermutationTree::initTestCase(){
 }
 
 void TestPermutationTree::lAlgorithmtest1(){
-    testLAlgorithmTree(X2, multyRowArray1);
+    testLAlgorithmTree(X2, a1);
 }
 
 void TestPermutationTree::lAlgorithmtest2(){
-    testLAlgorithmTree(X2, multyRowArray2);
+    testLAlgorithmTree(X2, a2);
 }
 
 void TestPermutationTree::lAlgorithmtest3(){
-    testLAlgorithmTree(X1, multyRowArray1);
+    testLAlgorithmTree(X1, a1);
 }
 
 void TestPermutationTree::lAlgorithmtest4(){
-    testLAlgorithmTree(X1, multyRowArray2);
+    testLAlgorithmTree(X1, a2);
 }
 
 //For both EE and ISE assumptions, we use only multyRowArray1 since
 //otherwise exhaustive approach won't end
 void TestPermutationTree::allSignFlippingsAndPermutationsTest1(){
-    testAllSignFlippingsAndPermutation(X1, multyRowArray1);
+    testAllSignFlippingsAndPermutation(X1, a1);
 }
 
 void TestPermutationTree::allSignFlippingsAndPermutationsTest2(){
-    testAllSignFlippingsAndPermutation(X2, multyRowArray1);
+    testAllSignFlippingsAndPermutation(X2, a1);
 }
 
 void TestPermutationTree::allSignFlippingsTest1(){
     //We could also have used X2, doesn't really matter for sign flips
-    testAllSignFlippingsTree(X1, multyRowArray1);
+    testAllSignFlippingsTree(X1, a1);
 }
 
 void TestPermutationTree::allSignFlippingsTest2(){
     //We could also have used X2, doesn't really matter for sign flips
-    testAllSignFlippingsTree(X1, multyRowArray2);
+    testAllSignFlippingsTree(X1, a2);
 }
 
 void TestPermutationTree::cleanUpTestCase(){

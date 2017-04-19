@@ -1,5 +1,9 @@
 #include "evstabbottompart.h"
 
+int EvsTabBottomPart::getEvs(int row, int col){
+    return rows[row]->getCol(col);
+}
+
 int EvsTabBottomPart::getNRows(){
     return rows.size();
 }

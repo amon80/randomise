@@ -5,7 +5,7 @@
 #include <QSpinBox>
 #include <QVector>
 #include <QLabel>
-#include "evstabtoppart.h"
+#include "filetabtoppart.h"
 #include "evstabuppermiddlepart.h"
 #include "evstabmiddlepart.h"
 #include "evstabbottompart.h"
@@ -18,17 +18,15 @@ class EvsTab : public QWidget
 public:
     explicit EvsTab(QWidget *parent = 0);
     void addOrRemoveEvs(int evNumber);
-    void setFileName(const QString &filename);
     void addSubject();
     void removeSubject();
     void removeAllSubjects();
+    int getNumEvs();
+    int getEv(int row, int col);
 signals:
     void valueChanged(int value);
-    void openVmp();
-    void clearAll();
 private slots:
 private:
-    EvsTabTopPart * top;
     EvsTabUpperMiddlePart * upperMiddle;
     EvsTabMiddlePart * middle;
     EvsTabBottomPart * bottom;
