@@ -13,7 +13,7 @@ public:
     explicit EvsTabBottomPart(QWidget *parent = 0);
     void addEv();
     void removeEv();
-    void addRow();
+    void addRow(int nEvs);
     void removeRow();
     int getNRows();
 signals:

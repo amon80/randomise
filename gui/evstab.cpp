@@ -2,7 +2,9 @@
 #include "evstab.h"
 
 void EvsTab::addSubject(){
-    bottom->addRow();
+    //TODO: must be modified to include n_predictors
+    int nEvs = middle->getNumberOfEvs();
+    bottom->addRow(nEvs);
 }
 
 void EvsTab::removeSubject(){

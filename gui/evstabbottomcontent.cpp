@@ -1,6 +1,6 @@
 #include "evstabbottomcontent.h"
 
-EvsTabBottomContent::EvsTabBottomContent(QWidget *parent, QString labelText)
+EvsTabBottomContent::EvsTabBottomContent(QWidget *parent, QString labelText, int nEvs)
     : QWidget(parent)
 {
     layout = new QHBoxLayout;
@@ -11,6 +11,9 @@ EvsTabBottomContent::EvsTabBottomContent(QWidget *parent, QString labelText)
     layout->addWidget(inputLabel);
     layout->addWidget(groupSpinBox);
     evs = QVector<QSpinBox*>();
+    for(int i = 0; i < nEvs; i++){
+        addEv();
+    }
     this->setLayout(layout);
 }
 

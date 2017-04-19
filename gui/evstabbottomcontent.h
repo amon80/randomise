@@ -11,7 +11,7 @@ class EvsTabBottomContent : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EvsTabBottomContent(QWidget *parent = 0, QString labelText = "");
+    explicit EvsTabBottomContent(QWidget *parent = 0, QString labelText = "", int nEvs = 0);
     void addEv();
     void removeEv();
 

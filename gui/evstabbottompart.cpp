@@ -18,8 +18,8 @@ void EvsTabBottomPart::removeEv(){
     }
 }
 
-void EvsTabBottomPart::addRow(){
-    EvsTabBottomContent * newRow = new EvsTabBottomContent(this, QString::number(rows.size()+1));
+void EvsTabBottomPart::addRow(int nEvs){
+    EvsTabBottomContent * newRow = new EvsTabBottomContent(this, QString::number(rows.size()+1), nEvs);
     rows.push_back(newRow);
     layout->addWidget(newRow);
 }
