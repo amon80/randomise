@@ -15,6 +15,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+CONFIG += c++11
+
+QMAKE_CXXFLAGS += -fopenmp
+LIBS += -fopenmp
+
 
 INCLUDEPATH += ../src
 
@@ -26,6 +31,21 @@ SOURCES += main.cpp\
     ../src/binaryio.cpp \
     ../src/statisticalmap4d.cpp \
     ../src/multyrowarray.cpp \
+    ../src/randomise.cpp \
+    ../src/statisticalmap3d.cpp \
+    ../src/permutationtree.cpp \
+    ../src/mymath.cpp \
+    ../src/mystat.cpp \
+    ../src/tfce.cpp \
+    ../src/permutationtreeblock.cpp \
+    ../src/threecolsarray.cpp \
+    ../src/matrices.cpp \
+    ../src/connectivity3d.cpp \
+    ../src/connectivity3d6.cpp \
+    ../src/connectivity3d18.cpp \
+    ../src/connectivity3d26.cpp \
+    ../src/binarystring.cpp \
+    ../src/point3d.cpp \
     evstabuppermiddlepart.cpp \
     evstabmiddlepart.cpp \
     evstabbottompart.cpp \
