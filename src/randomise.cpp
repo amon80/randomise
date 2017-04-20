@@ -9,7 +9,7 @@
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J, float alpha){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -111,8 +111,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         if(useTfce)
             tfce(toReturn[index].originalStatistic);
 
-        toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
-
+        std::vector<float> maxDistribution = std::vector<float>(actualPermutationSize);
 
         #pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
@@ -178,7 +177,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
             //NOTE: Instead of computing pvalues in this way
             //a vector of maxes can be used to assest inference
-            toReturn[index].maxDistribution[j] = maxTj;
+            maxDistribution[j] = maxTj;
 
             //Using the maximum to compute FWER
             for(int v = 0; v < numVoxels; v++){
@@ -189,16 +188,19 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             }
         }
         //finished the computation for current contrast
+        //NOTE: Single threaded from here
 
         //OPTIONAL
         //t.resetTreePermutationState();
         //t.resetTreeSignState();
+        toReturn[index].performedPermutations = actualPermutationSize;
         if(actualPermutationSize > 0){
             toReturn[index].uncorrected /= actualPermutationSize;
             toReturn[index].corrected /= actualPermutationSize;
-            std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
+            std::sort(maxDistribution.begin(), maxDistribution.end());
             //maximal statistic is now sorted from the lowest to the highest, we need the opposite
-            std::reverse(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
+            std::reverse(maxDistribution.begin(), maxDistribution.end());
+            toReturn[index].criticalThreshold = maxDistribution[floor(alpha*maxDistribution.size() + 1)];
         }
 		index++;
     }

@@ -10,9 +10,10 @@ struct RandomiseResult{
     StatisticalMap3D uncorrected;
     StatisticalMap3D corrected;
     StatisticalMap3D originalStatistic;
-    std::vector<float> maxDistribution;
+    float criticalThreshold;
+    int performedPermutations;
 };
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, MultyRowArray &a, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce = true, bool EE = true, bool ISE = false, int J = 10000);
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, MultyRowArray &a, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& M, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce = true, bool EE = true, bool ISE = false, int J = 10000, float alpha = 0.05);
 
 #endif // RANDOMISE_H
