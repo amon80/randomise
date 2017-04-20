@@ -146,7 +146,7 @@ bool RandomisePlugin::execute()
         bool ISE = true;
 
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, EE, ISE, J);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, EE, ISE, J, alpha);
         qxStopBusyCursor();
 
         int n = C.size();
@@ -155,15 +155,11 @@ bool RandomisePlugin::execute()
         qxCreateNRVMPsForCurrentVMR(n, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
         for(int i = 0; i < n; i++){
-            int performedPermutations = r[i].maxDistribution.size();
-            int criticalThresholdIndex;
+            int performedPermutations = r[i].performedPermutations;
             float criticalThreshold;
 
             if(performedPermutations > 0){
-                criticalThresholdIndex = (int) floor(alpha*performedPermutations) + 1;
-                sprintf(buffer, "Contrast %d - Critical Threshold index for %f inference level: %d", i, alpha, criticalThresholdIndex);
-                qxLogText(buffer);
-                criticalThreshold = r[i].maxDistribution[criticalThresholdIndex];
+                criticalThreshold = r[i].criticalThreshold;
                 sprintf(buffer, "Contrast %d - Critical threshold for %f inference level: %f", i, alpha, criticalThreshold);
                 qxLogText(buffer);
             }
