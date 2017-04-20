@@ -111,7 +111,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         if(useTfce)
             tfce(toReturn[index].originalStatistic);
 
-        std::vector<float> maxDistribution = std::vector<float>(actualPermutationSize);
+       toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
         #pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
@@ -177,7 +177,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
             //NOTE: Instead of computing pvalues in this way
             //a vector of maxes can be used to assest inference
-            maxDistribution[j] = maxTj;
+            toReturn[index].maxDistribution[j] = maxTj;
 
             //Using the maximum to compute FWER
             for(int v = 0; v < numVoxels; v++){
@@ -197,10 +197,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         if(actualPermutationSize > 0){
             toReturn[index].uncorrected /= actualPermutationSize;
             toReturn[index].corrected /= actualPermutationSize;
-            std::sort(maxDistribution.begin(), maxDistribution.end());
+            std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
             //maximal statistic is now sorted from the lowest to the highest, we need the opposite
-            std::reverse(maxDistribution.begin(), maxDistribution.end());
-            toReturn[index].criticalThreshold = maxDistribution[floor(alpha*maxDistribution.size() + 1)];
+            std::reverse(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
+            toReturn[index].criticalThreshold = toReturn[index].maxDistribution[floor(alpha*toReturn[index].toReturn[index].performedPermutations) + 1];
         }
 		index++;
     }
