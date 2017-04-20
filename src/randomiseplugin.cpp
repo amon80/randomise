@@ -125,11 +125,7 @@ bool RandomisePlugin::execute()
 
         //Initializing multyrow array
         //NOTE: GUI controls can be made in the future
-        //And maybe also a class since the last row is always the same
         MultyRowArray a(num_of_maps,2);
-        for(int i = 0; i < 2; i++)
-            a[i] = std::vector<int>(num_of_maps);
-        //Filling first row
         for(int i = 0; i < num_of_maps; i++)
             a[0][i] = 1;
 
@@ -150,7 +146,7 @@ bool RandomisePlugin::execute()
         bool ISE = true;
 
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, a, TStatistic, useTfce, EE, ISE, J);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, EE, ISE, J);
         qxStopBusyCursor();
 
         int n = C.size();
