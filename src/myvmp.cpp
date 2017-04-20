@@ -2,9 +2,39 @@
 #include "binaryio.h"
 #include <fstream>
 
-MyVmp::MyVmp()
+//TODO: Set all default parameters in the creator
+//NOTE: At least a map should be added before saving
+MyVmp::MyVmp(int NrOfMaps, int NrOfTimePoints, int NrOfMapsParams)
 {
-
+    magic_number = MAGIC_NUMBER;
+    version_number = 6;
+    doctype = 1;
+    NrOfMaps = 0;
+    NrOfTimePoints = NrOfTimePoints;
+    NrOfMapParams = NrOfMapsParams;
+    ShowParamsFrom = 0;
+    ShowParamsTo = 0;
+    UseForICFingerprintFrom = 0;
+    UseForICFingerprintTo = 0;
+    XStart = 57;
+    XEnd = 231;
+    YStart = 52;
+    YEnd = 172;
+    ZStart = 59;
+    ZEnd = 197;
+    Resolution = 3;
+    dimX = 256;
+    dimY = 256;
+    dimZ = 256;
+    VTCFileName = "";
+    ProtocolFileName = "";
+    VOIFileName = "";
+    subHeaders = std::vector<MyVmpHeader>(0);
+    for(int i = 0; i < NrOfMaps; i++){
+        subHeaders.push_back(MyVmpHeader(NrOfTimePoints));
+    }
+    NamesOfComponentParameters = std::vector<std::string>(NrOfMapsParams);
+    ComponentParams = std::vector<float>(NrOfMapsParams);
 }
 
 
@@ -22,6 +52,17 @@ int MyVmp::getDimZ(){
 
 std::vector<float>& MyVmp::operator[](const std::size_t idx){
     return data[idx];
+}
+
+MyVmpHeader& MyVmp::getSubHeader(const std::size_t idx){
+    return subHeaders[idx];
+}
+
+
+void MyVmp::addSubMap(){
+    NrOfMaps++;
+    subHeaders.push_back(MyVmpHeader());
+    data.push_back(std::vector<float>(dimX*dimY*dimZ));
 }
 
 void MyVmp::removeAllSubMaps(){
@@ -189,7 +230,7 @@ void MyVmp::readvmp(const char * filename){
     ProtocolFileName = read_string(input);
     VOIFileName = read_string(input);
 
-    subHeaders = std::vector<vmp_header>(NrOfMaps);
+    subHeaders = std::vector<MyVmpHeader>(NrOfMaps);
 
     for(int i = 0; i < NrOfMaps; i++){
         subHeaders[i].MapType = static_cast<MapTypeEnum>(read_uint32(input));

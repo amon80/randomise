@@ -28,6 +28,7 @@ SOURCES += main.cpp\
     evstab.cpp \
     contrasttab.cpp \
     ../src/myvmp.cpp \
+    ../src/myvmpheader.cpp \
     ../src/binaryio.cpp \
     ../src/statisticalmap4d.cpp \
     ../src/multyrowarray.cpp \

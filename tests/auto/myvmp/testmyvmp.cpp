@@ -22,14 +22,14 @@ TestMyVMP::~TestMyVMP(){
 
 }
 
-//They're the same
+//Check if they're the same
 void TestMyVMP::testcase1(){
     MyVmp v;
     v.readvmp("/home/marco/TestData/BetaMapsFillContrast.vmp");
     v.writevmp("/home/marco/TestData/BetaMapsFillContrastCopy.vmp");
 }
 
-//They're the same
+//Check if they're the same
 void TestMyVMP::testcase2(){
     MyVmp v;
     v.readvmp("/home/marco/TestData/TMapFillContrast.vmp");

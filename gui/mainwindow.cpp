@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "statisticalmap4d.h"
 #include "multyrowarray.h"
+#include "mystat.h"
+#include "randomise.h"
 #include "Eigen/Dense"
 #include <QFileDialog>
 
@@ -53,24 +55,21 @@ void MainWindow::collectDataAndFire(){
     }
 
     //Initializing multyrow array
-    //TODO: Should be deduced by groups somehow
+    //TODO: The 2 Should be deduced by groups somehow
+    //for now it's still a stub to test the mean effect
+    //and the saving of vmps
     MultyRowArray a(num_of_maps, 2);
-    //std::vector<std::vector<int>> multyRowArray(2);
-    //for(int i = 0; i < 2; i++)
-        //[i] = std::vector<int>(num_of_maps);
     //Filling first row
-    //for(int i = 0; i < num_of_maps; i++)
-        //multyRowArray[0][i] = 1;
-    //Filling second row
-    //for(int i = 0; i < num_of_maps; i++)
-        //multyRowArray[1][i] = i+1;
-
+    for(int i = 0; i < num_of_maps; i++)
+        a[0][i] = 1;
 
     //Fire Randomise
-    //std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, options.useTfce, options.EE, options.ISE, options.numPermutation);
+    std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, options.useTfce, options.EE, options.ISE, options.numPermutation, options.alpha);
 
     //Save results in VMP (one or more)
+    vmp.removeAllSubMaps();
     //TODO
+    //vmp.add
 
     //Close Dialog
     MainWindow::close();

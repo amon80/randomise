@@ -10,4 +10,5 @@ INCLUDEPATH += ../../../src
 
 SOURCES +=  testmyvmp.cpp \
             ../../../src/myvmp.cpp \
+            ../../../src/myvmpheader.cpp \
             ../../../src/binaryio.cpp

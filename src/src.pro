@@ -48,7 +48,8 @@ SOURCES += \
     binaryio.cpp \
     myglm.cpp \
     myvmp.cpp \
-    multyrowarray.cpp
+    multyrowarray.cpp \
+    myvmpheader.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -360,7 +361,8 @@ HEADERS += \
     ioerror.h \
     myglm.h \
     myvmp.h \
-    multyrowarray.h
+    multyrowarray.h \
+    myvmpheader.h
 
 unix {
     target.path = /usr/lib

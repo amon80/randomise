@@ -3,72 +3,14 @@
 
 #include <vector>
 #include <string>
+#include "myvmpheader.h"
 
-//TODO:Add all kinds of map
-enum MapTypeEnum{
-    beta = 15, t = 1
-};
-
-struct fdrentry{
-    float q;
-    float crit_std;
-    float crit_conservative;
-};
-
-struct vmp_header{
-    std::string NameOfMap;			// 101 chars
-
-    MapTypeEnum MapType;
-
-    float ThreshMin;
-    float ThreshMax;
-    int IncludeValuesGreaterThreshMax; // "1" (default) -> shows map values greater max threshold, "0" excludes values greater max threshold
-    int ClusterSize;
-    int UseClusterSize;
-    int df1;
-    int df2;
-    int NrOfStatVoxels;		// number of voxels with a calculated map value (!= 0.0) - used for multiple comparisons correction
-    int ShowPosOrNegOrBoth;   // 1 -> show pos values, 2 -> show neg values, 3 -> show pos and neg valeus
-
-    int NrOfCrossCorrLags;	// use value only if MapType "3" (cross-correlation or relative contribution map)
-    int CrossCorrMinLag;      // use value only if MapType "3"
-    int CrossCorrMaxLag;		// use value only if MapType "3"
-    int ShowCorrelations;		// use value only if MapType "3", if "1" shows correlation value, if "0" shows lag value in overlayed map
-
-    int RedPositiveMinValue;
-    int GreenPositiveMinValue;
-    int YellowPositiveMinValue;
-
-    int RedPositiveMaxValue;
-    int GreenPositiveMaxValue;
-    int YellowPositiveMaxValue;
-
-    int RedNegativeMinValue;
-    int GreenNegativeMinValue;
-    int YellowNegativeMinValue;
-
-    int RedNegativeMaxValue;
-    int GreenNegativeMaxValue;
-    int YellowNegativeMaxValue;
-
-    int UseMapColor;
-
-    int SizeOfFdrTable;
-    std::vector<fdrentry> FdrTable;
-    int FdrTableIndex;
-
-    std::string LUTFileName;
-    std::vector<float> TimeCourse;
-
-    float TransparentColorFactor;
-
-    int   OverlayMap;			// get/set whether this component is shown
-};
+const int MAGIC_NUMBER = 0xA1B2C3D4;
 
 class MyVmp
 {
 public:
-    MyVmp();
+    MyVmp(int NrOfMaps = 0, int NrOfTimePoints = 0, int NrOfMapsParams = 0);
     void readvmp(const char * filename);
     void writevmp(const char * filename);
     int getNrMaps();
@@ -76,6 +18,8 @@ public:
     int getDimY();
     int getDimZ();
     std::vector<float>& operator[](const std::size_t idx);
+    MyVmpHeader& getSubHeader(const std::size_t idx);
+    void addSubMap();
     void removeSubMap(int index);
     void removeAllSubMaps();
 private:
@@ -116,7 +60,7 @@ private:
     std::vector<float> ComponentParams;		// defined only if "(NrOfComponentParams > 0)", otherwise NULL ptr
 
     //subheaders
-    std::vector<vmp_header> subHeaders;
+    std::vector<MyVmpHeader> subHeaders;
 
     //actualdata
     std::vector<std::vector<float>> data;
