@@ -11,6 +11,7 @@ private slots:
     void initTestCase();
     void testcase1();
     void testcase2();
+    void testcase3();
     void cleanUpTestCase();
 };
 
@@ -32,8 +33,29 @@ void TestMyVMP::testcase1(){
 //Check if they're the same
 void TestMyVMP::testcase2(){
     MyVmp v;
-    v.readvmp("/home/marco/TestData/TMapFillContrast.vmp");
-    v.writevmp("/home/marco/TestData/TMapFillContrastCopy.vmp");
+    //v.readvmp("/home/marco/TestData/TMapFillContrast.vmp");
+    //v.writevmp("/home/marco/TestData/TMapFillContrastCopy.vmp");
+}
+
+void TestMyVMP::testcase3(){
+    MyVmp v;
+    v.addSubMap();
+    v.getSubHeader(0).NameOfMap = "Contrast " + std::to_string(1);
+    v.getSubHeader(0).ThreshMin = 0;
+    v.getSubHeader(0).ThreshMax = 10;
+    v.getSubHeader(0).df1 = 0;
+    v.getSubHeader(0).MapType = t;
+    v.getSubHeader(0).ClusterSize = 0;
+    v.getSubHeader(0).UseClusterSize = 0;
+    //v.getSubHeader(0).NrOfStatVoxels = ???;
+    int dimX = v.getDimX();
+    int dimY = v.getDimY();
+    int dimZ = v.getDimZ();
+    int dim = dimX * dimY * dimZ;
+    for(int j = 0; j < dim; j++){
+        v[0][j] = 0;
+    }
+    v.writevmp("/home/marco/TestData/example.vmp");
 }
 
 

@@ -37,17 +37,16 @@ MyVmp::MyVmp(int NrOfMaps, int NrOfTimePoints, int NrOfMapsParams)
     ComponentParams = std::vector<float>(NrOfMapsParams);
 }
 
-
 int MyVmp::getDimX(){
-    return dimX;
+    return (XEnd - XStart) / Resolution;
 }
 
 int MyVmp::getDimY(){
-    return dimY;
+    return (YEnd - YStart) / Resolution;
 }
 
 int MyVmp::getDimZ(){
-    return dimZ;
+    return (ZEnd - ZStart) / Resolution;
 }
 
 std::vector<float>& MyVmp::operator[](const std::size_t idx){
@@ -105,10 +104,9 @@ void MyVmp::writevmp(const char * filename){
 
     write_uint32(output, Resolution);
 
-    //dimX, dimY, dimZ
-    write_uint32(output, 256);
-    write_uint32(output, 256);
-    write_uint32(output, 256);
+    write_uint32(output, dimX);
+    write_uint32(output, dimY);
+    write_uint32(output, dimZ);
 
     write_zstring(output, VTCFileName);
     write_zstring(output, ProtocolFileName);
@@ -183,7 +181,7 @@ void MyVmp::writevmp(const char * filename){
         }
     }
 
-    int dim = dimX*dimY*dimZ;
+    int dim = getDimX()*getDimY()*getDimZ();
     for(int i = 0; i < NrOfMaps; i++){
         for(int j = 0; j < dim; j++){
             write_float(output, data[i][j]);
@@ -303,12 +301,12 @@ void MyVmp::readvmp(const char * filename){
         }
     }
 
-    dimX = (XEnd - XStart) / Resolution;
-    dimY = (YEnd - YStart) / Resolution;
-    dimZ = (ZEnd - ZStart) / Resolution;
+    int realDimX = getDimX();
+    int realDimY = getDimY();
+    int realDimZ = getDimZ();
 
     data = std::vector<std::vector<float>>(NrOfMaps);
-    int dim = dimX*dimY*dimZ;
+    int dim = realDimX*realDimY*realDimZ;
     for(int i = 0; i < NrOfMaps; i++){
         data[i] = std::vector<float>(dim);
         for(int j = 0; j < dim; j++){
