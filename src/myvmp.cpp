@@ -2,13 +2,12 @@
 #include "binaryio.h"
 #include <fstream>
 
-//TODO: Set all default parameters in the creator
 //NOTE: At least a map should be added before saving
 MyVmp::MyVmp(int NrOfMaps, int NrOfTimePoints, int NrOfMapsParams)
 {
     magic_number = MAGIC_NUMBER;
-    version_number = 6;
-    doctype = 1;
+    version_number = VERSION_NUMBER;
+    doctype = DOCTYPE;
     NrOfMaps = 0;
     NrOfTimePoints = NrOfTimePoints;
     NrOfMapParams = NrOfMapsParams;
@@ -16,16 +15,16 @@ MyVmp::MyVmp(int NrOfMaps, int NrOfTimePoints, int NrOfMapsParams)
     ShowParamsTo = 0;
     UseForICFingerprintFrom = 0;
     UseForICFingerprintTo = 0;
-    XStart = 57;
-    XEnd = 231;
-    YStart = 52;
-    YEnd = 172;
-    ZStart = 59;
-    ZEnd = 197;
-    Resolution = 3;
-    dimX = 256;
-    dimY = 256;
-    dimZ = 256;
+    XStart = STARTX;
+    XEnd = ENDX;
+    YStart = STARTY;
+    YEnd = ENDY;
+    ZStart = STARTZ;
+    ZEnd = ENDZ;
+    Resolution = RESOLUTION;
+    dimX = DIMX;
+    dimY = DIMY;
+    dimZ = DIMZ;
     VTCFileName = "";
     ProtocolFileName = "";
     VOIFileName = "";

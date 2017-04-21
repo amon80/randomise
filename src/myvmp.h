@@ -6,6 +6,18 @@
 #include "myvmpheader.h"
 
 const int MAGIC_NUMBER = 0xA1B2C3D4;
+const int VERSION_NUMBER = 6;
+const int DIMX = 256;
+const int DIMY = 256;
+const int DIMZ = 256;
+const int STARTX = 57;
+const int ENDX = 231;
+const int STARTY = 52;
+const int ENDY = 172;
+const int STARTZ = 59;
+const int ENDZ = 197;
+const int RESOLUTION = 3;
+const int DOCTYPE = 1;
 
 class MyVmp
 {
