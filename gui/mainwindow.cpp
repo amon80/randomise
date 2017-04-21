@@ -6,6 +6,10 @@
 #include "Eigen/Dense"
 #include <QFileDialog>
 
+inline QString withoutExtension(const QString & fileName) {
+    return fileName.left(fileName.lastIndexOf("."));
+}
+
 void MainWindow::collectDataAndFire(){
     //Initializing 4D map of data
 
@@ -39,7 +43,7 @@ void MainWindow::collectDataAndFire(){
         }
     }
 
-    //Collect data(contrast and ftests) from the contrastTab
+    //Collect data(contrasts, ftests, and their names) from the contrastTab
     int numContrast = contrastTab->getNumberOfContrasts();
     if(numContrast == 0)
         return;
@@ -54,25 +58,54 @@ void MainWindow::collectDataAndFire(){
         }
     }
 
+    std::vector<std::string> contrastNames = std::vector<std::string>(numContrast);
+    for(int i = 0; i < numContrast; i++){
+        QString currentContrastName = contrastTab->getContrastName(i);
+        if(currentContrastName == "")
+            contrastNames[i] = "Contrast " + std::to_string(i+1);
+        else
+            contrastNames[i] = currentContrastName.toStdString();
+    }
+
+    //TODO: Get Ftests
+
     //Initializing multyrow array
-    //TODO: The 2 Should be deduced by groups somehow
-    //for now it's still a stub to test the mean effect
-    //and the saving of vmps
+    //TODO: It should be deduced from the evsTab
+    //this is just a stub to test stuff
     MultyRowArray a(num_of_maps, 2);
     //Filling first row
     for(int i = 0; i < num_of_maps; i++)
         a[0][i] = 1;
 
+    this->setCursor(Qt::WaitCursor);
     //Fire Randomise
     std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, options.useTfce, options.EE, options.ISE, options.numPermutation, options.alpha);
 
-    //Save results in VMP (one or more)
+    //Save results in VMP (one or more), only tmaps for now
     vmp.removeAllSubMaps();
-    //TODO
-    //vmp.add
+
+    int n = r.size();
+    for(int i = 0; i < n; i++){
+        vmp.addSubMap();
+        vmp.getSubHeader(i).NameOfMap = contrastNames[i];
+        vmp.getSubHeader(i).ThreshMin = r[i].criticalThreshold;
+        MinMaxStructure m = r[i].originalStatistic.findMinMax();
+        vmp.getSubHeader(i).ThreshMax = m.max;
+        vmp.getSubHeader(i).df1 = num_of_maps-1;
+        vmp.getSubHeader(i).MapType = t;
+        vmp.getSubHeader(i).ClusterSize = 0;
+        vmp.getSubHeader(i).UseClusterSize = 0;
+        //vmp.getSubHeader(i).NrOfStatVoxels = ???;
+        for(int j = 0; j < dim; j++){
+            vmp[i][j] = r[i].originalStatistic[j];
+        }
+    }
+    QString outputPath = withoutExtension(filepath) + "RandomiseResult.vmp";
+    vmp.writevmp(outputPath.toStdString().c_str());
+    this->setCursor(Qt::ArrowCursor);
 
     //Close Dialog
-    MainWindow::close();
+    //MainWindow::close();
 }
 
 void MainWindow::closeWindow(){
@@ -85,7 +118,7 @@ void MainWindow::addOrRemoveEvs(int evsNumber){
 }
 
 void MainWindow::openVmp(){
-    QString filepath = QFileDialog::getOpenFileName(this, tr("Open vmp"), QDir::home().absolutePath(), tr("vmp Files (*.vmp)"));
+    filepath = QFileDialog::getOpenFileName(this, tr("Open vmp"), QDir::home().absolutePath(), tr("vmp Files (*.vmp)"));
     if(filepath == "")
         return;
     fileTab->setFileName(filepath);
@@ -97,6 +130,7 @@ void MainWindow::openVmp(){
 }
 
 void MainWindow::clearAll(){
+    filepath = "";
     fileTab->setFileName("");
     evsTab->removeAllSubjects();
     vmp = MyVmp();

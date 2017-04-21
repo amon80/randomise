@@ -5,6 +5,7 @@
 #include <QSpinBox>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QString>
 #include "contrasttabtoppart.h"
 #include "contrasttabuppermiddlepart.h"
 #include "contrasttabmiddlepart.h"
@@ -19,6 +20,7 @@ public:
     int getNumberOfFTests();
     int getNumberOfContrasts();
     int getContrast(int contrastNumber, int evNumber);
+    QString getContrastName(int contrastNumber);
 signals:
 public slots:
     void ftestsValueChanged(int ftestsNumber);

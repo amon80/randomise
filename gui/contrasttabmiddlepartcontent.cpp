@@ -1,5 +1,9 @@
 #include "contrasttabmiddlepartcontent.h"
 
+QString ContrastTabMiddlePartContent::getContrastName(){
+    return contrastTitleLineEdit->text();
+}
+
 int ContrastTabMiddlePartContent::getContrast(int evNumber){
     return evsSpinBoxes->getContrast(evNumber);
 }

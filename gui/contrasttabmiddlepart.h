@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QVector>
+#include <QString>
 #include "contrasttabmiddlepartcontent.h"
 
 class ContrastTabMiddlePart : public QWidget
@@ -18,6 +19,7 @@ public:
     void removeContrast();
     void addOrRemoveEvs(int evsNumber);
     int getContrast(int contrastNumber, int evNumber);
+    QString getContrastName(int contrastNumber);
 signals:
 
 public slots:

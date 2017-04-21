@@ -5,6 +5,7 @@
 #include <QTabWidget>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
+#include <QString>
 #include "filetab.h"
 #include "contrasttab.h"
 #include "evstab.h"
@@ -25,6 +26,7 @@ public slots:
     void collectDataAndFire();
     void closeWindow();
 private:
+    QString filepath;
     QVBoxLayout * mainLayout;
     QTabWidget * tabs;
     QDialogButtonBox * buttonBox;

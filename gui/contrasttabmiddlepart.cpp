@@ -1,5 +1,10 @@
 #include "contrasttabmiddlepart.h"
 
+QString ContrastTabMiddlePart::getContrastName(int contrastNumber){
+    return rows[contrastNumber]->getContrastName();
+}
+
+
 int ContrastTabMiddlePart::getContrast(int contrastNumber, int evNumber){
     return rows[contrastNumber]->getContrast(evNumber);
 }

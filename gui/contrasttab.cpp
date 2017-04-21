@@ -1,5 +1,10 @@
 #include "contrasttab.h"
 
+QString ContrastTab::getContrastName(int contrastNumber){
+    return middle->getContrastName(contrastNumber);
+}
+
+
 int ContrastTab::getNumberOfEvs(){
     return uppermiddle->getNumberOfEvs();
 }

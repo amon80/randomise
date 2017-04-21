@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QHBoxLayout>
+#include <QString>
 #include "evsspinboxes.h"
 #include "ftestscheckboxes.h"
 
@@ -17,6 +18,7 @@ public:
     void addFTest();
     void removeFTest();
     int getContrast(int evNumber);
+    QString getContrastName();
 signals:
 
 public slots:
