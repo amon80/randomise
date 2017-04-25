@@ -85,6 +85,24 @@ bool RandomisePlugin::execute()
         qxSetIntParameter("NumOfMaps", num_of_maps);
         return true;
     }else if(!strcmp(task_name, "Execute")){
+        int maxPermutations = qxGetIntParameter("MaxPermutations");
+        int useEEInt = qxGetIntParameter("EE");
+        int useISEInt = qxGetIntParameter("ISE");
+        int useTfceInt = qxGetIntParameter("UseTfce");
+        float alpha = qxGetFloatParameter("Alpha");
+
+        bool useTfce = false;
+        if(useTfceInt)
+            useTfce = true;
+
+        bool EE = false;
+        if(useEEInt)
+            EE = true;
+
+        bool ISE = false;
+        if(useISEInt)
+            ISE = true;
+
         float * vv = NULL;
         struct NR_VMP_Header vmp_header;
         int dim;
@@ -96,16 +114,6 @@ bool RandomisePlugin::execute()
         int dimY = (vmps_header.YEnd - vmps_header.YStart) / vmps_header.Resolution;
         int dimZ = (vmps_header.ZEnd - vmps_header.ZStart) / vmps_header.Resolution;
         dim = dimX*dimY*dimZ;
-
-        //Getting number of vmps
-        int num_of_maps = vmps_header.NrOfMaps;
-
-        //Getting desired significance level
-        //NOTE: This should be asked to the user, so GUI controls are need in the future
-
-        //TODO: if there are few maps (i.e. low degrees of freedom),
-        //variance can be pooled together
-        //by smoothing the maps with a gaussian kernel of 5mm
 
         //Initializing 4D map of data
         StatisticalMap4D Y(dimX, dimY, dimZ, num_of_maps);
@@ -120,8 +128,7 @@ bool RandomisePlugin::execute()
         }
 
         //Initializing the design matrix
-        //No nuisance effect for this tests
-        //NOTE: GUI controls can be made in the future
+        //NOTE: Should be take from GUI
         Eigen::MatrixXd M(num_of_maps, 1);
         //Filling the design matrix
         for(int i = 0; i < num_of_maps; i++){
@@ -129,37 +136,20 @@ bool RandomisePlugin::execute()
         }
 
         //Initializing the contrasts
-        //NOTE: GUI controls can be made in the future
-        std::vector<Eigen::MatrixXd> C(2);
+        //NOTE: Should be take from GUI
+        std::vector<Eigen::MatrixXd> C(1);
         C[0] = Eigen::MatrixXd::Zero(1,1);
         C[0](0,0) = 1;
-        C[1] = Eigen::MatrixXd::Zero(1,1);
-        C[1](0,0) = -1;
 
         //Initializing multyrow array
-        //NOTE: GUI controls can be made in the future
+        //NOTE: Should be take from GUI
         MultyRowArray a(num_of_maps,2);
         for(int i = 0; i < num_of_maps; i++)
             a[0][i] = 1;
 
-        //Go with the math!
-        //DEBUG NOTE: set to 1 permutation is set to test F/T statistic correctness
-
-        float alpha = qxGetFloatInput("Enter desired alpha inference level:", 0.05, 0.01, 0.05);
-
-        int J = qxGetIntegerInput("How many permutations would you like to perform maximum?", 10000, 0, 50000);
-
-        int useTfceInt = qxYesNoMessageBox("Do you want to use TFCE?");
-        bool useTfce = false;
-        if(useTfceInt)
-            useTfce = true;
-
-        //Setting values hardcoded for this small example
-        bool EE = false;
-        bool ISE = true;
-
+        //Go with the math
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, EE, ISE, J, alpha);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, EE, ISE, maxPermutations, alpha);
         qxStopBusyCursor();
 
         int n = C.size();
@@ -203,9 +193,11 @@ bool RandomisePlugin::execute()
         // To make the change visible, update the active window in QX
         qxUpdateActiveWindow();
 
-        qxLogText("Plugin>  Randomise Plugin completed!\n");
+        qxLogText("Plugin>  Randomise Plugin completed!");
         return true;
     }
+    qxLogText("Plugin>  Plugin received unknown command, exiting.");
+    return false;
 }
 
 

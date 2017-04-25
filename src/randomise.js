@@ -78,11 +78,36 @@ scriptObj.removeFTest =  function(){
 }
 
 scriptObj.collectDataAndFire = function(){
-    var rows = dlg.designGroupBox.designMatrixTableWidget.rowCount;
-    var cols = dlg.designGroupBox.designMatrixTableWidget.columnCount;
+
+    bv.SetPluginIntParameter("MaxPermutations",  dlg.optionsGroupBox.maxNumPermutationsSpinbox.value);
+    bv.SetPluginFloatParameter("Alpha",  dlg.optionsGroupBox.desiredAlphaSpinBox.value);
+    if(dlg.optionsGroupBox.tfceCheckBox.checked)
+        bv.SetPluginIntParameter("UseTfce",  1);
+    else
+        bv.SetPluginIntParameter("UseTfce",  0);
+    if(dlg.optionsGroupBox.eeCheckBox.checked)
+        bv.SetPluginIntParameter("EE",  1);
+    else
+        bv.SetPluginIntParameter("EE",  0);
+    if(dlg.optionsGroupBox.iseCheckBox.checked)
+        bv.SetPluginIntParameter("ISE",  1);
+    else
+        bv.SetPluginIntParameter("ISE",  0);
+
+    var numberContrasts = dlg.designGroupBox.contrastMatrixTableWidget.rowCount;
+    var numberRegressors = dlg.designGroupBox.designMatrixTableWidget.columnCount;
+    var numberFTests = dlg.designGroupBox.fTestMatrixTableWidget.columnCount;
+    var numberGroupLayers = dlg.designGroupBox.groupMatrixTableWidget.columnCount;
+
+    bv.SetPluginIntParameter("NumberOfContrasts", numberContrasts);
+    bv.SetPluginIntParameter("NumberOfRegressors", numberRegressors);
+    bv.SetPluginIntParameter("NumberOfFTests", numberFTests);
+    bv.SetPluginIntParameter("NumberOfGroupLayers", numberGroupLayers);
+
+    //TODO: Set all the actual data
 
     bv.SetPluginStringParameter("Command", "Execute");
-    //bv.ExecutePlugin();
+    bv.ExecutePlugin();
 }
 
 
@@ -91,16 +116,21 @@ scriptObj.onChangeStudy = function(){
     if(currentStudy != "Custom"){
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(false);
         dlg.designGroupBox.designMatrixRemoveColumnButton.setEnabled(false);
+
         dlg.designGroupBox.groupMatrixAddGroupButton.setEnabled(false);
         dlg.designGroupBox.groupMatrixRemoveGroupButton.setEnabled(false);
+
         dlg.designGroupBox.contrastMatrixAddContrastButton.setEnabled(false);
         dlg.designGroupBox.contrastMatrixRemoveContrastButton.setEnabled(false);
+
         dlg.designGroupBox.fTestMatrixAddFTestButton.setEnabled(false);
         dlg.designGroupBox.fTestMatrixRemoveFTestButton.setEnabled(false);
+
         dlg.optionsGroupBox.eeCheckBox.setEnabled(false);
         dlg.optionsGroupBox.iseCheckBox.setEnabled(false);
         dlg.optionsGroupBox.eeCheckBox.setChecked(false);
         dlg.optionsGroupBox.iseCheckBox.setChecked(false);
+
         while(dlg.designGroupBox.contrastMatrixTableWidget.rowCount != 0){
             this.removeContrast();
         }
@@ -113,6 +143,7 @@ scriptObj.onChangeStudy = function(){
         while(dlg.designGroupBox.groupMatrixTableWidget.columnCount != 0){
             this.removeGroup();
         }
+
         if(currentStudy == "Mean Effect"){
             dlg.optionsGroupBox.iseCheckBox.setChecked(true);
             this.addColumn();
@@ -130,12 +161,16 @@ scriptObj.onChangeStudy = function(){
     }else{
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(true);
         dlg.designGroupBox.designMatrixRemoveColumnButton.setEnabled(true);
+
         dlg.designGroupBox.groupMatrixAddGroupButton.setEnabled(true);
         dlg.designGroupBox.groupMatrixRemoveGroupButton.setEnabled(true);
+
         dlg.designGroupBox.contrastMatrixAddContrastButton.setEnabled(true);
         dlg.designGroupBox.contrastMatrixRemoveContrastButton.setEnabled(true);
+
         dlg.designGroupBox.fTestMatrixAddFTestButton.setEnabled(true);
         dlg.designGroupBox.fTestMatrixRemoveFTestButton.setEnabled(true);
+
         dlg.optionsGroupBox.eeCheckBox.setEnabled(true);
         dlg.optionsGroupBox.iseCheckBox.setEnabled(true);
     }
