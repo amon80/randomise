@@ -19,6 +19,7 @@
 #include "randomise.h"
 #include "Eigen/Dense"
 
+#include <string>
 
 // constructor of your plugin class
 //
@@ -91,6 +92,11 @@ bool RandomisePlugin::execute()
         int useTfceInt = qxGetIntParameter("UseTfce");
         float alpha = qxGetFloatParameter("Alpha");
 
+        int numberContrasts = qxGetIntParameter("NumberOfContrasts");
+        int numberRegressors = qxGetIntParameter("NumberOfRegressors");
+        int numberFTests = qxGetIntParameter("NumberOfFTests");
+        int numberGroupLayers = qxGetIntParameter("NumberOfGroupLayers");
+
         bool useTfce = false;
         if(useTfceInt)
             useTfce = true;
@@ -108,6 +114,8 @@ bool RandomisePlugin::execute()
         int dim;
 
         char buffer[100];
+        char variableName[100];
+
 
         //Getting VMR dimension
         int dimX = (vmps_header.XEnd - vmps_header.XStart) / vmps_header.Resolution;
@@ -128,24 +136,40 @@ bool RandomisePlugin::execute()
         }
 
         //Initializing the design matrix
-        //NOTE: Should be take from GUI
-        Eigen::MatrixXd M(num_of_maps, 1);
+        Eigen::MatrixXd M(num_of_maps, numberRegressors);
         //Filling the design matrix
         for(int i = 0; i < num_of_maps; i++){
-            M(i,0) = 1;
+            for(int j = 0; j < numberRegressors; j++){
+                sprintf(variableName, "DesignMatrix%d%d",i,j);
+                qxGetStringParameter(variableName, buffer);
+                M(i,j) = atof(buffer);
+
+            }
         }
 
         //Initializing the contrasts
-        //NOTE: Should be take from GUI
-        std::vector<Eigen::MatrixXd> C(1);
-        C[0] = Eigen::MatrixXd::Zero(1,1);
-        C[0](0,0) = 1;
+        //TODO:Add Ftests
+        std::vector<Eigen::MatrixXd> C(numberContrasts);
+        for(int i = 0; i < numberContrasts; i++){
+            C[i] = Eigen::MatrixXd::Zero(numberRegressors,1);
+        }
+        for(int i = 0; i < numberContrasts; i++){
+            for(int j = 0; j < numberRegressors; j++){
+                sprintf(variableName, "ContrastMatrix%d%d",i,j);
+                qxGetStringParameter(variableName, buffer);
+                C[i](j,0) = atof(buffer);
+            }
+        }
 
         //Initializing multyrow array
-        //NOTE: Should be take from GUI
-        MultyRowArray a(num_of_maps,2);
-        for(int i = 0; i < num_of_maps; i++)
-            a[0][i] = 1;
+        MultyRowArray a(num_of_maps,1+numberGroupLayers);
+        for(int j = 0; j < numberGroupLayers; j++){
+            for(int i = 0; i < num_of_maps; i++){
+                sprintf(variableName, "GroupMatrix%d%d",i,j);
+                qxGetStringParameter(variableName, buffer);
+                a[j][i] = atof(buffer);
+            }
+        }
 
         //Go with the math
         qxShowBusyCursor();
@@ -224,7 +248,7 @@ PLUGIN_ACCESS const char *getPluginName()
 //   (the potentially lengthy string needs then not be created repeatedly in successive calls)
 //   Note that you may use simple HTML tags to format the string, such as <b></b>, <i></i> and <br>
 //
-static const char *PluginDescription = "This plugin implements the permutation tests for the GLM.<br>";
+static const char *PluginDescription = "This plugin implements the permutation inference for the GLM.<br>";
 
 PLUGIN_ACCESS const char *getPluginDescription() 
 {

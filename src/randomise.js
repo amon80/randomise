@@ -17,9 +17,9 @@ scriptObj.initDlg = function(){
     bv.SetPluginStringParameter("Command", "GetNumOfMaps");
     bv.ExecutePlugin();
 
-    var num_of_maps = bv.GetPluginIntParameter("NumOfMaps");
+    num_of_maps = bv.GetPluginIntParameter("NumOfMaps");
 
-    for(i = 0; i < num_of_maps; i++){
+    for(var i = 0; i < num_of_maps; i++){
         dlg.designGroupBox.designMatrixTableWidget.insertRow(i);
         dlg.designGroupBox.groupMatrixTableWidget.insertRow(i);
     }
@@ -104,7 +104,34 @@ scriptObj.collectDataAndFire = function(){
     bv.SetPluginIntParameter("NumberOfFTests", numberFTests);
     bv.SetPluginIntParameter("NumberOfGroupLayers", numberGroupLayers);
 
-    //TODO: Set all the actual data
+    //Setting parameters for the design matrix
+    for(var i = 0; i < num_of_maps; i++){
+        for(var j = 0; j < numberRegressors; j++){
+            var text = dlg.designGroupBox.designMatrixTableWidget.item(i,j).text();
+            var variableName = "DesignMatrix"+i+""+j;
+            bv.SetPluginStringParameter(variableName, text);
+        }
+    }
+
+    //Setting parameters for the contrast matrix
+    for(var i = 0; i < numberContrasts; i++){
+        for(var j = 0; j < numberRegressors; j++){
+            var text = dlg.designGroupBox.contrastMatrixTableWidget.item(i,j).text();
+            var variableName = "ContrastMatrix"+i+""+j;
+            bv.SetPluginStringParameter(variableName, text);
+        }
+    }
+
+    //Setting parameters for the group matrix
+    for(var i = 0; i < num_of_maps; i++){
+        for(var j = 0; j < numberGroupLayers; j++){
+            var text = dlg.designGroupBox.groupMatrixTableWidget.item(i,j).text();
+            var variableName = "GroupMatrix"+i+""+j;
+            bv.SetPluginStringParameter(variableName, text);
+        }
+    }
+
+    //TODO:Set parameters for FTest
 
     bv.SetPluginStringParameter("Command", "Execute");
     bv.ExecutePlugin();
@@ -149,6 +176,16 @@ scriptObj.onChangeStudy = function(){
             this.addColumn();
             this.addContrast();
             this.addGroup();
+            //Filling Design Matrix and Group Matrix
+            for(i = 0; i < num_of_maps; i++){
+                var item1 = new QTableWidgetItem("1");
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
+                var item1 = new QTableWidgetItem("1");
+                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
+            }
+            //Filling the contrast matrix
+            var item1 = new QTableWidgetItem("1");
+            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
         }
         else if(currentStudy == "Two-Sample Unpaired T-Test"){
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
@@ -157,6 +194,36 @@ scriptObj.onChangeStudy = function(){
             this.addContrast();
             this.addContrast();
             this.addGroup();
+
+            //Filling the design matrix
+            for(var i = 0; i < num_of_maps/2; i++){
+                var item1 = new QTableWidgetItem("1");
+                var item0 = new QTableWidgetItem("0");
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,1,item0);
+            }
+            for(var i = num_of_maps/2; i < num_of_maps; i++){
+                var item1 = new QTableWidgetItem("1");
+                var item0 = new QTableWidgetItem("0");
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item0);
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,1,item1);
+            }
+
+            //Filling the group matrix
+            for(var i = 0; i < num_of_maps; i++){
+                var item1 = new QTableWidgetItem("1");
+                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
+            }
+
+            //Filling the contrast matrix
+            var item1 = new QTableWidgetItem("1");
+            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
+            var item1 = new QTableWidgetItem("-1");
+            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,1,item1);
+            var item1 = new QTableWidgetItem("-1");
+            dlg.designGroupBox.contrastMatrixTableWidget.setItem(1,0,item1);
+            var item1 = new QTableWidgetItem("1");
+            dlg.designGroupBox.contrastMatrixTableWidget.setItem(1,1,item1);
         }
     }else{
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(true);
