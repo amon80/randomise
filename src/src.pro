@@ -365,6 +365,12 @@ HEADERS += \
     myvmpheader.h
 
 unix {
-    target.path = /usr/lib
+    target.path = ~/Documents/BVExtensions/Plugins_64
     INSTALLS += target
 }
+
+FORMS += \
+    randomise.ui
+
+DISTFILES += \
+    randomise.js

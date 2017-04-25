@@ -56,6 +56,21 @@ bool RandomisePlugin::initPlugin() // this function is called in GUI plugins onc
 		return false;
 	}
 
+    if (!qxGetMainHeaderOfCurrentVMR(&vmr_header)){
+        qxLogText("Plugin>  Problem Get resolution voxel.");
+        return false;
+    }
+
+    if (!qxGetNRVMPsOfCurrentVMR(&vmps_header)){
+        qxLogText("Plugin> No vmp loaded, exiting.");
+        return false;
+    }
+    num_of_maps = vmps_header.NrOfMaps;
+    if(!num_of_maps){
+        qxLogText("Plugin> For this plugin, you need a vmp with more than one map. Read the docs. Exiting.");
+        return false;
+    }
+
 	return true;
 }
 
@@ -63,21 +78,19 @@ bool RandomisePlugin::initPlugin() // this function is called in GUI plugins onc
 //
 bool RandomisePlugin::execute()
 {
-    float * vv = NULL;
-    struct VMR_Header vmr_header;
-    struct NR_VMPs_Header vmps_header;
-    struct NR_VMP_Header vmp_header;
-    int dim;
+    char task_name[100];
+    qxGetStringParameter("Command", task_name);
 
-    char buffer[100];
+    if(!strcmp(task_name, "GetNumOfMaps")){
+        qxSetIntParameter("NumOfMaps", num_of_maps);
+        return true;
+    }else if(!strcmp(task_name, "Execute")){
+        float * vv = NULL;
+        struct NR_VMP_Header vmp_header;
+        int dim;
 
+        char buffer[100];
 
-    if (!qxGetMainHeaderOfCurrentVMR(&vmr_header)){
-        qxLogText("Plugin>  Problem Get resolution voxel");
-        return false;
-    }
-
-    if (qxGetNRVMPsOfCurrentVMR(&vmps_header) != NULL) {
         //Getting VMR dimension
         int dimX = (vmps_header.XEnd - vmps_header.XStart) / vmps_header.Resolution;
         int dimY = (vmps_header.YEnd - vmps_header.YStart) / vmps_header.Resolution;
@@ -186,17 +199,13 @@ bool RandomisePlugin::execute()
                 vv[j] = r[i].originalStatistic[j];
             qxSetNRVMPParametersOfCurrentVMR(i, &vmp_header);
         }
-    }
-    else{
-        qxLogText("Plugin>  VMP not found");
-        return false;
-    }
 
-	// To make the change visible, update the active window in QX
-	qxUpdateActiveWindow();
+        // To make the change visible, update the active window in QX
+        qxUpdateActiveWindow();
 
-    qxLogText("Plugin>  Randomise Plugin completed!\n");
-	return true;
+        qxLogText("Plugin>  Randomise Plugin completed!\n");
+        return true;
+    }
 }
 
 
@@ -255,7 +264,7 @@ PLUGIN_ACCESS const char *getPluginVersion()
 //
 PLUGIN_ACCESS const char *getGUIScript()
 {
-	return "";
+    return "randomise.js";
 }
 
 

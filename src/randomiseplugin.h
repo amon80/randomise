@@ -19,6 +19,9 @@ public:
 	PLUGIN_ACCESS bool initPlugin();
 	PLUGIN_ACCESS bool execute();
 private:
+    int num_of_maps;
+    struct VMR_Header vmr_header;
+    struct NR_VMPs_Header vmps_header;
 };
 
 // To avoid C++ name mangling problems, we need to bootstrap access of plugin via C functions
