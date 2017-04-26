@@ -19,7 +19,9 @@
 #include "randomise.h"
 #include "Eigen/Dense"
 
-#include <string>
+#include "connectivity3d6.h"
+#include "connectivity3d18.h"
+#include "connectivity3d26.h"
 
 // constructor of your plugin class
 //
@@ -97,10 +99,28 @@ bool RandomisePlugin::execute()
         int numberFTests = qxGetIntParameter("NumberOfFTests");
         int numberGroupLayers = qxGetIntParameter("NumberOfGroupLayers");
 
-        bool useTfce = false;
-        if(useTfceInt)
-            useTfce = true;
+        float dh = 0.1;
+        float H = 2.0;
+        float E = 0.5;
+        Connectivity3D * Conn = nullptr;
 
+        char buffer[100];
+
+        bool useTfce = false;
+        if(useTfceInt){
+            useTfce = true;
+            dh = qxGetFloatParameter("dh");
+            H = qxGetFloatParameter("H");
+            E = qxGetFloatParameter("E");
+            qxGetStringParameter("C", buffer);
+            if(!strcmp(buffer, "6 connectivity")){
+                Conn = new Connectivity3D6();
+            }else if(!strcmp(buffer, "18 connectivity")){
+                Conn = new Connectivity3D18();
+            }else{
+                Conn = new Connectivity3D26();
+            }
+        }
         bool EE = false;
         if(useEEInt)
             EE = true;
@@ -113,9 +133,7 @@ bool RandomisePlugin::execute()
         struct NR_VMP_Header vmp_header;
         int dim;
 
-        char buffer[100];
         char variableName[100];
-
 
         //Getting VMR dimension
         int dimX = (vmps_header.XEnd - vmps_header.XStart) / vmps_header.Resolution;
@@ -173,7 +191,7 @@ bool RandomisePlugin::execute()
 
         //Go with the math
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, EE, ISE, maxPermutations, alpha);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha);
         qxStopBusyCursor();
 
         int n = C.size();

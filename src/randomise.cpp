@@ -9,7 +9,7 @@
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, bool EE, bool ISE, int J, float alpha){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, float E, float H,  float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -25,6 +25,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         PermutationTree t(a);
         t.initializeBinaryCounters();
         t.initializeThreeColsArray();
+
+        //Copy the original design matrix
+        //NOTE:This is necessary since MCopy will be replaced by the partitioning
+        Eigen::MatrixXd MCopy = M;
 
         //Partitioning the model and computing the rank of the contrast
         PartitioningResult partitioning = partitionModel(M, c);
@@ -43,10 +47,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         if(r != s){
             Eigen::MatrixXd tmp(X.rows(), X.cols()+Z.cols());
             tmp << X, Z;
-            M = tmp;
+            MCopy = tmp;
         }
         else{
-            M = X;
+            MCopy = X;
         }
 
         //Storing the identity matrix for convenience
@@ -90,10 +94,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         //Computing utility matrices
         double epsilon = std::numeric_limits<double>::epsilon();
-        Eigen::MatrixXd Mplus = pseudoInverse(M, epsilon);
+        Eigen::MatrixXd Mplus = pseudoInverse(MCopy, epsilon);
         Eigen::MatrixXd Zplus = pseudoInverse(Z, epsilon);
         Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*Zplus);
-        Eigen::MatrixXd ResidualFormingMatrixM = (I - M*Mplus);
+        Eigen::MatrixXd ResidualFormingMatrixM = (I - MCopy*Mplus);
 
         //Setting omp variables
         int max_num_threads = omp_get_num_procs();
@@ -105,11 +109,11 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
             Eigen::VectorXd epsilonv = ResidualFormingMatrixM*epsilonZetas[v];
-            toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, M, c, s, VGS);
+            toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, MCopy, c, s, VGS);
         }
 
         if(useTfce)
-            tfce(toReturn[index].originalStatistic);
+            tfce(toReturn[index].originalStatistic, E, H, dh, conn);
 
        toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
@@ -146,7 +150,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 currentPerm = t.getSignVector();
             }
             Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
-            Eigen::MatrixXd Mj = Pj*M;
+            Eigen::MatrixXd Mj = Pj*MCopy;
             Eigen::MatrixXd Mjplus = pseudoInverse(Mj, epsilon);
             Eigen::MatrixXd ResidualFormingMatrixMj = (I - Mj*Mjplus);
 
@@ -165,7 +169,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             }
 
             if(useTfce)
-                tfce(permutedStatistic);
+                tfce(permutedStatistic, E, H, dh, conn);
 
             //Find the maximum
             float maxTj = permutedStatistic[0];

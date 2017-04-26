@@ -38,8 +38,30 @@ scriptObj.initDlg = function(){
     dlg.designGroupBox.fTestMatrixAddFTestButton.clicked.connect(this, this.addFTest);
     dlg.designGroupBox.fTestMatrixRemoveFTestButton.clicked.connect(this, this.removeFTest);
 
+    dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("6 connectivity");
+    dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("18 connectivity");
+    dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("26 connectivity");
+
+    dlg.optionsGroupBox.tfceCheckBox.toggled.connect(this, this.enableTfceOptions);
+
     dlg.buttonBox.accepted.connect(this, this.collectDataAndFire);
 }
+
+scriptObj.enableTfceOptions = function(){
+    var t = dlg.optionsGroupBox.tfceCheckBox.checked;
+    if(t){
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceESpinBox.setEnabled(true);
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceHSpinBox.setEnabled(true);
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceDhSpinBox.setEnabled(true);
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.setEnabled(true);
+    }else{
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceESpinBox.setEnabled(false);
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceHSpinBox.setEnabled(false);
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceDhSpinBox.setEnabled(false);
+        dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.setEnabled(false);
+    }
+}
+
 
 scriptObj.addColumn = function(){
     dlg.designGroupBox.designMatrixTableWidget.insertColumn(dlg.designGroupBox.designMatrixTableWidget.columnCount);
@@ -78,11 +100,18 @@ scriptObj.removeFTest =  function(){
 }
 
 scriptObj.collectDataAndFire = function(){
-
     bv.SetPluginIntParameter("MaxPermutations",  dlg.optionsGroupBox.maxNumPermutationsSpinbox.value);
     bv.SetPluginFloatParameter("Alpha",  dlg.optionsGroupBox.desiredAlphaSpinBox.value);
-    if(dlg.optionsGroupBox.tfceCheckBox.checked)
-        bv.SetPluginIntParameter("UseTfce",  1);
+    if(dlg.optionsGroupBox.tfceCheckBox.checked){
+        bv.SetPluginIntParameter("UseTfce", 1);
+        bv.SetPluginFloatParameter("H", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceHSpinBox.value);
+        bv.SetPluginFloatParameter("E", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceESpinBox.value);
+        bv.SetPluginFloatParameter("dh", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceDhSpinBox.value);
+        var conn = dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.currentText;
+        bv.PrintToLog(conn);
+        bv.SetPluginStringParameter("C", conn);
+
+    }
     else
         bv.SetPluginIntParameter("UseTfce",  0);
     if(dlg.optionsGroupBox.eeCheckBox.checked)
