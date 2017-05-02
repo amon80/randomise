@@ -107,10 +107,7 @@ scriptObj.collectDataAndFire = function(){
         bv.SetPluginFloatParameter("H", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceHSpinBox.value);
         bv.SetPluginFloatParameter("E", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceESpinBox.value);
         bv.SetPluginFloatParameter("dh", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceDhSpinBox.value);
-        var conn = dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.currentText;
-        bv.PrintToLog(conn);
-        bv.SetPluginStringParameter("C", conn);
-
+        bv.SetPluginStringParameter("C", dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.currentText);
     }
     else
         bv.SetPluginIntParameter("UseTfce",  0);
