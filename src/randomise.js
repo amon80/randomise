@@ -10,8 +10,9 @@ scriptObj.initDlg = function(){
     dlg = this.PluginDialog;
     dlg.windowTitle = "Randomise GUI";
     dlg.designGroupBox.typeOfStudyComboBox.addItem("Custom");
-    dlg.designGroupBox.typeOfStudyComboBox.addItem("Mean Effect");
+    dlg.designGroupBox.typeOfStudyComboBox.addItem("One-Sample T-Test");
     dlg.designGroupBox.typeOfStudyComboBox.addItem("Two-Sample Unpaired T-Test");
+    dlg.designGroupBox.typeOfStudyComboBox.addItem("Two-Sample Paired T-Test");
     //TODO:Add other studies
 
     bv.SetPluginStringParameter("Command", "GetNumOfMaps");
@@ -197,7 +198,7 @@ scriptObj.onChangeStudy = function(){
             this.removeGroup();
         }
 
-        if(currentStudy == "Mean Effect"){
+        if(currentStudy == "One-Sample T-Test"){
             dlg.optionsGroupBox.iseCheckBox.setChecked(true);
             this.addColumn();
             this.addContrast();
@@ -217,7 +218,6 @@ scriptObj.onChangeStudy = function(){
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
             this.addColumn();
             this.addColumn();
-            this.addContrast();
             this.addContrast();
             this.addGroup();
 
@@ -246,10 +246,72 @@ scriptObj.onChangeStudy = function(){
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
             var item1 = new QTableWidgetItem("-1");
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,1,item1);
-            var item1 = new QTableWidgetItem("-1");
-            dlg.designGroupBox.contrastMatrixTableWidget.setItem(1,0,item1);
+        }else if(currentStudy == "Two-Sample Paired T-Test"){
+            dlg.optionsGroupBox.eeCheckBox.setChecked(true);
+            this.addColumn();
+            for(var i = 0; i < num_of_maps/2; i++){
+                this.addColumn();
+            }
+
+            this.addContrast();
+            this.addGroup();
+            this.addGroup();
+
+            //Filling the design matrix
+            //First column
+            for(var i = 0; i < num_of_maps/2; i++){
+                var item1 = new QTableWidgetItem("1");
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
+            }
+            for(var i = num_of_maps/2; i < num_of_maps; i++){
+                var item1 = new QTableWidgetItem("-1");
+                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
+            }
+
+            //Other columns
+            for(var j = 1; j < num_of_maps/2 + 1; j++){
+                for(var i = 0; i < num_of_maps/2; i++){
+                    if(j == i+1){
+                        var item1 = new QTableWidgetItem("1");
+                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
+                    }else{
+                        var item1 = new QTableWidgetItem("0");
+                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
+                    }
+                }
+                for(var i = num_of_maps/2; i < num_of_maps; i++){
+                    var k = i - num_of_maps/2;
+                    if(j == k+1){
+                        var item1 = new QTableWidgetItem("1");
+                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
+                    }else{
+                        var item1 = new QTableWidgetItem("0");
+                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
+                    }
+                }
+            }
+
+            //Filling the group matrix
+            for(var i = 0; i < num_of_maps; i++){
+                var item1 = new QTableWidgetItem("-1");
+                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
+            }
+            var j = 1;
+            for(var i = 0; i < num_of_maps/2; i++){
+                var item1 = new QTableWidgetItem(""+j);
+                var item2 = new QTableWidgetItem(""+j);
+                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,1,item1);
+                dlg.designGroupBox.groupMatrixTableWidget.setItem(i+num_of_maps/2,1,item2);
+                j = j + 1;
+            }
+
+            //Filling the contrast matrix
             var item1 = new QTableWidgetItem("1");
-            dlg.designGroupBox.contrastMatrixTableWidget.setItem(1,1,item1);
+            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
+            for(var i = 1; i < num_of_maps+1; i++){
+                var item1 = new QTableWidgetItem("0");
+                dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,i,item1);
+            }
         }
     }else{
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(true);
