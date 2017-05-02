@@ -171,6 +171,7 @@
     <ClInclude Include="src\dlfcn.h" />
     <ClInclude Include="src\global.h" />
     <ClInclude Include="src\matrices.h" />
+    <ClInclude Include="src\multyrowarray.h" />
     <ClInclude Include="src\mymath.h" />
     <ClInclude Include="src\mystat.h" />
     <ClInclude Include="src\permutationtree.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="src\connectivity3d26.cpp" />
     <ClCompile Include="src\connectivity3d6.cpp" />
     <ClCompile Include="src\matrices.cpp" />
+    <ClCompile Include="src\multyrowarray.cpp" />
     <ClCompile Include="src\mymath.cpp" />
     <ClCompile Include="src\mystat.cpp" />
     <ClCompile Include="src\permutationtree.cpp" />
@@ -217,6 +219,10 @@
     <ClCompile Include="src\statisticalmap4d.cpp" />
     <ClCompile Include="src\tfce.cpp" />
     <ClCompile Include="src\threecolsarray.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\randomise.js" />
+    <None Include="src\randomise.ui" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
