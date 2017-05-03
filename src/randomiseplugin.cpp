@@ -165,17 +165,37 @@ bool RandomisePlugin::execute()
             }
         }
 
-        //Initializing the contrasts
-        //TODO:Add Ftests
-        std::vector<Eigen::MatrixXd> C(numberContrasts);
+        //Initializing the contrasts and the ftests
+        std::vector<Eigen::MatrixXd> C(numberContrasts + numberFTests);
         for(int i = 0; i < numberContrasts; i++){
             C[i] = Eigen::MatrixXd::Zero(numberRegressors,1);
         }
+        for(int i = numberContrasts; i < numberContrasts + numberFTests; i++){
+            C[i] = Eigen::MatrixXd::Zero(numberRegressors,numberContrasts);
+        }
+        //Filling contrasts and ftests
         for(int i = 0; i < numberContrasts; i++){
             for(int j = 0; j < numberRegressors; j++){
                 sprintf(variableName, "ContrastMatrix%d%d",i,j);
                 qxGetStringParameter(variableName, buffer);
                 C[i](j,0) = atof(buffer);
+            }
+        }
+        for(int i = numberContrasts; i < numberContrasts + numberFTests; i++){
+            int k = i - numberContrasts;
+            for(int j = 0; j < numberContrasts; j++){
+                sprintf(variableName, "FTestMatrix%d%d",k,j);
+                qxGetStringParameter(variableName, buffer);
+                int useContrastJ = atoi(buffer);
+                if(useContrastJ){
+                    for(int r = 0; r < numberRegressors; r++){
+                        C[i](r,j) = C[j](r,0);
+                    }
+                }else{
+                    for(int r = 0; r < numberRegressors; r++){
+                        C[i](r,j) = 0;
+                    }
+                }
             }
         }
 
@@ -189,9 +209,18 @@ bool RandomisePlugin::execute()
             }
         }
 
+        //Declaring function pointer for statistic, and getting its value from ui
+        float (*pivotal)(Eigen::VectorXd&, Eigen::VectorXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, int, std::vector<int>&);
+        qxGetStringParameter("Statistic", buffer);
+        if(!strcmp(buffer, "F")){
+            pivotal = FStatistic;
+        }else if(!strcmp(buffer, "G")){
+            pivotal = GStatistic;
+        }
+
         //Go with the math
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, a, FStatistic, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha);
+        std::vector<RandomiseResult> r = randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha);
         qxStopBusyCursor();
 
         int n = C.size();

@@ -13,6 +13,8 @@ scriptObj.initDlg = function(){
     dlg.designGroupBox.typeOfStudyComboBox.addItem("One-Sample T-Test");
     dlg.designGroupBox.typeOfStudyComboBox.addItem("Two-Sample Unpaired T-Test");
     dlg.designGroupBox.typeOfStudyComboBox.addItem("Two-Sample Paired T-Test");
+    dlg.designGroupBox.typeOfStudyComboBox.addItem("ANOVA: 1-factor 4-levels (Repeated Measures)");
+
     //TODO:Add other studies
 
     bv.SetPluginStringParameter("Command", "GetNumOfMaps");
@@ -42,6 +44,9 @@ scriptObj.initDlg = function(){
     dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("6 connectivity");
     dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("18 connectivity");
     dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("26 connectivity");
+
+    dlg.optionsGroupBox.statisticToUseComboBox.addItem("F");
+    dlg.optionsGroupBox.statisticToUseComboBox.addItem("G");
 
     dlg.optionsGroupBox.tfceCheckBox.toggled.connect(this, this.enableTfceOptions);
 
@@ -158,9 +163,22 @@ scriptObj.collectDataAndFire = function(){
         }
     }
 
-    //TODO:Set parameters for FTest
+    //Setting parameters for FTests (if any)
+    for(var i = 0; i < numberFTests; i++){
+        for(var j = 0; j < numberContrasts; j++){
+            var text = dlg.designGroupBox.fTestMatrixTableWidget.item(j,i).text();
+            var variableName = "FTestMatrix"+i+""+j;
+            bv.SetPluginStringParameter(variableName, text);
+        }
+    }
 
+    //Setting statistic to use
+    bv.SetPluginStringParameter("Statistic", dlg.optionsGroupBox.statisticToUseComboBox.currentText);
+
+    //Setting plugin command
     bv.SetPluginStringParameter("Command", "Execute");
+
+    //GO!!!
     bv.ExecutePlugin();
 }
 
@@ -185,6 +203,8 @@ scriptObj.onChangeStudy = function(){
         dlg.optionsGroupBox.eeCheckBox.setChecked(false);
         dlg.optionsGroupBox.iseCheckBox.setChecked(false);
 
+        dlg.optionsGroupBox.statisticToUseComboBox.setEnabled(false);
+
         while(dlg.designGroupBox.contrastMatrixTableWidget.rowCount != 0){
             this.removeContrast();
         }
@@ -203,6 +223,7 @@ scriptObj.onChangeStudy = function(){
             this.addColumn();
             this.addContrast();
             this.addGroup();
+
             //Filling Design Matrix and Group Matrix
             for(i = 0; i < num_of_maps; i++){
                 var item1 = new QTableWidgetItem("1");
@@ -210,9 +231,14 @@ scriptObj.onChangeStudy = function(){
                 var item1 = new QTableWidgetItem("1");
                 dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
             }
+
             //Filling the contrast matrix
             var item1 = new QTableWidgetItem("1");
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
+
+            //Setting proper statistic
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
+
         }
         else if(currentStudy == "Two-Sample Unpaired T-Test"){
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
@@ -246,6 +272,10 @@ scriptObj.onChangeStudy = function(){
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
             var item1 = new QTableWidgetItem("-1");
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,1,item1);
+
+            //Setting proper statistic
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
+
         }else if(currentStudy == "Two-Sample Paired T-Test"){
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
             this.addColumn();
@@ -312,6 +342,30 @@ scriptObj.onChangeStudy = function(){
                 var item1 = new QTableWidgetItem("0");
                 dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,i,item1);
             }
+
+            //Setting proper statistic
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
+
+        }else if(currentStudy == "ANOVA: 1-factor 4-levels (Repeated Measures)"){
+            //TODO
+            var num_subjects = num_of_maps/4;
+            for(var i = 0; i < num_subjects; i++){
+                this.addColumn();
+            }
+            this.addColumn();
+            this.addColumn();
+            this.addColumn();
+
+            //TODO: Proper Filling design matrix
+            for(var i = 0; i < num_subjects; i++){
+                for(var j = 0; j < num_of_maps; j++){
+                    var item1 = new QTableWidgetItem("1");
+                    dlg.designGroupBox.designMatrixTableWidget.setItem(j,i,item1);
+                }
+            }
+
+            //Setting proper statistic
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
         }
     }else{
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(true);
@@ -328,6 +382,8 @@ scriptObj.onChangeStudy = function(){
 
         dlg.optionsGroupBox.eeCheckBox.setEnabled(true);
         dlg.optionsGroupBox.iseCheckBox.setEnabled(true);
+
+        dlg.optionsGroupBox.statisticToUseComboBox.setEnabled(true);
     }
 }
 
