@@ -165,12 +165,13 @@ bool RandomisePlugin::execute()
             }
         }
 
+        int total_contrasts = numberContrasts + numberFTests;
         //Initializing the contrasts and the ftests
-        std::vector<Eigen::MatrixXd> C(numberContrasts + numberFTests);
+        std::vector<Eigen::MatrixXd> C(total_contrasts);
         for(int i = 0; i < numberContrasts; i++){
             C[i] = Eigen::MatrixXd::Zero(numberRegressors,1);
         }
-        for(int i = numberContrasts; i < numberContrasts + numberFTests; i++){
+        for(int i = numberContrasts; i < total_contrasts; i++){
             C[i] = Eigen::MatrixXd::Zero(numberRegressors,numberContrasts);
         }
         //Filling contrasts and ftests
@@ -181,20 +182,14 @@ bool RandomisePlugin::execute()
                 C[i](j,0) = atof(buffer);
             }
         }
-        for(int i = numberContrasts; i < numberContrasts + numberFTests; i++){
+        for(int i = numberContrasts; i < total_contrasts; i++){
             int k = i - numberContrasts;
             for(int j = 0; j < numberContrasts; j++){
                 sprintf(variableName, "FTestMatrix%d%d",k,j);
                 qxGetStringParameter(variableName, buffer);
-                int useContrastJ = atoi(buffer);
-                if(useContrastJ){
-                    for(int r = 0; r < numberRegressors; r++){
-                        C[i](r,j) = C[j](r,0);
-                    }
-                }else{
-                    for(int r = 0; r < numberRegressors; r++){
-                        C[i](r,j) = 0;
-                    }
+                float useContrastJ = atof(buffer);
+                for(int r = 0; r < numberRegressors; r++){
+                    C[i](r,j) = useContrastJ*C[j](r,0);
                 }
             }
         }
