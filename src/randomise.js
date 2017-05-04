@@ -347,7 +347,6 @@ scriptObj.onChangeStudy = function(){
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
 
         }else if(currentStudy == "ANOVA: 1-factor 4-levels (Repeated Measures)"){
-            //TODO
             var num_subjects = num_of_maps/4;
             for(var i = 0; i < num_subjects; i++){
                 this.addColumn();
@@ -356,11 +355,19 @@ scriptObj.onChangeStudy = function(){
             this.addColumn();
             this.addColumn();
 
-            //TODO: Proper Filling design matrix
+            this.addContrast();
+            this.addContrast();
+            this.addContrast();
+
+            this.addFTest();
+            this.addGroup();
+            this.addGroup();
+
             for(var i = 0; i < num_subjects; i++){
-                for(var j = 0; j < num_of_maps; j++){
+                var firstRowSubjI = i*4;
+                for(var j = 0; j < 4; j++){
                     var item1 = new QTableWidgetItem("1");
-                    dlg.designGroupBox.designMatrixTableWidget.setItem(j,i,item1);
+                    dlg.designGroupBox.designMatrixTableWidget.setItem(j+firstRowSubjI,i,item1);
                 }
             }
 
