@@ -200,7 +200,7 @@ bool RandomisePlugin::execute()
             for(int i = 0; i < num_of_maps; i++){
                 sprintf(variableName, "GroupMatrix%d%d",i,j);
                 qxGetStringParameter(variableName, buffer);
-                a[j][i] = atof(buffer);
+                a[j][i] = atoi(buffer);
             }
         }
 
