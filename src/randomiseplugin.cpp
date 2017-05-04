@@ -205,7 +205,7 @@ bool RandomisePlugin::execute()
         }
 
         //Declaring function pointer for statistic, and getting its value from ui
-        float (*pivotal)(Eigen::VectorXd&, Eigen::VectorXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, int, std::vector<int>&);
+        float (*pivotal)(Eigen::VectorXd&, Eigen::VectorXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, int, std::vector<int>&) = nullptr;
         qxGetStringParameter("Statistic", buffer);
         if(!strcmp(buffer, "F")){
             pivotal = FStatistic;
