@@ -225,7 +225,7 @@ bool RandomisePlugin::execute()
         qxDeleteNRVMPsOfCurrentVMR();
         qxCreateNRVMPsForCurrentVMR(total_vmp, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
-		int j = 0;
+        int j = 0;
         for(int i = 0; i < n; i++){
             int performedPermutations = r[i].performedPermutations;
             float criticalThreshold;
@@ -264,6 +264,7 @@ bool RandomisePlugin::execute()
 			vmp_header.ThreshMax = 1;
 			for (int k = 0; k < dim; k++)
 				vv[k] = 1 - r[i].uncorrected[k];
+            vmp_header.ShowPosOrNegOrBoth = 1;
 			qxSetNRVMPParametersOfCurrentVMR(j++, &vmp_header);
 
 			//Filling submap with negated FWER corrected pvalues for contrast i
@@ -275,6 +276,7 @@ bool RandomisePlugin::execute()
 			vmp_header.ThreshMax = 1;
 			for (int k = 0; k < dim; k++)
 				vv[k] = 1 - r[i].corrected[k];
+            vmp_header.ShowPosOrNegOrBoth = 1;
 			qxSetNRVMPParametersOfCurrentVMR(j++, &vmp_header);
         }
 
