@@ -218,11 +218,14 @@ bool RandomisePlugin::execute()
         std::vector<RandomiseResult> r = randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha);
         qxStopBusyCursor();
 
+		//Arrange the results in a vmp
         int n = C.size();
+		int total_vmp = n * 3;
 
         qxDeleteNRVMPsOfCurrentVMR();
-        qxCreateNRVMPsForCurrentVMR(n, 0, 0, NULL);
+        qxCreateNRVMPsForCurrentVMR(total_vmp, 0, 0, NULL);
         qxGetNRVMPsOfCurrentVMR(&vmps_header);
+		int j = 0;
         for(int i = 0; i < n; i++){
             int performedPermutations = r[i].performedPermutations;
             float criticalThreshold;
@@ -233,27 +236,46 @@ bool RandomisePlugin::execute()
                 qxLogText(buffer);
             }
 
+			//Filling submap with original statistic for contrast i
             MinMaxStructure m = r[i].originalStatistic.findMinMax();
             float min = m.min;
             float max = m.max;
 
-            vv = qxGetNRVMPOfCurrentVMR(i, &vmp_header);
+            vv = qxGetNRVMPOfCurrentVMR(j, &vmp_header);
             sprintf(buffer, "Contrast %d", i);
             strcpy(vmp_header.NameOfMap, buffer);
-            vmp_header.MapType = 1;
             vmp_header.df1 = num_of_maps - 1;
-            if(i == 0)
-                vmp_header.OverlayMap = 1;
-            else
-                vmp_header.OverlayMap = 0;
+            vmp_header.OverlayMap = 0;
             if(performedPermutations > 0)
                 vmp_header.ThreshMin = criticalThreshold;
             else
                 vmp_header.ThreshMin = min;
             vmp_header.ThreshMax = max;
-            for(int j = 0; j < dim; j++)
-                vv[j] = r[i].originalStatistic[j];
-            qxSetNRVMPParametersOfCurrentVMR(i, &vmp_header);
+            for(int k = 0; k < dim; k++)
+                vv[k] = r[i].originalStatistic[k];
+            qxSetNRVMPParametersOfCurrentVMR(j++, &vmp_header);
+
+			//Filling submap with negated uncorrected pvalues for contrast i
+			vv = qxGetNRVMPOfCurrentVMR(j, &vmp_header);
+			sprintf(buffer, "Contrast %d - Uncorrected pvalues", i);
+			strcpy(vmp_header.NameOfMap, buffer);
+			vmp_header.OverlayMap = 0;
+			vmp_header.ThreshMin = 1-alpha;
+			vmp_header.ThreshMax = 1;
+			for (int k = 0; k < dim; k++)
+				vv[k] = 1 - r[i].uncorrected[k];
+			qxSetNRVMPParametersOfCurrentVMR(j++, &vmp_header);
+
+			//Filling submap with negated FWER corrected pvalues for contrast i
+			vv = qxGetNRVMPOfCurrentVMR(j, &vmp_header);
+			sprintf(buffer, "Contrast %d - FWER corrected pvalues", i);
+			strcpy(vmp_header.NameOfMap, buffer);
+			vmp_header.OverlayMap = 0;
+			vmp_header.ThreshMin = 1 - alpha;
+			vmp_header.ThreshMax = 1;
+			for (int k = 0; k < dim; k++)
+				vv[k] = 1 - r[i].corrected[k];
+			qxSetNRVMPParametersOfCurrentVMR(j++, &vmp_header);
         }
 
         // To make the change visible, update the active window in QX
