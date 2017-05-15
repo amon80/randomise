@@ -9,12 +9,16 @@
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, float E, float H,  float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, float E, float H,  float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int * performed_perm, int * total_perm){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
     //Initializing the vector of results
     std::vector<RandomiseResult> toReturn(C.size());
+
+    //Initializing permutations counters variables
+    (*performed_perm) = 0;
+    (*total_perm) = 0;
 
     int index = 0;
     for(Eigen::MatrixXd c: C){
@@ -72,7 +76,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         }else{
             actualPermutationSize = J;
         }
-
+        (*total_perm) = actualPermutationSize;
 
         //Let's risolve the original model.
         //First, we get the informations that we need from the 4D map
@@ -190,6 +194,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                         toReturn[index].corrected[v] += 1;
                 }
             }
+
+            //Updating counter
+            #pragma omp atomic
+                (*performed_perm) += 1;
         }
         //finished the computation for current contrast
         //NOTE: Single threaded from here

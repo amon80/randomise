@@ -23,6 +23,9 @@
 #include "connectivity3d18.h"
 #include "connectivity3d26.h"
 
+#include <future>
+#include <chrono>
+
 // constructor of your plugin class
 //
 RandomisePlugin::RandomisePlugin()
@@ -98,6 +101,8 @@ bool RandomisePlugin::execute()
         int numberRegressors = qxGetIntParameter("NumberOfRegressors");
         int numberFTests = qxGetIntParameter("NumberOfFTests");
         int numberGroupLayers = qxGetIntParameter("NumberOfGroupLayers");
+
+        int refreshingTimeSeconds = qxGetIntParameter("RefreshingTime");
 
         float dh = 0.1;
         float H = 2.0;
@@ -213,10 +218,32 @@ bool RandomisePlugin::execute()
             pivotal = GStatistic;
         }
 
-        //Go with the math
+        //Declaring integer to pass by reference for logging use
+        int performed_perm = 0;
+        int total_perm = 0;
+
+        //Go with the math (asynchronosly)
         qxShowBusyCursor();
-        std::vector<RandomiseResult> r = randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha);
+        std::chrono::milliseconds span (1000 * refreshingTimeSeconds);
+        auto randomise_lambda = [&Y, &M, &C, &a, &pivotal, &useTfce, &E, &H, &dh, &Conn, &EE, &ISE, &maxPermutations, &alpha, &performed_perm, &total_perm]
+        {
+            return randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha, &performed_perm, &total_perm);
+        };
+        auto fut = std::async(std::launch::async, randomise_lambda);
+        while (true){
+            auto waiting_result = fut.wait_for(span);
+            if(waiting_result==std::future_status::ready){
+                qxLogText("Finished!");
+                break;
+            }
+            else if(waiting_result==std::future_status::timeout){
+                sprintf(buffer, "Executed %d/%d permutations", performed_perm, total_perm);
+                qxLogText(buffer);
+            }
+        }
         qxStopBusyCursor();
+
+        std::vector<RandomiseResult> r = fut.get();
 
 		//Arrange the results in a vmp
         int n = C.size();
@@ -257,7 +284,7 @@ bool RandomisePlugin::execute()
 
 			//Filling submap with negated uncorrected pvalues for contrast i
 			vv = qxGetNRVMPOfCurrentVMR(j, &vmp_header);
-			sprintf(buffer, "Contrast %d - Uncorrected pvalues", i);
+            sprintf(buffer, "Contrast %d - Uncorrected 1-pvalues", i);
 			strcpy(vmp_header.NameOfMap, buffer);
 			vmp_header.OverlayMap = 0;
 			vmp_header.ThreshMin = 1-alpha;
@@ -269,7 +296,7 @@ bool RandomisePlugin::execute()
 
 			//Filling submap with negated FWER corrected pvalues for contrast i
 			vv = qxGetNRVMPOfCurrentVMR(j, &vmp_header);
-			sprintf(buffer, "Contrast %d - FWER corrected pvalues", i);
+            sprintf(buffer, "Contrast %d - FWER corrected 1-pvalues", i);
 			strcpy(vmp_header.NameOfMap, buffer);
 			vmp_header.OverlayMap = 0;
 			vmp_header.ThreshMin = 1 - alpha;

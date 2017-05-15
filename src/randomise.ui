@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>945</width>
-    <height>487</height>
+    <width>1005</width>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>590</x>
-     <y>440</y>
+     <y>520</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -35,7 +35,7 @@
      <x>10</x>
      <y>10</y>
      <width>521</width>
-     <height>471</height>
+     <height>501</height>
     </rect>
    </property>
    <property name="title">
@@ -267,7 +267,7 @@
      <x>540</x>
      <y>10</y>
      <width>391</width>
-     <height>421</height>
+     <height>501</height>
     </rect>
    </property>
    <property name="title">
@@ -322,7 +322,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Max number of permutations</string>
+     <string>Max number of permutations:</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="maxNumPermutationsSpinbox">
@@ -351,7 +351,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Desired Inference level</string>
+     <string>Desired Inference level:</string>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="desiredAlphaSpinBox">
@@ -519,7 +519,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>Statistic to use</string>
+     <string>Statistic to use:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="refreshingTimeLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>450</y>
+      <width>171</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Refreshing time (seconds)</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="refreshingTimeSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>440</y>
+      <width>121</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="value">
+     <number>5</number>
     </property>
    </widget>
   </widget>

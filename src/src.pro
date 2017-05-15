@@ -12,8 +12,8 @@ CONFIG += unversioned_libname unversioned_soname
 TARGET = RandomisePlugin
 TEMPLATE = lib
 
-QMAKE_CXXFLAGS += -fopenmp
-LIBS += -fopenmp
+QMAKE_CXXFLAGS += -fopenmp -pthread
+LIBS += -fopenmp -pthread
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings

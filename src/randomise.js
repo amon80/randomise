@@ -175,6 +175,9 @@ scriptObj.collectDataAndFire = function(){
     //Setting statistic to use
     bv.SetPluginStringParameter("Statistic", dlg.optionsGroupBox.statisticToUseComboBox.currentText);
 
+    //Setting refreshing time for log
+    bv.SetPluginIntParameter("RefreshingTime", dlg.optionsGroupBox.refreshingTimeSpinBox.value);
+
     //Setting plugin command
     bv.SetPluginStringParameter("Command", "Execute");
 
