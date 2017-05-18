@@ -17,6 +17,6 @@ Eigen::MatrixXd buildShufflingMatrix(std::vector<int>& perm);
 //Function for PseudoInverse
 Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon);
 
-PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd& C);
+PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd& C, Eigen::MatrixXd &W);
 
 #endif // MATRICES_H

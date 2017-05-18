@@ -33,10 +33,10 @@ Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon)
     return svd.matrixV() *  (svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix().asDiagonal() * svd.matrixU().adjoint();
 }
 
-PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C){
+PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C, Eigen::MatrixXd &W){
     //Partition the model
     PartitioningResult toReturn;
-    Eigen::MatrixXd D = (M.transpose() * M).inverse();
+    Eigen::MatrixXd D = (M.transpose() * W * M).inverse();
     Eigen::MatrixXd Ctrasp = C.transpose();
     toReturn.X = M*D*C*((Ctrasp*D*C).inverse());
 

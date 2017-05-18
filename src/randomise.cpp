@@ -9,7 +9,7 @@
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, float E, float H,  float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int * performed_perm, int * total_perm, int *contrast){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, MultyRowArray &a, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& partitionedM, Eigen::MatrixXd& unpartitionedM, Eigen::MatrixXd& Pj, Eigen::MatrixXd& R, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce, float E, float H, float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int *performed_perm, int *total_perm, int *contrast){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -34,8 +34,11 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         //NOTE:This is necessary since MCopy will be replaced by the partitioning
         Eigen::MatrixXd MCopy = M;
 
+        //Storing the identity matrix for convenience
+        Eigen::MatrixXd I = Eigen::MatrixXd::Identity(N, N);
+
         //Partitioning the model and computing the rank of the contrast
-        PartitioningResult partitioning = partitionModel(M, c);
+        PartitioningResult partitioning = partitionModel(M, c, I);
         Eigen::MatrixXd X = partitioning.X;
         Eigen::MatrixXd Z = partitioning.Z;
         int s = c.cols();
@@ -57,10 +60,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             MCopy = X;
         }
 
-        //Storing the identity matrix for convenience
-        Eigen::MatrixXd I = Eigen::MatrixXd::Identity(N, N);
-
-        //Computing the # number of permutations
+        //Computing the max number of permutations
         int Jmax = t.calculatePermutations(X, EE, ISE);
 
         //Computing the minimum set of VGS
@@ -113,7 +113,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
             Eigen::VectorXd epsilonv = ResidualFormingMatrixM*epsilonZetas[v];
-            toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, MCopy, c, s, VGS);
+            toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, MCopy, M, I, ResidualFormingMatrixM, c, s, VGS);
         }
 
         if(useTfce)
@@ -165,7 +165,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             for(int v = 0; v < numVoxels; v++){
                 Eigen::VectorXd phijv = Mjplus*epsilonZetas[v];
                 Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
-                permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, c, s, VGS);
+                permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, M, Pj, ResidualFormingMatrixMj, c, s, VGS);
                 if(permutedStatistic[v] >= toReturn[index].originalStatistic[v]){
                     #pragma omp atomic
                         toReturn[index].uncorrected[v] += 1;
