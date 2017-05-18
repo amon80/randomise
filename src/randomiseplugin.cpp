@@ -221,13 +221,14 @@ bool RandomisePlugin::execute()
         //Declaring integer to pass by reference for logging use
         int performed_perm = 0;
         int total_perm = 0;
+        int contrast = 0;
 
         //Go with the math (asynchronosly)
         qxShowBusyCursor();
         std::chrono::milliseconds span (1000 * refreshingTimeSeconds);
-        auto randomise_lambda = [&Y, &M, &C, &a, &pivotal, &useTfce, &E, &H, &dh, &Conn, &EE, &ISE, &maxPermutations, &alpha, &performed_perm, &total_perm]
+        auto randomise_lambda = [&Y, &M, &C, &a, &pivotal, &useTfce, &E, &H, &dh, &Conn, &EE, &ISE, &maxPermutations, &alpha, &performed_perm, &total_perm, &contrast]
         {
-            return randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha, &performed_perm, &total_perm);
+            return randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha, &performed_perm, &total_perm, &contrast);
         };
         auto fut = std::async(std::launch::async, randomise_lambda);
         while (true){
@@ -237,7 +238,7 @@ bool RandomisePlugin::execute()
                 break;
             }
             else if(waiting_result==std::future_status::timeout){
-                sprintf(buffer, "Executed %d/%d permutations", performed_perm, total_perm);
+                sprintf(buffer, "Contrast %d - Executed %d/%d permutations", contrast, performed_perm, total_perm);
                 qxLogText(buffer);
             }
         }

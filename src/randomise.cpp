@@ -9,7 +9,7 @@
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, float E, float H,  float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int * performed_perm, int * total_perm){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd> &C, MultyRowArray& a, float (*pivotal)(Eigen::VectorXd &, Eigen::VectorXd &, Eigen::MatrixXd &, Eigen::MatrixXd &, int, std::vector<int> &), bool useTfce, float E, float H,  float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int * performed_perm, int * total_perm, int *contrast){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -215,6 +215,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             toReturn[index].criticalThreshold = toReturn[index].maxDistribution[floor(alpha*toReturn[index].performedPermutations) + 1];
         }
 		index++;
+        (*contrast)++;
     }
     return toReturn;
 }
