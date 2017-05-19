@@ -108,7 +108,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         omp_set_num_threads(max_num_threads);
 
         //Computing statistics on original model
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for(int v = 0; v < numVoxels; v++){
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
@@ -121,7 +121,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
        toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
             std::vector<int> currentPerm;
             #pragma omp critical

@@ -97,6 +97,7 @@ float computeLambda(int s, Eigen::MatrixXd& R, Eigen::MatrixXd& W, std::vector<i
     return term1 + term2*term3;
 }
 
+//BUG: Apparently it generates Nan in some situations
 float GStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& partitionedM, Eigen::MatrixXd& unpartitionedM, Eigen::MatrixXd& Pj, Eigen::MatrixXd& R, Eigen::MatrixXd& C, int s, std::vector<int>& VGS){
     int N = partitionedM.rows();
 
