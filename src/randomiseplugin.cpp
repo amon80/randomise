@@ -216,6 +216,8 @@ bool RandomisePlugin::execute()
             pivotal = FStatistic;
         }else if(!strcmp(buffer, "G")){
             pivotal = GStatistic;
+        }else if(!strcmp(buffer, "T")){
+            pivotal = TStatistic;
         }
 
         //Declaring integer to pass by reference for logging use

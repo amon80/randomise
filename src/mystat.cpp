@@ -54,7 +54,11 @@ Eigen::MatrixXd computeW(Eigen::MatrixXd& R, Eigen::VectorXd& epsilon, std::vect
                 epsilonGroup(j) = epsilon(j);
             }
         }
-        toReturn(i,i) = sum / (epsilonGroup.dot(epsilonGroup));
+        float denominator = epsilonGroup.dot(epsilonGroup);
+        if(denominator == 0)
+            toReturn(i,i) = 1;
+        else
+            toReturn(i,i) = sum / denominator;
     }
     return toReturn;
 }
@@ -74,8 +78,8 @@ float computeLambda(int s, Eigen::MatrixXd& R, Eigen::MatrixXd& W, std::vector<i
         return 1;
 
     //Computing term3
-    int ngroups = (*std::max_element(VGS.begin(), VGS.end()));
-    for(int i = 1; i <= ngroups; i++){
+    int ngroups = (*std::max_element(VGS.begin(), VGS.end())) + 1;
+    for(int i = 0; i < ngroups; i++){
         float term30 = 0;
         for(int j = 0; j < N; j++){
             if(VGS[j] == i){
@@ -91,13 +95,13 @@ float computeLambda(int s, Eigen::MatrixXd& R, Eigen::MatrixXd& W, std::vector<i
         }
         term40 /= W.trace();
         float term41 = 1 - term40;
+        term41 *= term41;
         term3 += term31*term41;
     }
 
     return term1 + term2*term3;
 }
 
-//BUG: Apparently it generates Nan in some situations
 float GStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& partitionedM, Eigen::MatrixXd& unpartitionedM, Eigen::MatrixXd& Pj, Eigen::MatrixXd& R, Eigen::MatrixXd& C, int s, std::vector<int>& VGS){
     int N = partitionedM.rows();
 
@@ -116,16 +120,11 @@ float GStatistic(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd
     float lambda = computeLambda(s, R, W, VGS);
 
     PartitioningResult p = partitionModel(unpartitionedM, C, W);
-    Eigen::MatrixXd Xw = p.X;
-    Eigen::MatrixXd Xwj = Pj*Xw;
+    Eigen::MatrixXd Xwj = Pj*p.X;
 
     Eigen::MatrixXd numeratorMatrix = beta.transpose()*(Xwj.transpose()*X)*beta;
     float denominator = lambda*s;
     float numerator = numeratorMatrix(0,0);
-    if(denominator == 0)
-        return 0;
-    else
-        return numerator/denominator;
-    return 0;
+    return numerator/denominator;
 }
 

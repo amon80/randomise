@@ -32,6 +32,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         //Copy the original design matrix
         //NOTE:This is necessary since MCopy will be replaced by the partitioning
+        //The original model is also needed by the G statistic
         Eigen::MatrixXd MCopy = M;
 
         //Storing the identity matrix for convenience
@@ -43,12 +44,6 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         Eigen::MatrixXd Z = partitioning.Z;
         int s = c.cols();
         int r = c.rows();
-
-        //Automatically switching to TStatistic if we are using F statistic and
-        //rank C == 1
-        if(pivotal == FStatistic && s == 1){
-            pivotal = TStatistic;
-        }
 
         //"For semplicity, replace M"
         if(r != s){
@@ -108,7 +103,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         omp_set_num_threads(max_num_threads);
 
         //Computing statistics on original model
-        //#pragma omp parallel for
+        #pragma omp parallel for
         for(int v = 0; v < numVoxels; v++){
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
@@ -121,7 +116,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
        toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
-        //#pragma omp parallel for
+        #pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
             std::vector<int> currentPerm;
             #pragma omp critical

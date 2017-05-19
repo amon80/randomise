@@ -36,9 +36,10 @@ Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon)
 PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C, Eigen::MatrixXd &W){
     //Partition the model
     PartitioningResult toReturn;
-    Eigen::MatrixXd D = (M.transpose() * W * M).inverse();
+    Eigen::MatrixXd D = (M.transpose() * M).inverse();
+    Eigen::MatrixXd Dw = (M.transpose() * W * M).inverse();
     Eigen::MatrixXd Ctrasp = C.transpose();
-    toReturn.X = M*D*C*((Ctrasp*D*C).inverse());
+    toReturn.X = M*D*C*((Ctrasp*Dw*C).inverse());
 
     int r = C.rows();
     int s = C.cols();

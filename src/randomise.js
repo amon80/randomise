@@ -45,6 +45,7 @@ scriptObj.initDlg = function(){
     dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("18 connectivity");
     dlg.optionsGroupBox.tfceOptionsGroupBox.tfceCComboBox.addItem("26 connectivity");
 
+    dlg.optionsGroupBox.statisticToUseComboBox.addItem("T");
     dlg.optionsGroupBox.statisticToUseComboBox.addItem("F");
     dlg.optionsGroupBox.statisticToUseComboBox.addItem("G");
 
@@ -240,7 +241,7 @@ scriptObj.onChangeStudy = function(){
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
 
             //Setting proper statistic
-            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
         }
         else if(currentStudy == "Two-Sample Unpaired T-Test"){
@@ -277,7 +278,7 @@ scriptObj.onChangeStudy = function(){
             dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,1,item1);
 
             //Setting proper statistic
-            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
         }else if(currentStudy == "Two-Sample Paired T-Test"){
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
@@ -347,7 +348,7 @@ scriptObj.onChangeStudy = function(){
             }
 
             //Setting proper statistic
-            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
         }else if(currentStudy == "ANOVA: 1-factor 4-levels (Repeated Measures)"){
             var num_subjects = num_of_maps/4;
