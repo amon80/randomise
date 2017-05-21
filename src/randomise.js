@@ -6,16 +6,26 @@ var scriptObj  = new Object;
 scriptObj.dialogFileName = "randomise.ui";
 scriptObj.dialogAccessName = "PluginDialog";
 
+function addEntryToTable(table, row, column, value){
+    var item = new QTableWidgetItem(value);
+    table.setItem(row,column,item);
+}
+
 scriptObj.initDlg = function(){
     dlg = this.PluginDialog;
     dlg.windowTitle = "Randomise GUI";
-    dlg.designGroupBox.typeOfStudyComboBox.addItem("Custom");
-    dlg.designGroupBox.typeOfStudyComboBox.addItem("One-Sample T-Test");
-    dlg.designGroupBox.typeOfStudyComboBox.addItem("Two-Sample Unpaired T-Test");
-    dlg.designGroupBox.typeOfStudyComboBox.addItem("Two-Sample Paired T-Test");
-    dlg.designGroupBox.typeOfStudyComboBox.addItem("ANOVA: 1-factor 4-levels (Repeated Measures)");
 
-    //TODO:Add other studies
+    //Shortening names
+    designMatrix = dlg.designGroupBox.designMatrixTableWidget;
+    treeMatrix = dlg.designGroupBox.groupMatrixTableWidget;
+    contrastMatrix = dlg.designGroupBox.contrastMatrixTableWidget;
+    ftestMatrix = dlg.designGroupBox.fTestMatrixTableWidget;
+    studies = dlg.designGroupBox.typeOfStudyComboBox;
+
+    studies.addItem("Custom");
+    studies.addItem("One-Sample T-Test");
+    studies.addItem("Two-Sample Unpaired T-Test");
+    studies.addItem("Two-Sample Paired T-Test");
 
     bv.SetPluginStringParameter("Command", "GetNumOfMaps");
     bv.ExecutePlugin();
@@ -23,11 +33,11 @@ scriptObj.initDlg = function(){
     num_of_maps = bv.GetPluginIntParameter("NumOfMaps");
 
     for(var i = 0; i < num_of_maps; i++){
-        dlg.designGroupBox.designMatrixTableWidget.insertRow(i);
-        dlg.designGroupBox.groupMatrixTableWidget.insertRow(i);
+        designMatrix.insertRow(i);
+        treeMatrix.insertRow(i);
     }
 
-    dlg.designGroupBox.typeOfStudyComboBox.currentTextChanged.connect(this, this.onChangeStudy);
+    studies.currentTextChanged.connect(this, this.onChangeStudy);
 
     dlg.designGroupBox.designMatrixAddColumnButton.clicked.connect(this, this.addColumn);
     dlg.designGroupBox.designMatrixRemoveColumnButton.clicked.connect(this, this.removeColumn);
@@ -71,39 +81,39 @@ scriptObj.enableTfceOptions = function(){
 
 
 scriptObj.addColumn = function(){
-    dlg.designGroupBox.designMatrixTableWidget.insertColumn(dlg.designGroupBox.designMatrixTableWidget.columnCount);
-    dlg.designGroupBox.contrastMatrixTableWidget.insertColumn(dlg.designGroupBox.contrastMatrixTableWidget.columnCount);
+    designMatrix.insertColumn(designMatrix.columnCount);
+    contrastMatrix.insertColumn(contrastMatrix.columnCount);
 }
 
 scriptObj.removeColumn = function(){
-    dlg.designGroupBox.designMatrixTableWidget.removeColumn(dlg.designGroupBox.designMatrixTableWidget.columnCount-1);
-    dlg.designGroupBox.contrastMatrixTableWidget.removeColumn(dlg.designGroupBox.contrastMatrixTableWidget.columnCount-1);
+    designMatrix.removeColumn(designMatrix.columnCount-1);
+    contrastMatrix.removeColumn(contrastMatrix.columnCount-1);
 }
 
 scriptObj.addGroup = function(){
-    dlg.designGroupBox.groupMatrixTableWidget.insertColumn(dlg.designGroupBox.groupMatrixTableWidget.columnCount);
+    treeMatrix.insertColumn(treeMatrix.columnCount);
 }
 
 scriptObj.removeGroup = function(){
-    dlg.designGroupBox.groupMatrixTableWidget.removeColumn(dlg.designGroupBox.groupMatrixTableWidget.columnCount-1);
+    treeMatrix.removeColumn(treeMatrix.columnCount-1);
 }
 
 scriptObj.addContrast = function(){
-    dlg.designGroupBox.contrastMatrixTableWidget.insertRow(dlg.designGroupBox.contrastMatrixTableWidget.rowCount);
-    dlg.designGroupBox.fTestMatrixTableWidget.insertRow(dlg.designGroupBox.fTestMatrixTableWidget.rowCount);
+    contrastMatrix.insertRow(contrastMatrix.rowCount);
+    ftestMatrix.insertRow(ftestMatrix.rowCount);
 }
 
 scriptObj.removeContrast =  function(){
-    dlg.designGroupBox.contrastMatrixTableWidget.removeRow(dlg.designGroupBox.contrastMatrixTableWidget.rowCount-1);
-    dlg.designGroupBox.fTestMatrixTableWidget.removeRow(dlg.designGroupBox.fTestMatrixTableWidget.rowCount-1);
+    contrastMatrix.removeRow(contrastMatrix.rowCount-1);
+    ftestMatrix.removeRow(ftestMatrix.rowCount-1);
 }
 
 scriptObj.addFTest = function(){
-    dlg.designGroupBox.fTestMatrixTableWidget.insertColumn(dlg.designGroupBox.fTestMatrixTableWidget.columnCount);
+    ftestMatrix.insertColumn(ftestMatrix.columnCount);
 }
 
 scriptObj.removeFTest =  function(){
-    dlg.designGroupBox.fTestMatrixTableWidget.removeColumn(dlg.designGroupBox.fTestMatrixTableWidget.columnCount-1);
+    ftestMatrix.removeColumn(ftestMatrix.columnCount-1);
 }
 
 scriptObj.collectDataAndFire = function(){
@@ -127,10 +137,10 @@ scriptObj.collectDataAndFire = function(){
     else
         bv.SetPluginIntParameter("ISE",  0);
 
-    var numberContrasts = dlg.designGroupBox.contrastMatrixTableWidget.rowCount;
-    var numberRegressors = dlg.designGroupBox.designMatrixTableWidget.columnCount;
-    var numberFTests = dlg.designGroupBox.fTestMatrixTableWidget.columnCount;
-    var numberGroupLayers = dlg.designGroupBox.groupMatrixTableWidget.columnCount;
+    var numberContrasts = contrastMatrix.rowCount;
+    var numberRegressors = designMatrix.columnCount;
+    var numberFTests = ftestMatrix.columnCount;
+    var numberGroupLayers = treeMatrix.columnCount;
 
     bv.SetPluginIntParameter("NumberOfContrasts", numberContrasts);
     bv.SetPluginIntParameter("NumberOfRegressors", numberRegressors);
@@ -140,7 +150,7 @@ scriptObj.collectDataAndFire = function(){
     //Setting parameters for the design matrix
     for(var i = 0; i < num_of_maps; i++){
         for(var j = 0; j < numberRegressors; j++){
-            var text = dlg.designGroupBox.designMatrixTableWidget.item(i,j).text();
+            var text = designMatrix.item(i,j).text();
             var variableName = "DesignMatrix"+i+""+j;
             bv.SetPluginStringParameter(variableName, text);
         }
@@ -149,7 +159,7 @@ scriptObj.collectDataAndFire = function(){
     //Setting parameters for the contrast matrix
     for(var i = 0; i < numberContrasts; i++){
         for(var j = 0; j < numberRegressors; j++){
-            var text = dlg.designGroupBox.contrastMatrixTableWidget.item(i,j).text();
+            var text = contrastMatrix.item(i,j).text();
             var variableName = "ContrastMatrix"+i+""+j;
             bv.SetPluginStringParameter(variableName, text);
         }
@@ -158,7 +168,7 @@ scriptObj.collectDataAndFire = function(){
     //Setting parameters for the group matrix
     for(var i = 0; i < num_of_maps; i++){
         for(var j = 0; j < numberGroupLayers; j++){
-            var text = dlg.designGroupBox.groupMatrixTableWidget.item(i,j).text();
+            var text = treeMatrix.item(i,j).text();
             var variableName = "GroupMatrix"+i+""+j;
             bv.SetPluginStringParameter(variableName, text);
         }
@@ -167,7 +177,7 @@ scriptObj.collectDataAndFire = function(){
     //Setting parameters for FTests (if any)
     for(var i = 0; i < numberFTests; i++){
         for(var j = 0; j < numberContrasts; j++){
-            var text = dlg.designGroupBox.fTestMatrixTableWidget.item(j,i).text();
+            var text = ftestMatrix.item(j,i).text();
             var variableName = "FTestMatrix"+i+""+j;
             bv.SetPluginStringParameter(variableName, text);
         }
@@ -188,7 +198,7 @@ scriptObj.collectDataAndFire = function(){
 
 
 scriptObj.onChangeStudy = function(){
-    var currentStudy = dlg.designGroupBox.typeOfStudyComboBox.currentText;
+    var currentStudy = studies.currentText;
     if(currentStudy != "Custom"){
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(false);
         dlg.designGroupBox.designMatrixRemoveColumnButton.setEnabled(false);
@@ -209,43 +219,45 @@ scriptObj.onChangeStudy = function(){
 
         dlg.optionsGroupBox.statisticToUseComboBox.setEnabled(false);
 
-        while(dlg.designGroupBox.contrastMatrixTableWidget.rowCount != 0){
+        while(contrastMatrix.rowCount != 0){
             this.removeContrast();
         }
-        while(dlg.designGroupBox.designMatrixTableWidget.columnCount != 0){
+        while(designMatrix.columnCount != 0){
             this.removeColumn();
         }
-        while(dlg.designGroupBox.fTestMatrixTableWidget.columnCount != 0){
+        while(ftestMatrix.columnCount != 0){
             this.removeFTest();
         }
-        while(dlg.designGroupBox.groupMatrixTableWidget.columnCount != 0){
+        while(treeMatrix.columnCount != 0){
             this.removeGroup();
         }
 
         if(currentStudy == "One-Sample T-Test"){
+            //Setting permutation hypothesis
             dlg.optionsGroupBox.iseCheckBox.setChecked(true);
+
+            //Adding necessary rows/columns to tables
             this.addColumn();
             this.addContrast();
             this.addGroup();
 
             //Filling Design Matrix and Group Matrix
             for(i = 0; i < num_of_maps; i++){
-                var item1 = new QTableWidgetItem("1");
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
-                var item1 = new QTableWidgetItem("1");
-                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
+                addEntryToTable(designMatrix, i, 0, "1");
+                addEntryToTable(treeMatrix, i, 0, "1");
             }
 
             //Filling the contrast matrix
-            var item1 = new QTableWidgetItem("1");
-            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
+            addEntryToTable(contrastMatrix, 0, 0, "1");
 
             //Setting proper statistic
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
-
         }
         else if(currentStudy == "Two-Sample Unpaired T-Test"){
+            //Setting permutation hypothesis
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
+
+            //Adding necessary rows/columns to tables
             this.addColumn();
             this.addColumn();
             this.addContrast();
@@ -253,130 +265,84 @@ scriptObj.onChangeStudy = function(){
 
             //Filling the design matrix
             for(var i = 0; i < num_of_maps/2; i++){
-                var item1 = new QTableWidgetItem("1");
-                var item0 = new QTableWidgetItem("0");
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,1,item0);
+                addEntryToTable(designMatrix, i, 0, "1");
+                addEntryToTable(designMatrix, i, 1, "0");
             }
             for(var i = num_of_maps/2; i < num_of_maps; i++){
-                var item1 = new QTableWidgetItem("1");
-                var item0 = new QTableWidgetItem("0");
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item0);
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,1,item1);
+                addEntryToTable(designMatrix, i, 0, "0");
+                addEntryToTable(designMatrix, i, 1, "1");
             }
 
             //Filling the group matrix
             for(var i = 0; i < num_of_maps; i++){
-                var item1 = new QTableWidgetItem("1");
-                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
+                addEntryToTable(treeMatrix, i, 0, "1");
             }
 
             //Filling the contrast matrix
-            var item1 = new QTableWidgetItem("1");
-            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
-            var item1 = new QTableWidgetItem("-1");
-            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,1,item1);
+            addEntryToTable(contrastMatrix, 0, 0, "1");
+            addEntryToTable(contrastMatrix, 0, 1, "-1");
 
             //Setting proper statistic
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
         }else if(currentStudy == "Two-Sample Paired T-Test"){
+            //Getting number of subjects
+            var num_subjects = num_of_maps/2;
+
+            //Setting permutation hypothesis
             dlg.optionsGroupBox.eeCheckBox.setChecked(true);
+
+            //Adding necessary rows/columns to tables
             this.addColumn();
-            for(var i = 0; i < num_of_maps/2; i++){
+            for(var i = 0; i < num_subjects; i++){
                 this.addColumn();
             }
-
             this.addContrast();
             this.addGroup();
             this.addGroup();
 
             //Filling the design matrix
             //First column
-            for(var i = 0; i < num_of_maps/2; i++){
-                var item1 = new QTableWidgetItem("1");
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
+            for(var i = 0; i < num_of_maps; i+=2){
+                addEntryToTable(designMatrix, i,0, "1");
+                addEntryToTable(designMatrix, i+1,0, "-1");
             }
-            for(var i = num_of_maps/2; i < num_of_maps; i++){
-                var item1 = new QTableWidgetItem("-1");
-                dlg.designGroupBox.designMatrixTableWidget.setItem(i,0,item1);
-            }
-
             //Other columns
-            for(var j = 1; j < num_of_maps/2 + 1; j++){
-                for(var i = 0; i < num_of_maps/2; i++){
-                    if(j == i+1){
-                        var item1 = new QTableWidgetItem("1");
-                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
-                    }else{
-                        var item1 = new QTableWidgetItem("0");
-                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
+            for(var j = 1; j < num_subjects+1; j++){
+                var nsubj = j - 1;
+                for(var i = 0; i < num_of_maps; i++){
+                    if(i/2 == nsubj || i/2 - 0.5 == nsubj){
+                        addEntryToTable(designMatrix, i, j, "1");
                     }
-                }
-                for(var i = num_of_maps/2; i < num_of_maps; i++){
-                    var k = i - num_of_maps/2;
-                    if(j == k+1){
-                        var item1 = new QTableWidgetItem("1");
-                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
-                    }else{
-                        var item1 = new QTableWidgetItem("0");
-                        dlg.designGroupBox.designMatrixTableWidget.setItem(i,j,item1);
+                    else{
+                        addEntryToTable(designMatrix, i, j, "0");
                     }
                 }
             }
 
             //Filling the group matrix
+            //First column
             for(var i = 0; i < num_of_maps; i++){
-                var item1 = new QTableWidgetItem("-1");
-                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,0,item1);
+                addEntryToTable(treeMatrix, i,0, "-1");
             }
-            var j = 1;
-            for(var i = 0; i < num_of_maps/2; i++){
-                var item1 = new QTableWidgetItem(""+j);
-                var item2 = new QTableWidgetItem(""+j);
-                dlg.designGroupBox.groupMatrixTableWidget.setItem(i,1,item1);
-                dlg.designGroupBox.groupMatrixTableWidget.setItem(i+num_of_maps/2,1,item2);
-                j = j + 1;
+            //Second column
+            var group = 1;
+            for(var i = 0; i < num_of_maps; i+=2){
+                var group_string = ""+group;
+                addEntryToTable(treeMatrix, i,1, group_string);
+                addEntryToTable(treeMatrix, i+1,1, group_string);
+                group += 1;
             }
 
             //Filling the contrast matrix
-            var item1 = new QTableWidgetItem("1");
-            dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,0,item1);
-            for(var i = 1; i < num_of_maps+1; i++){
-                var item1 = new QTableWidgetItem("0");
-                dlg.designGroupBox.contrastMatrixTableWidget.setItem(0,i,item1);
+            addEntryToTable(contrastMatrix, 0, 0, "1");
+            for(var j = 1; j < num_subjects+1; j++){
+                addEntryToTable(contrastMatrix, 0, j, "0");
             }
 
             //Setting proper statistic
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
-        }else if(currentStudy == "ANOVA: 1-factor 4-levels (Repeated Measures)"){
-            var num_subjects = num_of_maps/4;
-            for(var i = 0; i < num_subjects; i++){
-                this.addColumn();
-            }
-            this.addColumn();
-            this.addColumn();
-            this.addColumn();
-
-            this.addContrast();
-            this.addContrast();
-            this.addContrast();
-
-            this.addFTest();
-            this.addGroup();
-            this.addGroup();
-
-            for(var i = 0; i < num_subjects; i++){
-                var firstRowSubjI = i*4;
-                for(var j = 0; j < 4; j++){
-                    var item1 = new QTableWidgetItem("1");
-                    dlg.designGroupBox.designMatrixTableWidget.setItem(j+firstRowSubjI,i,item1);
-                }
-            }
-
-            //Setting proper statistic
-            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
         }
     }else{
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(true);
