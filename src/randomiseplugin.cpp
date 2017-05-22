@@ -344,7 +344,7 @@ PLUGIN_ACCESS const char *getPluginName()
 //   (the potentially lengthy string needs then not be created repeatedly in successive calls)
 //   Note that you may use simple HTML tags to format the string, such as <b></b>, <i></i> and <br>
 //
-static const char *PluginDescription = "This plugin implements the permutation inference for the GLM.<br>";
+static const char *PluginDescription = "This plugin implements the permutation inference for the GLM.<br> For the user guide see <b><a href=\"RandomisePluginHelp/RandomisePluginHelp.html\">here</a></b>";
 
 PLUGIN_ACCESS const char *getPluginDescription() 
 {
