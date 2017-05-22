@@ -362,7 +362,7 @@ PLUGIN_ACCESS const char *getAuthor()
 //
 PLUGIN_ACCESS const char *getHelpFile()
 {
-	return "";
+    return "RandomisePluginHelp/RandomisePluginHelp.html";
 }
 
 // you may provide a version string ("Major.Minor") for (updated) releases of your plugins

@@ -6,14 +6,180 @@
   <meta name="generator" content="pandoc" />
   <title></title>
   <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
-<h1 id="overview">Overview</h1>
+<h2 id="overview">Overview</h2>
 <p>This plugin performs permutation tests and inference on multy subject task related fMRI experiments. It has to be executed after GLM multy study analysis. For details about the technique see <a href="http://www.sciencedirect.com/science/article/pii/S1053811914000913/" title="Reference">here</a>.</p>
-<h1 id="before-running-the-plugin">Before running the plugin</h1>
-<h1 id="using-the-plugin">Using the plugin</h1>
-<h1 id="visualizing-results">Visualizing results</h1>
-<h1 id="authors">Authors</h1>
+<h2 id="before-running-the-plugin">Before running the plugin</h2>
+<p>The plugin needs the beta maps of the contrast of interest for each subject. Depending on the type of study, e.g. a paired t-test, there can also be more than one map for each subject. The beta maps can be easily generated using the &quot;Overlay General Linear Model dialog&quot;, as shown below.</p>
+<h3 id="example-creating-maps-for-one-sample-t-test">Example: creating maps for one sample t-test</h3>
+<p>First of all, we have to load the .vmr file related to the study. Then, we can load our .glm file from the Analysis -&gt; Overlay General Linear Model and select the contrast of interest. In the example, we want to study the group activation of the condition A1. After the contrast has been set, we move to the options menu to create the beta maps. <img src="images/loadglm1.png" /></p>
+<p>In the dialog, be sure to select &quot;Create beta/contrast maps&quot; and &quot;Create separate maps for each subject&quot;, then click &quot;Create maps&quot;.</p>
+<div class="figure">
+<img src="images/createbetamaps1.png" />
+
+</div>
+<p>You can view the created maps in Analysis -&gt; Overlay Volume Maps.</p>
+<h3 id="example-creating-maps-for-paired-t-test">Example: creating maps for paired t-test</h3>
+<p>This example is very similar to the previous one, except for the fact that more than one contrast is specified. In this case, we want to confront conditions A1 and B1. We first specify A1 as previously done, than we add the new contrast regarding B1:</p>
+<p><img src="images/newcontrast1.png" /> <img src="images/newcontrast2.png" /></p>
+<p>We create the beta maps in the same way as we did before, and here's the result:</p>
+<div class="figure">
+<img src="images/twocontrastresult.png" />
+
+</div>
+<h2 id="gui-description">GUI description</h2>
+<p>After the creation of the beta maps, the plugin GUI can be launched from the Plugins menu. Note that the creation of the beta maps is essential, otherwise the GUI won't load at all.</p>
+<div class="figure">
+<img src="images/gui.png" />
+
+</div>
+<p>As you can see from the image, the GUI is divided into two main parts: <strong>Design</strong> and <strong>Options</strong>. A brief description of each component is provided below.</p>
+<h3 id="type-of-study">Type of study</h3>
+<div class="figure">
+<img src="images/typeofstudy.png" />
+
+</div>
+<p>This combobox lets the user select the type of analysis he wants to perform. The default selection is &quot;Custom&quot;, which means that the user must specify himself the design matrix, the contrast and the exchangeability tree using the buttons above each matrix and then fill the entries manually. If one of the other predefined studies is selected, then all the matrices and the options will be filled automatically. In this case, the buttons and the options will also be disabled, as shown below.</p>
+<div class="figure">
+<img src="images/predefinedstudy.png" />
+
+</div>
+<h3 id="design-matrix">Design Matrix</h3>
+<div class="figure">
+<img src="images/designmatrix.png" />
+
+</div>
+<p>The design matrix features one row for each beta map and one column for each regressor. Since the number of maps remains the same through the execution of the plugin, the user doesn't need to specify the number of rows as it is set automatically. As a result of this, the buttons above the matrix add and remove columns/regressors from it.</p>
+<h3 id="contrast-matrix">Contrast Matrix</h3>
+<div class="figure">
+<img src="images/contrastmatrix.png" />
+
+</div>
+<p>The contrast matrix features one column for each regressor specified in the design matrix and one row for each contrast specified by the user. In this case, since the number of regressors is set up in the design matrix, the buttons above the matrix add or remove rows/contrasts from it.</p>
+<h3 id="exchangeability-tree-matrix">Exchangeability Tree Matrix</h3>
+<div class="figure">
+<img src="images/exchangeabilitytree.png" />
+
+</div>
+<p>The exchangeability tree (and its rappresentation as a matrix) is a crucial concept in permutation tests, so it's important to understand it clearly. The matrix features one row for each map and one column for each layer. The buttons on the top of the matrix add or remove columns/layers. The minimum number of layers required is 1. The first layer should always be either a column of &quot;+1&quot; or a column of &quot;-1&quot;.</p>
+<p>Each layer specifies the exchangeability of the next layer. This is done by using two elements:</p>
+<ol style="list-style-type: decimal">
+<li>Numbers. Each number denotes a different exchangeability group.</li>
+<li>Sign. A + sign denotes that a group can be permutated. A - sign denotes that a group cannot be permutated.</li>
+</ol>
+<p>The last layer specifies the exchangeability of the maps.</p>
+<h4 id="example-1-unrestricted-exchangeability">Example 1: Unrestricted exchangeability</h4>
+<div class="figure">
+<img src="images/exchangeabilitytree1.png" />
+
+</div>
+<p>This is the simplest example of exchangeability tree matrix. In this case, also known as unrestricted exchangeability, all the observations belong to the same group (1) and are exchangeable with each other(+).</p>
+<h4 id="example-2-whole-block-exchangeability">Example 2: Whole block exchangeability</h4>
+<div class="figure">
+<img src="images/exchangeabilitytree2.png" />
+
+</div>
+<p>In this case, there are three groups that can be permutated as blocks, but they are not permutable internally.</p>
+<h4 id="example-3-within-block-exchangeability">Example 3: Within block exchangeability</h4>
+<div class="figure">
+<img src="images/exchangeabilitytree3.png" />
+
+</div>
+<p>In this case, there are three groups that can be permutated internally, but they are not permutable as blocks.</p>
+<h4 id="example-4-within-and-whole-block-exchangeability">Example 4: Within and whole block exchangeability</h4>
+<div class="figure">
+<img src="images/exchangeabilitytree4.png" />
+
+</div>
+<p>In this case, there are three groups that can be permutated both internally and as blocks. Note that this is different from unrestricted exchangeability.</p>
+<h3 id="f-test-matrix">F-Test matrix</h3>
+<div class="figure">
+<img src="images/ftestmatrix.png" />
+
+</div>
+<p>The F-Test matrix is used in those designs in which F-Tests are involved. It features one row for each contrast and one column for each F-tests. The buttons above the matrix add or remove columns/f-tests. The entry at row i, column j of this matrix specifies if the contrast i must be taken into account when composing f-test j.</p>
+<div class="figure">
+<img src="images/ftestexample.png" />
+
+</div>
+<h3 id="options-and-tfce">Options and TFCE</h3>
+<div class="figure">
+<img src="images/options.png" />
+
+</div>
+<p>The options tab is pretty much self explainatory, however it's important to point out some aspects about some of its entries.</p>
+<h4 id="hypothesis-check-boxes">Hypothesis check boxes</h4>
+<div class="figure">
+<img src="images/hypothesischeckboxes.png" />
+
+</div>
+<h2 id="tips-tricks">Tips &amp; Tricks</h2>
+<h3 id="modify-a-standard-test">Modify a standard test</h3>
+<p>There are several reasons to modify one of the standard analysis listed in the plugin:</p>
+<ol style="list-style-type: decimal">
+<li>You may want to add additional covariate (e.g. age, sex, handdeness) to the study.</li>
+<li>The study doesn't suit your needs. For example, the two sample unpaired t test assumes that first half of your maps belong to the first sample, and the second half to the second sample, but that's not always the case.</li>
+<li>You may want to build a custom study starting from one standard analysis.</li>
+</ol>
+<p>The plugin gives you the chance to modify arbitrarily one of the standard analysis. To do so, first select a study different from &quot;Custom&quot;, then reselect custom. You'll notice that all the matrix, their control buttons and the options have been enabled, but their setup remained the same.</p>
+<p><img src="images/modifycustom1.png" /> <img src="images/modifycustom2.png" /></p>
+<p>Now you can add regressors, layers to the exchangeability tree, ftests and contrasts. You can also change the hypothesis and the statistics used by the test.</p>
+<h3 id="choice-of-the-statistic-for-custom-tests">Choice of the statistic for custom tests</h3>
+<p>The plugin offers three statistics:</p>
+<ul>
+<li>T statistic.</li>
+<li>F statistic.</li>
+<li>G statistic.</li>
+</ul>
+<p>You won't probably know the last one, since it's not a real statistic but a generalization of known statistics (including F and T as well):</p>
+<table>
+<colgroup>
+<col width="60%" />
+<col width="25%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">rank(C) = 1</th>
+<th align="center">rank(C) &gt; 1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Homoscedastic errors, unrestriced exchangeability</td>
+<td align="center">Square of T</td>
+<td align="center">F-ratio</td>
+</tr>
+<tr class="even">
+<td>Homoscedastic errors within group, restricted exchangeability</td>
+<td align="center">Square of Aspin-Welch v</td>
+<td align="center">Welch's v^2</td>
+</tr>
+</tbody>
+</table>
+<p>So, when setting up a custom test the G statistic is probably your safest choice. However, it should be noted that since G statistic has a very complex equation involving lots of matrix products, its computation slows all the plugin. So, use it only when strictly necessary.</p>
+<h2 id="computing-visualizing-results">Computing &amp; Visualizing results</h2>
+<p>After you've set up your study, click on the OK button on the bottom right of the GUI to start the computation. This will take a while, depending on the number of contrasts specified, the use of TFCE and the choice of the statistic. You can monitor the progress in the Log bar of BrainVoyager, which is updated every time interval specified in the GUI.</p>
+<div class="figure">
+<img src="images/log.png" />
+
+</div>
+<p>Once the plugin has finished, you can view the results in Analysis -&gt; Overlay Volume Maps.</p>
+<div class="figure">
+<img src="images/results.png" />
+
+</div>
+<p>As you can see, for each contrast three map are generated:</p>
+<ol style="list-style-type: decimal">
+<li>A map of the statistic of your choice computed for that contrast.</li>
+<li>A map of 1-p uncorrected p-values.</li>
+<li>A map of 1-p FWER corrected p-values.</li>
+</ol>
+<h2 id="authors">Authors</h2>
+<p>Algorithm: Anderson M. Winkler, Gerard R. Ridgway, Matthew A. Webster, Stephen M. Smith, Thomas E. Nichols.</p>
 <p>Implementation: Marco Mecchia</p>
 </body>
 </html>
