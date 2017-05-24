@@ -4,12 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title></title>
+  <title>Permutation tests</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
-<h2 id="permutation-tests">Permutation tests</h2>
+<div id="header">
+<h1 class="title">Permutation tests</h1>
+</div>
 <p><em>Permutatation tests</em> are a class of widely applicable non-parametric methods. They uses random shuffles of the data to get the correct distribution of a test statistic under a null hypothesis. They provide valid tests (that is, tests with advertised type I error), although they are more computationally intensive than standard parametric tests. They are most useful when we have insufficient information about the distribution of the data, are uncomfortable making assumptions about the distribution, or if the distribution of the test statistic is not easily computed.</p>
 <p>Permutation tests were pioonered by Fisher and Pitman. Fisher demonstrated that the null hypothesis could be tested simply by observing, after permuting observations, how often the difference between means would exceed the difference found without permutation, and that for such test, no normality would be required. Pitman provided the first compolete mathematical framework for permutation methods.</p>
 <h2 id="p-values">p-Values</h2>

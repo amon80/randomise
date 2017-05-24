@@ -57,37 +57,6 @@ The design matrix features one row for each beta map and one column for each reg
 
 The contrast matrix features one column for each regressor specified in the design matrix and one row for each contrast specified by the user. In this case, since the number of regressors is set up in the design matrix, the buttons above the matrix add or remove rows/contrasts from it.
 
-### Exchangeability Tree Matrix ###
-![](images/gui/exchangeabilitytree.png)
-
-The exchangeability tree (and its rappresentation as a matrix) is a crucial concept in permutation tests, so it's important to understand it clearly. The matrix features one row for each map and one column for each layer. The buttons on the top of the matrix add or remove columns/layers. The minimum number of layers required is 1. The first layer should always be either a column of "+1" or a column of "-1".
-
-Each layer specifies the exchangeability of the next layer. This is done by using two elements:
-
-1. Numbers. Each number denotes a different exchangeability group.
-2. Sign. A + sign denotes that a group can be permutated. A - sign denotes that a group cannot be permutated.
-
-The last layer specifies the exchangeability of the maps.
-
-#### Example 1: Unrestricted exchangeability ####
-
-![](images/gui/exchangeabilitytree1.png)
-
-This is the simplest example of exchangeability tree matrix. In this case, also known as unrestricted exchangeability, all the observations belong to the same group (1) and are exchangeable with each other(+).
-
-#### Example 2: Whole block exchangeability ####
-
-![](images/gui/exchangeabilitytree2.png)
-
-In this case, there are three groups that can be permutated as blocks, but they are not permutable internally.
-
-#### Example 3: Within block exchangeability ####
-
-![](images/gui/exchangeabilitytree3.png)
-
-In this case, there are three groups that can be permutated internally, but they are not permutable as blocks.
-
-#### Example 4: Within and whole block exchangeability ####
 
 ![](images/gui/exchangeabilitytree4.png)
 

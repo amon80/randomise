@@ -66,37 +66,6 @@
 
 </div>
 <p>The contrast matrix features one column for each regressor specified in the design matrix and one row for each contrast specified by the user. In this case, since the number of regressors is set up in the design matrix, the buttons above the matrix add or remove rows/contrasts from it.</p>
-<h3 id="exchangeability-tree-matrix">Exchangeability Tree Matrix</h3>
-<div class="figure">
-<img src="images/gui/exchangeabilitytree.png" />
-
-</div>
-<p>The exchangeability tree (and its rappresentation as a matrix) is a crucial concept in permutation tests, so it's important to understand it clearly. The matrix features one row for each map and one column for each layer. The buttons on the top of the matrix add or remove columns/layers. The minimum number of layers required is 1. The first layer should always be either a column of &quot;+1&quot; or a column of &quot;-1&quot;.</p>
-<p>Each layer specifies the exchangeability of the next layer. This is done by using two elements:</p>
-<ol style="list-style-type: decimal">
-<li>Numbers. Each number denotes a different exchangeability group.</li>
-<li>Sign. A + sign denotes that a group can be permutated. A - sign denotes that a group cannot be permutated.</li>
-</ol>
-<p>The last layer specifies the exchangeability of the maps.</p>
-<h4 id="example-1-unrestricted-exchangeability">Example 1: Unrestricted exchangeability</h4>
-<div class="figure">
-<img src="images/gui/exchangeabilitytree1.png" />
-
-</div>
-<p>This is the simplest example of exchangeability tree matrix. In this case, also known as unrestricted exchangeability, all the observations belong to the same group (1) and are exchangeable with each other(+).</p>
-<h4 id="example-2-whole-block-exchangeability">Example 2: Whole block exchangeability</h4>
-<div class="figure">
-<img src="images/gui/exchangeabilitytree2.png" />
-
-</div>
-<p>In this case, there are three groups that can be permutated as blocks, but they are not permutable internally.</p>
-<h4 id="example-3-within-block-exchangeability">Example 3: Within block exchangeability</h4>
-<div class="figure">
-<img src="images/gui/exchangeabilitytree3.png" />
-
-</div>
-<p>In this case, there are three groups that can be permutated internally, but they are not permutable as blocks.</p>
-<h4 id="example-4-within-and-whole-block-exchangeability">Example 4: Within and whole block exchangeability</h4>
 <div class="figure">
 <img src="images/gui/exchangeabilitytree4.png" />
 

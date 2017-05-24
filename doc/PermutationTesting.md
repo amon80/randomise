@@ -1,4 +1,4 @@
-## Permutation tests ##
+% Permutation tests
 
 *Permutatation tests* are a class of widely applicable non-parametric methods. They uses random shuffles of the data to get the correct distribution of a test statistic under a null hypothesis. They provide valid tests (that is, tests with advertised type I error), although they are more computationally intensive than standard parametric tests. They are most useful when we have insufficient information about the distribution of the data, are uncomfortable making assumptions about the distribution, or if the distribution of the test statistic is not easily computed.
 

@@ -4,11 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title></title>
+  <title>Permutation Inference for the GLM</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
+<div id="header">
+<h1 class="title">Permutation Inference for the GLM</h1>
+</div>
 <h2 id="general-liner-model-notation">General Liner Model notation</h2>
 <p>Before exploring the permutation strategies appliable to GLM, it's important to give a proper notation.</p>
 <p>At each spatial point (voxel, vertex or face) of an image representation of the brain, a <em>general linear model</em> can be formulated and expressed as:</p>
@@ -27,5 +30,54 @@
 <span class="math inline"><em>H</em><sub>0</sub> : <em>C</em>′<em>ϕ</em> = 0</span>
 </p>
 <p>where <span class="math inline"><em>C</em></span> is a <span class="math inline"><em>r</em><em>x</em><em>s</em></span> full-rank matrix of <span class="math inline"><em>s</em></span> contrasts, 1 <span class="math inline">≤<em>s</em> ≤ <em>r</em></span>.</p>
+<h2 id="permutagion-strategies">Permutagion strategies</h2>
+<p>The most important aspect of permutation tests is the manner in which data are shuffled under the null hypothesis. It is the null hypothesis, together with assumptions about exchangeability, which determines the permutation strategy.</p>
+<p>Let the <span class="math inline"><em>j</em></span>-th permutation be expresssed by <span class="math inline"><em>P</em><sub><em>j</em></sub></span>, a <span class="math inline"><em>N</em><em>x</em><em>N</em></span> permutation matrix, a matrix that has all elements being either 0 or 1, each row and column having exactly one 1. Pre-multiplication of a matrix by <span class="math inline"><em>P</em><sub><em>j</em></sub></span> permutes its rows. We smilarly define a sign flipping <span class="math inline"><em>S</em><sub><em>j</em></sub></span>, a <span class="math inline"><em>N</em><em>x</em><em>N</em></span> diagonal matrix whose non-zero elements consist only of <span class="math inline">+1</span> or <span class="math inline">−1</span>. Pre-multiplication of a matrix by <span class="math inline"><em>S</em><sub><em>j</em></sub></span> implements a set of sign flips for each row. The essential assumption of permutation methods is that, for a given set of variable, <em>their joint probability distribution does not change if they are rearranged</em>. This can be expressed in terms of <strong>Exchangeable Errors (EE)</strong> and/or <strong>Indipendent and Symmetric Errors (ISE)</strong>, each of these weakining different assumptions when compared to parametric methods.</p>
+<p><strong>Exchangeable Errors</strong> is the traditional permutation requirement. The formal statement is that, for any permutation <span class="math inline"><em>P</em><sub><em>j</em></sub></span>,</p>
+<p style="text-align: center; font-size: large;">
+<span class="math inline"><em>ϵ</em>*=<em>P</em><sub><em>j</em></sub><em>ϵ</em></span>
+</p>
+<p>Where <span class="math inline">*=</span> denotes equality of distributions. Exchangeability is similar to, yet more genreal than, indipendence, as exchangeable errors can have all-equale and homogeneous dependence. Relative to the common parametric assumptions of indipendente, normally and identically distributed (iid) errors, EE relaxes two aspects:</p>
+<ol style="list-style-type: decimal">
+<li>Normality is no longer assumed, although identical distributions are required.</li>
+<li>The indipendence assumption is weakened slightly to allow exchangeability when the observations are not indipendent, but their joint distribution is maintained after permutation.</li>
+</ol>
+<p><strong>Indipendent and Simmetric Errors</strong> can be considenred for measurements that arise, for instance, from difference between two groups if the variances are not assumed to be the same. The formal statement for permutation under ISE is that for any sign flipping matrix <span class="math inline"><em>S</em><sub><em>j</em></sub></span> we have:</p>
+<p style="text-align: center; font-size: large;">
+<span class="math inline"><em>ϵ</em>*=<em>S</em><sub><em>j</em></sub><em>ϵ</em></span>
+</p>
+<p>Relative to the parametric assumptions of errors iid, ISE realxes normality, although symmetry (i.e. non-skewness) of distributions is required. Indipendence is also required to allow sign flipping of one observation without perturbing the others.</p>
+<p>The choice between EE and ISE depends on the knowledge/assumptions about the error terms. If both EE and ISE are plausible and available for a given model, they can be performed together, increasing the number of possible rearrangements.</p>
+<h2 id="exchangeability-blocks">Exchangeability blocks</h2>
+<p>The experimental design may dictate blocks of observations that are jointly exchangeable, allowing data to permuted <em>Within Block</em> or, alternatively, that the blocks may themselves be exchangeable as a whole. This is the case, for instance, for designs that involve multiple observations from each subject. While permutation methods genereally do noe easily deal with non-independent data, the definition of these <strong>Exchangeability Blocks(EBS)</strong> allows these special cases of well structured dependence to be accomodated. Even though the EBS determine how the data shuffling are performed, they should not be confused with <strong>Variance Groups (VG)</strong>, i.e. groups of observations that are known or assumed to have similar variances, whica can be pooled for estimation and computation of the statistic. Variance groups need to be compatible with the exchangeability blocks. Formally speaking, if <span class="math inline"><em>V</em></span> is a vector of <span class="math inline"><em>N</em><em>x</em>1</span> variance group labels, then the following equality must hold:</p>
+<p style="text-align: center; font-size: large;">
+<span class="math inline"><em>P</em><sub><em>j</em></sub><em>V</em> = <em>V</em></span>
+</p>
+<p>For each permutation matrix <span class="math inline"><em>P</em><sub><em>j</em></sub></span> coherent with the block structure.</p>
+<h3 id="exchangeability-tree">Exchangeability Tree</h3>
+<p>One way to define such blocks in a hierarchical fashion is that of using an <strong>Exchangeability Tree(ET)</strong>. In such a tree, the <span class="math inline"><em>N</em></span> leaves represent the actual observations, and each node in themiddle layers defines a block. The block defined by a node is simply the set of its sons. A boolean value associated to each node gives us the information about the exchangeability of that block. This structure lets us to specify many layers as we like, although for simple designs three layers usually are more than sufficient.</p>
+<p>Another useful feature of the ET is that it's easily represantable as a matrix. The matrix features one row for leaf and one column for each layer of the three. The minimum number of layers required is 2, corrisponding to the root and the observations. The first layer should always be either a column of &quot;+1&quot; or a column of &quot;-1&quot;. Each layer specifies the exchangeability of the next layer. This is done by using two elements:</p>
+<ol style="list-style-type: decimal">
+<li>Numbers. Each number denotes a different exchangeability group.</li>
+<li>Sign. A + sign denotes that a group can be permutated. A - sign denotes that a group cannot be permutated.</li>
+</ol>
+<h4 id="example-1-unrestricted-exchangeability">Example 1: Unrestricted exchangeability</h4>
+<div class="figure">
+<img src="images/gui/exchangeabilitytree1.jpg" />
+
+</div>
+<p>This is the simplest example of ET. In this case, also known as unrestricted exchangeability, all the observations belong to the same group (1) and are exchangeable with each other(+).</p>
+<h4 id="example-2-whole-block-exchangeability">Example 2: Whole block exchangeability</h4>
+<div class="figure">
+<img src="images/gui/exchangeabilitytree3.jpg" />
+
+</div>
+<p>In this case, there are three groups that can be permutated as blocks, but they are not permutable internally.</p>
+<h4 id="example-3-within-block-exchangeability">Example 3: Within block exchangeability</h4>
+<div class="figure">
+<img src="images/gui/exchangeabilitytree2.jpg" />
+
+</div>
+<p>In this case, there are three groups that can be permutated internally, but they are not permutable as blocks.</p>
 </body>
 </html>
