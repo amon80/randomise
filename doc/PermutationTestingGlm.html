@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<h2 id="general-liner-model-notation">General Liner Model notation</h2>
+<p>Before exploring the permutation strategies appliable to GLM, it's important to give a proper notation.</p>
+<p>At each spatial point (voxel, vertex or face) of an image representation of the brain, a <em>general linear model</em> can be formulated and expressed as:</p>
+<p style="text-align: center; font-size: large;">
+<span class="math inline"><em>Y</em> = <em>M</em><em>ϕ</em> + <em>ϵ</em></span>
+</p>
+<p>where:</p>
+<ul>
+<li><span class="math inline"><em>Y</em></span> is the <span class="math inline"><em>N</em><em>x</em>1</span> vector of observed data.</li>
+<li><span class="math inline"><em>M</em></span> is the full rank <span class="math inline"><em>N</em><em>x</em><em>r</em></span> design matrix that includes all effects of interest as well as modelled nuisance effects.</li>
+<li><span class="math inline"><em>ϕ</em></span> is the <span class="math inline"><em>r</em><em>x</em>1</span> vector of <span class="math inline"><em>r</em></span> regression coefficients.</li>
+<li><span class="math inline"><em>ϵ</em></span> is the <span class="math inline"><em>N</em><em>x</em>1</span> vector of random errors.</li>
+</ul>
+<p>Estimates for the regression coefficients can be computed as <span class="math inline"><em>ϕ</em><sub><em>e</em><em>s</em><em>t</em>.</sub> = <em>M</em><sup>+</sup><em>Y</em></span>, where the superscript (<span class="math inline"><em></em><sup>+</sup></span>) denotes the Moore-Penrose pseudo-inverse. Our interest is to test the null hypothesis that an arbitraty combination (contrast) of some or all of these parameters is equal to zero, that is</p>
+<p style="text-align: center; font-size: large;">
+<span class="math inline"><em>H</em><sub>0</sub> : <em>C</em>′<em>ϕ</em> = 0</span>
+</p>
+<p>where <span class="math inline"><em>C</em></span> is a <span class="math inline"><em>r</em><em>x</em><em>s</em></span> full-rank matrix of <span class="math inline"><em>s</em></span> contrasts, 1 <span class="math inline">≤<em>s</em> ≤ <em>r</em></span>.</p>
+</body>
+</html>
