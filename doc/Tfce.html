@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Threshold Free Cluster Enhancement</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<div id="header">
+<h1 class="title">Threshold Free Cluster Enhancement</h1>
+</div>
+<p><strong>Threshold Free Cluster Enhancement (TFCE)</strong> is a method for finding &quot;clusters&quot; in the data without having to define clusters in a binary way (e.g. with a cluster threshold). The TFCE approach aims to enhance areas of signal that exhibit some spatial contiguity. The image is passed through an algorithm which enhances the intensity within cluster-like regions more than background (noise) regions. The output image is therefore not <em>intrinsically</em> thresholded/clustered.</p>
+<div class="figure">
+<img src="images/equations/tfce.png" />
+
+</div>
+<p>The TFCE algorithm is illustrated in the figure above. The solid curve shows a 1D profile through and example statistic image (e.g. an unthresholded t statistic image). Each voxel's TFCE score is given by the sum of the scores of all &quot;supporting sections&quot; underneath it; as the height <span class="math inline"><em>h</em></span> is incrementally raised from zero up to the height (signal intensity) <span class="math inline"><em>h</em><sub><em>p</em></sub></span> of a given point <span class="math inline"><em>p</em></span>, the image is thresholded at <span class="math inline"><em>h</em></span>, and the single contiguous cluster containing <span class="math inline"><em>p</em></span> is used to define the score for that height <span class="math inline"><em>h</em></span>. This score is simply the height <span class="math inline"><em>h</em></span> (raised to some power <span class="math inline"><em>H</em></span>) multiplied by the cluster extent <span class="math inline"><em>e</em></span> (raised to some power <span class="math inline"><em>E</em></span>). Precisely, the TFCE output at voxel <span class="math inline"><em>p</em></span> is</p>
+<div class="figure">
+<img src="images/equations/tfce_eq.png" />
+
+</div>
+<p>where <span class="math inline"><em>h</em><sub>0</sub></span> will typically be zero, and <span class="math inline"><em>E</em></span> and <span class="math inline"><em>H</em></span>, 0.5 and 2 respectively. In practice this integral is estimated as a sum, using finite <span class="math inline"><em>d</em><em>h</em></span>.</p>
+<p>It is important to note that is useless use this kind of statistics, i.e. the ones that use spatial information, without a permutation framework. Indeed, without a permutation framework, there's no way to obtaine p-values, either uncorrected and corrected, from a cluster-enhanced output image, since there's no standard distribution to refer to.</p>
+</body>
+</html>

@@ -1,13 +1,13 @@
+%Randomise Plugin Help
 ## Overview ##
-
 This plugin performs permutation tests and inference on multy subject task related fMRI experiments. It has to be executed after GLM multy study analysis. For further details about permutation testing and its use on with the General Linear Model, refer to the following pages:
 
 - [Permutation testing](PermutationTesting.html)
 - [Permutation testing applied to GLM](PermutationTestingGlm.html)
+- [Threshold Free Cluster Enhancement](Tfce.html)
 
 
 ## Before running the plugin ##
-
 The plugin needs the beta maps of the contrast of interest for each subject. Depending on the type of study, e.g. a paired t-test, there can also be more than one map for each subject. The beta maps can be easily generated using the "Overlay General Linear Model dialog", as shown below.
 
 ### Example: creating maps for one sample t-test ###
@@ -40,39 +40,19 @@ After the creation of the beta maps, the plugin GUI can be launched from the Plu
 As you can see from the image, the GUI is divided into two main parts: **Design** and **Options**. A brief description of each component is provided below.
 
 ### Type of study ###
-![](images/gui/typeofstudy.png)
-
-This combobox lets the user select the type of analysis he wants to perform. The default selection is "Custom", which means that the user must specify himself the design matrix, the contrast and the exchangeability tree using the buttons above each matrix and then fill the entries manually. If one of the other predefined studies is selected, then all the matrices and the options will be filled automatically. In this case, the buttons and the options will also be disabled, as shown below.
-
-![](images/gui/predefinedstudy.png)
-
+This combobox lets the user select the type of analysis he wants to perform. The default selection is "Custom", which means that the user must specify himself the design matrix, the contrast and the exchangeability tree using the buttons above each matrix and then fill the entries manually. If one of the other predefined studies is selected, then all the matrices and the options will be filled automatically. In this case, the buttons and the options will also be disabled, as shown in the example above.
 
 ### Design Matrix ###
-![](images/gui/designmatrix.png)
-
 The design matrix features one row for each beta map and one column for each regressor. Since the number of maps remains the same through the execution of the plugin, the user doesn't need to specify the number of rows as it is set automatically. As a result of this, the buttons above the matrix add and remove columns/regressors from it.
 
 ### Contrast Matrix ###
-![](images/gui/contrastmatrix.png)
-
 The contrast matrix features one column for each regressor specified in the design matrix and one row for each contrast specified by the user. In this case, since the number of regressors is set up in the design matrix, the buttons above the matrix add or remove rows/contrasts from it.
 
-
-![](images/gui/exchangeabilitytree4.png)
-
-In this case, there are three groups that can be permutated both internally and as blocks. Note that this is different from unrestricted exchangeability.
-
 ### F-Test matrix ###
-![](images/gui/ftestmatrix.png)
-
 The F-Test matrix is used in those designs in which F-Tests are involved. It features one row for each contrast and one column for each F-tests. The buttons above the matrix add or remove columns/f-tests. The entry at row i, column j of this matrix specifies if the contrast i must be taken into account when composing f-test j.
 
-![](images/gui/ftestexample.png)
-
 ### Options and TFCE ###
-![](images/gui/options.png)
-
-The options tab is pretty much self explainatory, however it's important to point out some aspects about some of its entries.
+The options tab is pretty much self explainatory. For any doubts about exchangeability hypothesis and TFCE, refer to the pages linked above.
 
 ### Number of permutation requested ###
 The number of permutation can be speficied by the user by modifying the value in the relative spin box. However, it should be noted that the number specified by the user aren't always the actual permutation performed by the plugin, but it can be thought as an upper bound. 
@@ -96,9 +76,6 @@ There are several reasons to modify one of the standard analysis listed in the p
 3. You may want to build a custom study starting from one standard analysis.
 
 The plugin gives you the chance to modify arbitrarily one of the standard analysis. To do so, first select a study different from "Custom". After the tables and the options are filled automatically, reselect "Custom". You'll notice that the setup remains the same, but now all the control buttons are enabled.
-
-![](images/gui/modifycustom1.png)
-![](images/gui/modifycustom2.png)
 
 Now you can add regressors, layers to the exchangeability tree, ftests and contrasts. You can also change the hypothesis and the statistics used by the test.
 

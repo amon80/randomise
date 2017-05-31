@@ -4,16 +4,20 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title></title>
+  <title>Randomise Plugin Help</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
+<div id="header">
+<h1 class="title">Randomise Plugin Help</h1>
+</div>
 <h2 id="overview">Overview</h2>
 <p>This plugin performs permutation tests and inference on multy subject task related fMRI experiments. It has to be executed after GLM multy study analysis. For further details about permutation testing and its use on with the General Linear Model, refer to the following pages:</p>
 <ul>
 <li><a href="PermutationTesting.html">Permutation testing</a></li>
 <li><a href="PermutationTestingGlm.html">Permutation testing applied to GLM</a></li>
+<li><a href="Tfce.html">Threshold Free Cluster Enhancement</a></li>
 </ul>
 <h2 id="before-running-the-plugin">Before running the plugin</h2>
 <p>The plugin needs the beta maps of the contrast of interest for each subject. Depending on the type of study, e.g. a paired t-test, there can also be more than one map for each subject. The beta maps can be easily generated using the &quot;Overlay General Linear Model dialog&quot;, as shown below.</p>
@@ -45,48 +49,15 @@
 </div>
 <p>As you can see from the image, the GUI is divided into two main parts: <strong>Design</strong> and <strong>Options</strong>. A brief description of each component is provided below.</p>
 <h3 id="type-of-study">Type of study</h3>
-<div class="figure">
-<img src="images/gui/typeofstudy.png" />
-
-</div>
-<p>This combobox lets the user select the type of analysis he wants to perform. The default selection is &quot;Custom&quot;, which means that the user must specify himself the design matrix, the contrast and the exchangeability tree using the buttons above each matrix and then fill the entries manually. If one of the other predefined studies is selected, then all the matrices and the options will be filled automatically. In this case, the buttons and the options will also be disabled, as shown below.</p>
-<div class="figure">
-<img src="images/gui/predefinedstudy.png" />
-
-</div>
+<p>This combobox lets the user select the type of analysis he wants to perform. The default selection is &quot;Custom&quot;, which means that the user must specify himself the design matrix, the contrast and the exchangeability tree using the buttons above each matrix and then fill the entries manually. If one of the other predefined studies is selected, then all the matrices and the options will be filled automatically. In this case, the buttons and the options will also be disabled, as shown in the example above.</p>
 <h3 id="design-matrix">Design Matrix</h3>
-<div class="figure">
-<img src="images/gui/designmatrix.png" />
-
-</div>
 <p>The design matrix features one row for each beta map and one column for each regressor. Since the number of maps remains the same through the execution of the plugin, the user doesn't need to specify the number of rows as it is set automatically. As a result of this, the buttons above the matrix add and remove columns/regressors from it.</p>
 <h3 id="contrast-matrix">Contrast Matrix</h3>
-<div class="figure">
-<img src="images/gui/contrastmatrix.png" />
-
-</div>
 <p>The contrast matrix features one column for each regressor specified in the design matrix and one row for each contrast specified by the user. In this case, since the number of regressors is set up in the design matrix, the buttons above the matrix add or remove rows/contrasts from it.</p>
-<div class="figure">
-<img src="images/gui/exchangeabilitytree4.png" />
-
-</div>
-<p>In this case, there are three groups that can be permutated both internally and as blocks. Note that this is different from unrestricted exchangeability.</p>
 <h3 id="f-test-matrix">F-Test matrix</h3>
-<div class="figure">
-<img src="images/gui/ftestmatrix.png" />
-
-</div>
 <p>The F-Test matrix is used in those designs in which F-Tests are involved. It features one row for each contrast and one column for each F-tests. The buttons above the matrix add or remove columns/f-tests. The entry at row i, column j of this matrix specifies if the contrast i must be taken into account when composing f-test j.</p>
-<div class="figure">
-<img src="images/gui/ftestexample.png" />
-
-</div>
 <h3 id="options-and-tfce">Options and TFCE</h3>
-<div class="figure">
-<img src="images/gui/options.png" />
-
-</div>
-<p>The options tab is pretty much self explainatory, however it's important to point out some aspects about some of its entries.</p>
+<p>The options tab is pretty much self explainatory. For any doubts about exchangeability hypothesis and TFCE, refer to the pages linked above.</p>
 <h3 id="number-of-permutation-requested">Number of permutation requested</h3>
 <p>The number of permutation can be speficied by the user by modifying the value in the relative spin box. However, it should be noted that the number specified by the user aren't always the actual permutation performed by the plugin, but it can be thought as an upper bound.</p>
 <p>During the execution of the plugin, each contrast is treated separately. For one specific contrast, the maximum number of permutations depends on the design matrix, on the exchangeability tree and the hypothesis about the errors. After the maximum number of permutations is computed, it is confrontated with the number supplied by the user. If the number supplied by the user is inferior, than only that number of permutations will be performed.</p>
@@ -106,7 +77,6 @@
 <li>You may want to build a custom study starting from one standard analysis.</li>
 </ol>
 <p>The plugin gives you the chance to modify arbitrarily one of the standard analysis. To do so, first select a study different from &quot;Custom&quot;. After the tables and the options are filled automatically, reselect &quot;Custom&quot;. You'll notice that the setup remains the same, but now all the control buttons are enabled.</p>
-<p><img src="images/gui/modifycustom1.png" /> <img src="images/gui/modifycustom2.png" /></p>
 <p>Now you can add regressors, layers to the exchangeability tree, ftests and contrasts. You can also change the hypothesis and the statistics used by the test.</p>
 <h3 id="choice-of-the-statistic-for-custom-analysis">Choice of the statistic for custom analysis</h3>
 <p>The plugin offers three statistics:</p>
