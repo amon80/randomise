@@ -111,10 +111,13 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, MCopy, M, I, ResidualFormingMatrixM, c, s, VGS);
         }
 
+        //Copying the original map before applying TFCE
+        StatisticalMap3D originalCopy(toReturn[index].originalStatistic);
+
         if(useTfce)
             tfce(toReturn[index].originalStatistic, E, H, dh, conn);
 
-       toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
+        toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
         #pragma omp parallel for
         for(int j = 0; j < actualPermutationSize; j++){
@@ -161,7 +164,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 Eigen::VectorXd phijv = Mjplus*epsilonZetas[v];
                 Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
                 permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, M, Pj, ResidualFormingMatrixMj, c, s, VGS);
-                if(permutedStatistic[v] >= toReturn[index].originalStatistic[v]){
+                if(permutedStatistic[v] >= originalCopy[v]){
                     #pragma omp atomic
                         toReturn[index].uncorrected[v] += 1;
                 }
@@ -170,16 +173,13 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             if(useTfce)
                 tfce(permutedStatistic, E, H, dh, conn);
 
-            //Find the maximum
+            //Find the maximum and saving it
             float maxTj = permutedStatistic[0];
             for(int v = 1; v < numVoxels; v++){
                 if(permutedStatistic[v] > maxTj){
                     maxTj = permutedStatistic[v];
                 }
             }
-
-            //NOTE: Instead of computing pvalues in this way
-            //a vector of maxes can be used to assest inference
             toReturn[index].maxDistribution[j] = maxTj;
 
             //Using the maximum to compute FWER
