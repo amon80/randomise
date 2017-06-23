@@ -224,15 +224,26 @@ bool RandomisePlugin::execute()
         int performed_perm = 0;
         int total_perm = 0;
         int contrast = 0;
+        int max_number_permutations = 0;
 
         //Go with the math (asynchronosly)
         qxShowBusyCursor();
         std::chrono::milliseconds span (1000 * refreshingTimeSeconds);
-        auto randomise_lambda = [&Y, &M, &C, &a, &pivotal, &useTfce, &E, &H, &dh, &Conn, &EE, &ISE, &maxPermutations, &alpha, &performed_perm, &total_perm, &contrast]
+        auto randomise_lambda = [&Y, &M, &C, &a, &pivotal, &useTfce, &E, &H, &dh, &Conn, &EE, &ISE, &maxPermutations, &alpha, &performed_perm, &total_perm, &contrast, &max_number_permutations]
         {
-            return randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha, &performed_perm, &total_perm, &contrast);
+            return randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha, &performed_perm, &total_perm, &contrast, &max_number_permutations);
         };
         auto fut = std::async(std::launch::async, randomise_lambda);
+        fut.wait_for(std::chrono::milliseconds(2000));
+        sprintf(buffer, "Maximum number of possible permutations for this design: %d", max_number_permutations);
+        qxLogText(buffer);
+        if(max_number_permutations > maxPermutations){
+            sprintf(buffer, "Drawing %d random permutations", maxPermutations);
+            qxLogText(buffer);
+        }
+        else{
+            qxLogText("Exploring all possible permutations");
+        }
         while (true){
             auto waiting_result = fut.wait_for(span);
             if(waiting_result==std::future_status::ready){

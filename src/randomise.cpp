@@ -9,7 +9,7 @@
 #include <vector>
 #include <omp.h>
 
-std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, MultyRowArray &a, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& partitionedM, Eigen::MatrixXd& unpartitionedM, Eigen::MatrixXd& Pj, Eigen::MatrixXd& R, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce, float E, float H, float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int *performed_perm, int *total_perm, int *contrast){
+std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, std::vector<Eigen::MatrixXd>& C, MultyRowArray &a, float (*pivotal)(Eigen::VectorXd& phi, Eigen::VectorXd& epsilon, Eigen::MatrixXd& partitionedM, Eigen::MatrixXd& unpartitionedM, Eigen::MatrixXd& Pj, Eigen::MatrixXd& R, Eigen::MatrixXd& C, int s, std::vector<int>& VGS), bool useTfce, float E, float H, float dh, Connectivity3D * conn, bool EE, bool ISE, int J, float alpha, int *performed_perm, int *total_perm, int *contrast, int * maxNumberPermutations){
     //Storing number of observations for convinieance
     int N = Y.getNumMaps();
 
@@ -57,6 +57,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         //Computing the max number of permutations
         int Jmax = t.calculatePermutations(X, EE, ISE);
+        (*maxNumberPermutations) = Jmax;
 
         //Computing the minimum set of VGS
         std::vector<int> VGS = t.getMinimumSetOfVarianceGroups();
