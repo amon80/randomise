@@ -170,7 +170,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
             //Then, increment uncorrected p-values counters
             for(int v = 0; v < numVoxels; v++){
-                if(permutedStatistic[v] >= toReturn.originalStatistic[v]){
+                if(permutedStatistic[v] >= toReturn[index].originalStatistic[v]){
                     #pragma omp atomic
                         toReturn[index].uncorrected[v] += 1;
                 }

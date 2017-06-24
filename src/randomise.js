@@ -26,6 +26,7 @@ scriptObj.initDlg = function(){
     studies.addItem("One-Sample T-Test");
     studies.addItem("Two-Sample Unpaired T-Test");
     studies.addItem("Two-Sample Paired T-Test");
+    studies.addItem("ANOVA: 1 factor 4 levels (Repeated measures)");
 
     bv.SetPluginStringParameter("Command", "GetNumOfMaps");
     bv.ExecutePlugin();
@@ -343,6 +344,90 @@ scriptObj.onChangeStudy = function(){
             //Setting proper statistic
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
+        }else if(currentStudy == "ANOVA: 1 factor 4 levels (Repeated measures)"){
+            //Getting number of subjects
+            var num_subjects = num_of_maps/4;
+
+            //Setting permutation hypothesis
+            dlg.optionsGroupBox.eeCheckBox.setChecked(true);
+
+            //Adding necessary rows/columns to tables
+            this.addColumn();
+            this.addColumn();
+            this.addColumn();
+            for(var i = 0; i < num_subjects; i++){
+                this.addColumn();
+            }
+            this.addContrast();
+            this.addContrast();
+            this.addContrast();
+            this.addFTest();
+            this.addGroup();
+            this.addGroup();
+            
+            //Filling the design matrix
+            //First num_subjects columns
+            for(var j = 0; j < num_subjects; j++){
+                for(var i = 1; i <= num_of_maps; i++){
+                    if(i > 4*j && i <= 4*(j+1)){
+                        addEntryToTable(designMatrix, i-1,j, "1");
+                    }else{
+                        addEntryToTable(designMatrix, i-1,j, "0");
+                    }
+                }
+            }
+            //Other columns
+            for(var j = num_subjects; j < num_subjects+3; j++){
+                var k = j - num_subjects;
+                for(var i = 0; i < num_of_maps; i++){
+                    if(i % 4 == k){
+                        addEntryToTable(designMatrix, i,j, "1");
+                    }else{
+                        addEntryToTable(designMatrix, i,j, "0");
+                    }
+                }
+            }
+
+            //Filling the group matrix
+            //First column
+            for(var i = 0; i < num_of_maps; i++){
+                addEntryToTable(treeMatrix, i,0, "-1");
+            }
+            //Second column
+            var group = 1;
+            for(var j = 0; j < num_subjects; j++){
+                var group_string = ""+group;
+                for(var i = 0; i < 4; i++){
+                    addEntryToTable(treeMatrix, 4*j+i,1, group_string);
+                }
+                group += 1;
+            }
+            
+            //Filling the contrast matrix
+            //First num_subjects columns
+            for(var i = 0; i < num_subjects; i++){
+                for(var j = 0; j < 3; j++){
+                    addEntryToTable(contrastMatrix, j, i, "0");
+                }
+            }
+            //Other columns
+            for(var i = num_subjects; i < num_subjects+3; i++){
+                for(var j = 0; j < 3; j++){
+                    if(i-num_subjects == j){
+                        addEntryToTable(contrastMatrix, j, i, "1");
+                    }else{
+                        addEntryToTable(contrastMatrix, j, i, "0");
+                    }
+                }
+            }
+
+            //Filling the FTestMatrix
+            for(var i = 0; i < 3; i++){
+                addEntryToTable(ftestMatrix, i, 0, "1");
+            }
+
+            //Setting proper statistic
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("F");
         }
     }else{
         dlg.designGroupBox.designMatrixAddColumnButton.setEnabled(true);
