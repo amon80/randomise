@@ -112,9 +112,6 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, MCopy, M, I, ResidualFormingMatrixM, c, s, VGS);
         }
 
-        //Copying the original map before applying TFCE
-        StatisticalMap3D originalCopy(toReturn[index].originalStatistic);
-
         if(useTfce)
             tfce(toReturn[index].originalStatistic, E, H, dh, conn);
 
@@ -165,14 +162,19 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
                 Eigen::VectorXd phijv = Mjplus*epsilonZetas[v];
                 Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
                 permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, M, Pj, ResidualFormingMatrixMj, c, s, VGS);
-                if(permutedStatistic[v] >= originalCopy[v]){
+            }
+
+            //First, apply TFCE (if requested)
+            if(useTfce)
+                tfce(permutedStatistic, E, H, dh, conn);
+
+            //Then, increment uncorrected p-values counters
+            for(int v = 0; v < numVoxels; v++){
+                if(permutedStatistic[v] >= toReturn.originalStatistic[v]){
                     #pragma omp atomic
                         toReturn[index].uncorrected[v] += 1;
                 }
             }
-
-            if(useTfce)
-                tfce(permutedStatistic, E, H, dh, conn);
 
             //Find the maximum and saving it
             float maxTj = permutedStatistic[0];
