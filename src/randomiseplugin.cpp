@@ -235,16 +235,20 @@ bool RandomisePlugin::execute()
         };
         auto fut = std::async(std::launch::async, randomise_lambda);
         fut.wait_for(std::chrono::milliseconds(2000));
-        sprintf(buffer, "Maximum number of possible permutations for this design: %d", max_number_permutations);
-        qxLogText(buffer);
-        if(max_number_permutations > maxPermutations){
-            sprintf(buffer, "Drawing %d random permutations", maxPermutations);
-            qxLogText(buffer);
-        }
-        else{
-            qxLogText("Exploring all possible permutations");
-        }
+		int old_contrast = -1;
         while (true){
+			if (old_contrast != contrast) {
+				sprintf(buffer, "Maximum number of possible permutations for contrast %d: %d", contrast, max_number_permutations);
+				qxLogText(buffer);
+				if (max_number_permutations > maxPermutations) {
+					sprintf(buffer, "Drawing %d random permutations", maxPermutations);
+					qxLogText(buffer);
+				}
+				else {
+					qxLogText("Exploring all possible permutations");
+				}
+				old_contrast = contrast;
+			}
             auto waiting_result = fut.wait_for(span);
             if(waiting_result==std::future_status::ready){
                 qxLogText("Finished!");

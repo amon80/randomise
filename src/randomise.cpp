@@ -99,6 +99,13 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         Eigen::MatrixXd ResidualFormingMatrixZ = (I - Z*Zplus);
         Eigen::MatrixXd ResidualFormingMatrixM = (I - MCopy*Mplus);
 
+		//Setting up the statistic
+		float(*statisticToUse)(Eigen::VectorXd&, Eigen::VectorXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, int, std::vector<int>&) = nullptr;
+		if (statisticToUse == FStatistic && s == 1)
+			statisticToUse = TStatistic;
+		else
+			statisticToUse = pivotal;
+
         //Setting omp variables
         int max_num_threads = omp_get_num_procs();
         omp_set_num_threads(max_num_threads);
@@ -109,7 +116,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
             Eigen::VectorXd epsilonv = ResidualFormingMatrixM*epsilonZetas[v];
-            toReturn[index].originalStatistic[v] = pivotal(phiv, epsilonv, MCopy, M, I, ResidualFormingMatrixM, c, s, VGS);
+            toReturn[index].originalStatistic[v] = statisticToUse(phiv, epsilonv, MCopy, M, I, ResidualFormingMatrixM, c, s, VGS);
         }
 
         if(useTfce)
@@ -161,7 +168,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             for(int v = 0; v < numVoxels; v++){
                 Eigen::VectorXd phijv = Mjplus*epsilonZetas[v];
                 Eigen::VectorXd epsilonjv = ResidualFormingMatrixMj*epsilonZetas[v];
-                permutedStatistic[v] = pivotal(phijv, epsilonjv, Mj, M, Pj, ResidualFormingMatrixMj, c, s, VGS);
+                permutedStatistic[v] = statisticToUse(phijv, epsilonjv, Mj, M, Pj, ResidualFormingMatrixMj, c, s, VGS);
             }
 
             //First, apply TFCE (if requested)
@@ -214,6 +221,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         }
 		index++;
         (*contrast)++;
+		(*performed_perm) = 0;
     }
     return toReturn;
 }
