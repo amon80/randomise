@@ -267,8 +267,8 @@ bool PermutationTree::LAlgorithm(PermutationTreeBlock * block, std::vector<Permu
         block = root;
         alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
     }
-    //base case #1: block is not permutable. In this case it shall not be added to the list
-    if(!block->isPermutable())
+    //base case #1: block is a leaf.
+    if(block->isLeaf())
         return false;
     //base case #2: block is permutable, let's check if L algorithm is appliable
     //"The tree is swept from the top node [...] stopping when a single pairwise permutation of branches can be performed"
@@ -284,9 +284,13 @@ bool PermutationTree::LAlgorithm(PermutationTreeBlock * block, std::vector<Permu
         delete alreadyVisited;
         return true;
     }
-    //recursion case - if the function arrives here then the block is permutable, but has reached is last possible
-    //lexicograph permutation. So, it shall be added to list of already visited nodes.
-    alreadyVisited->push_back(block);
+    //recursion case - if the function arrives here then there are two possible cases:
+    //1)block is permutable, but has reached is last possible lexicograph permutation.
+    //In this case, it shall be added to the list of already visited nodes.
+    //2)block is not permutable, in this case it shall not be added
+    //In both cases, since the node is not a leaf then recursion shall happen
+    if(block->isPermutable())
+        alreadyVisited->push_back(block);
     int numSons = block->getNumSons();
     bool oneOfTheSonsIsPermutable = false;
     for(int i = 0; i < numSons; i++){
@@ -309,8 +313,8 @@ bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<Per
         block = root;
         alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
     }
-    //base case #1: block is not permutable. In this case it shall not be added to the list
-    if(!block->isPermutable())
+    //base case #1: block is a leaf.
+    if(!block->isLeaf())
         return false;
     //base case #2: block is permutable, let's check if counter is incrementable
     //"The tree is swept from the top node [...] stopping when a single sign flipping can be performed
@@ -326,9 +330,13 @@ bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<Per
         delete alreadyVisited;
         return true;
     }
-    //recursion case - if the function arrives here then the block is permutable, but his counter has reached its last possible
-    //state. So, it shall be added to list of already visited nodes.
-    alreadyVisited->push_back(block);
+    //recursion case - if the function arrives here then there are two possible cases:
+    //1)block is permutable, but its counter has reached its last possible value.
+    //In this case, it shall be added to the list of already visited nodes.
+    //2)block is not permutable, in this case it shall not be added
+    //In both cases, since the node is not a leaf then recursion shall happen
+    if(block->isPermutable())
+        alreadyVisited->push_back(block);
     int numSons = block->getNumSons();
     bool oneOfTheSonsIsSignFlippable = false;
     for(int i = 0; i < numSons; i++){

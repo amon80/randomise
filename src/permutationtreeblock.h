@@ -29,6 +29,7 @@ public:
     int getNumSons();
     int getIndicesSize();
     bool isPermutable();
+    bool isLeaf();
     bool isLAlgorithmApplicable();
     bool isReverseLAlgorithmApplicable();
     bool isIncrementable();

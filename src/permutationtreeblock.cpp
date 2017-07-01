@@ -100,6 +100,10 @@ int PermutationTreeBlock::getIndicesSize(){
     return indices.size();
 }
 
+bool PermutationTreeBlock::isLeaf(){
+    return sons.size() == 0;
+}
+
 bool PermutationTreeBlock::isPermutable(){
     return permutable;
 }
