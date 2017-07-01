@@ -234,27 +234,26 @@ bool RandomisePlugin::execute()
             return randomise(Y, M, C, a, pivotal, useTfce, E, H, dh, Conn, EE, ISE, maxPermutations, alpha, &performed_perm, &total_perm, &contrast, &max_number_permutations);
         };
         auto fut = std::async(std::launch::async, randomise_lambda);
-        fut.wait_for(std::chrono::milliseconds(2000));
 		int old_contrast = -1;
         while (true){
-			if (old_contrast != contrast) {
-				sprintf(buffer, "Maximum number of possible permutations for contrast %d: %d", contrast, max_number_permutations);
-				qxLogText(buffer);
-				if (max_number_permutations > maxPermutations) {
-					sprintf(buffer, "Drawing %d random permutations", maxPermutations);
-					qxLogText(buffer);
-				}
-				else {
-					qxLogText("Exploring all possible permutations");
-				}
-				old_contrast = contrast;
-			}
             auto waiting_result = fut.wait_for(span);
             if(waiting_result==std::future_status::ready){
                 qxLogText("Finished!");
                 break;
             }
-            else if(waiting_result==std::future_status::timeout){
+			if (old_contrast != contrast) {
+				sprintf(buffer, "Maximum number of possible permutations for contrast %d: %d", contrast, max_number_permutations);
+				qxLogText(buffer);
+                if(maxPermutations == -1 || maxPermutations >= max_number_permutations){
+                    qxLogText("Exploring all possible permutations");
+                }
+                else{
+                    sprintf(buffer, "Drawing %d random permutations", maxPermutations);
+                    qxLogText(buffer);
+                }
+				old_contrast = contrast;
+			}
+            if(waiting_result==std::future_status::timeout){
                 sprintf(buffer, "Contrast %d - Executed %d/%d permutations", contrast, performed_perm, total_perm);
                 qxLogText(buffer);
             }

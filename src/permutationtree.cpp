@@ -314,7 +314,7 @@ bool PermutationTree::signFlipping(PermutationTreeBlock * block, std::vector<Per
         alreadyVisited = new std::vector<PermutationTreeBlock*>(0);
     }
     //base case #1: block is a leaf.
-    if(!block->isLeaf())
+    if(block->isLeaf())
         return false;
     //base case #2: block is permutable, let's check if counter is incrementable
     //"The tree is swept from the top node [...] stopping when a single sign flipping can be performed

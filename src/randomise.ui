@@ -341,6 +341,9 @@
           </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="maxNumPermutationsSpinbox">
+            <property name="minimum">
+             <number>-1</number>
+            </property>
             <property name="maximum">
              <number>100000</number>
             </property>
@@ -535,10 +538,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>buttonBox</zorder>
-  <zorder>designGroupBox</zorder>
-  <zorder>optionsGroupBox</zorder>
-  <zorder>verticalSpacer_2</zorder>
  </widget>
  <resources/>
  <connections>

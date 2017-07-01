@@ -65,7 +65,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         //NOTE: if J >= Jmax then we're going exhaustively
         bool exhaustively = false;
         int actualPermutationSize = 0;
-        if(J >= Jmax){
+        if(J == -1 || J >= Jmax){
             exhaustively = true;
             actualPermutationSize = Jmax;
             t.reverseLAlgorithm();
