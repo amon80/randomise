@@ -26,6 +26,7 @@ scriptObj.initDlg = function(){
     studies.addItem("One-Sample T-Test");
     studies.addItem("Two-Sample Unpaired T-Test");
     studies.addItem("Two-Sample Paired T-Test");
+    studies.addItem("Two-Sample Unpaired T-Test (Unequal group variances)");
     studies.addItem("ANOVA: 1 factor 4 levels (Repeated measures)");
 
     bv.SetPluginStringParameter("Command", "GetNumOfMaps");
@@ -286,7 +287,48 @@ scriptObj.onChangeStudy = function(){
             //Setting proper statistic
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
 
-        }else if(currentStudy == "Two-Sample Paired T-Test"){
+        }
+        else if(currentStudy == "Two-Sample Unpaired T-Test (Unequal group variances)"){
+            //Setting permutation hypothesis
+            dlg.optionsGroupBox.iseCheckBox.setChecked(true);
+
+            //Adding necessary rows/columns to tables
+            this.addColumn();
+            this.addColumn();
+            this.addContrast();
+            this.addGroup();
+            this.addGroup();
+
+            //Filling the design matrix
+            for(var i = 0; i < num_of_maps/2; i++){
+                addEntryToTable(designMatrix, i, 0, "1");
+                addEntryToTable(designMatrix, i, 1, "0");
+            }
+            for(var i = num_of_maps/2; i < num_of_maps; i++){
+                addEntryToTable(designMatrix, i, 0, "0");
+                addEntryToTable(designMatrix, i, 1, "1");
+            }
+
+            //Filling the group matrix
+            for(var i = 0; i < num_of_maps; i++){
+                addEntryToTable(treeMatrix, i, 0, "-1");
+            }
+            for(var i = 0; i < num_of_maps/2; i++){
+                addEntryToTable(treeMatrix, i, 1, "1");
+            }
+            for(var i = num_of_maps/2; i < num_of_maps; i++){
+                addEntryToTable(treeMatrix, i, 1, "2");
+            }
+            
+            //Filling the contrast matrix
+            addEntryToTable(contrastMatrix, 0, 0, "1");
+            addEntryToTable(contrastMatrix, 0, 1, "-1");
+
+            //Setting proper statistic
+            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("G");
+
+        }
+        else if(currentStudy == "Two-Sample Paired T-Test"){
             //Getting number of subjects
             var num_subjects = num_of_maps/2;
 
