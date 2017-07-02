@@ -10,4 +10,4 @@ The TFCE algorithm is illustrated in the figure above. The solid curve shows a 1
 
 where $h_0$ will typically be zero, and $E$ and $H$, 0.5 and 2 respectively. In practice this integral is estimated as a sum, using finite $dh$.
 
-It is important to note that is useless use this kind of statistics, i.e. the ones that use spatial information, without a permutation framework. Indeed, without a permutation framework, there's no way to obtaine p-values, either uncorrected and corrected, from a cluster-enhanced output image, since there's no standard distribution to refer to.
+It is important to note that this kind of statistics can only be used with a permutation framework. Indeed, without a permutation framework, there's no way to obtaine p-values, either uncorrected or corrected, from a cluster-enhanced output image, since there's no standard distribution to refer to.
