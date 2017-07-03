@@ -64,7 +64,7 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
             increment = dh;
         }
 
-        steps = (int) ceil(rangeData / increment);
+        steps = (int) floor(rangeData / increment);
         for (i = 0; i < steps; i++) {
             computeTfceIteration(map, tfce_map, minData + i*increment, increment, E, H, C);
         }
