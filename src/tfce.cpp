@@ -5,16 +5,13 @@
 #include <cmath>
 #include <queue>
 
-void computeTfceIteration(StatisticalMap3D& map, StatisticalMap3D& tfce_map, float h, float increment, float E, float H, Connectivity3D * C){
+void computeTfceIteration(StatisticalMap3D& map, StatisticalMap3D& tfce_map, float h, float E, float H, Connectivity3D * C){
     int i = 0;
     StatisticalMap3D binaryClusterMap = createMask(map, moreThan, h);
-	//START - Slowest functions
     std::map<float, float> extensions = find_clusters_3D(binaryClusterMap, C);
     turn_into_extent_map(binaryClusterMap, extensions);
-	//END - Slowest functions
     binaryClusterMap.applyOperation(elevate, E);
     binaryClusterMap.applyOperation(multiply, pow(h,H));
-    binaryClusterMap.applyOperation(multiply, increment);
     int dim = tfce_map.size();
     for (i = 0; i < dim; ++i)
         tfce_map[i] += binaryClusterMap[i];
@@ -66,8 +63,9 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
 
         steps = (int) floor(rangeData / increment);
         for (i = 0; i < steps; i++) {
-            computeTfceIteration(map, tfce_map, minData + i*increment, increment, E, H, C);
+            computeTfceIteration(map, tfce_map, minData + i*increment, E, H, C);
         }
+        tfce_map.applyOperation(multiply, increment);
     }else{
         StatisticalMap3D maskPosData = createMask(map, moreThan, 0);
         StatisticalMap3D maskNegData = createMask(map, lessThan, 0);
@@ -76,7 +74,7 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
         negData.flipMap();
         tfce(posData, E, H, dh, C);
         tfce(negData, E, H, dh, C);
-        negData.flipMap();
+        negData.flipMap();      
         tfce_map = posData + negData;
     }
     map = tfce_map;
