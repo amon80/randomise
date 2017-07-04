@@ -189,7 +189,39 @@ scriptObj.collectDataAndFire = function(){
     bv.SetPluginStringParameter("Statistic", dlg.optionsGroupBox.statisticToUseComboBox.currentText);
 
     //Setting refreshing time for log
-    bv.SetPluginIntParameter("RefreshingTime", dlg.optionsGroupBox.refreshingTimeSpinBox.value);
+    bv.SetPluginIntParameter("RefreshingTime", dlg.optionsGroupBox.loggingAndOutputGroupBox.refreshingTimeSpinBox.value);
+
+    //Setting output options
+    //FWER
+    if(dlg.optionsGroupBox.loggingAndOutputGroupBox.FWERCheckBox.checked){
+        bv.SetPluginIntParameter("FWER",1);
+    } else{
+        bv.SetPluginIntParameter("FWER",0);
+    }
+    //Uncorrected
+    if(dlg.optionsGroupBox.loggingAndOutputGroupBox.uncorrectedCheckBox.checked){
+        bv.SetPluginIntParameter("Uncorrected",1);
+    } else{
+        bv.SetPluginIntParameter("Uncorrected",0);
+    }
+    //Raw statistic
+    if(dlg.optionsGroupBox.loggingAndOutputGroupBox.rawCheckBox.checked){
+        bv.SetPluginIntParameter("Raw",1);
+    } else{
+        bv.SetPluginIntParameter("Raw",0);
+    }
+    //Permutation distribution
+    if(dlg.optionsGroupBox.loggingAndOutputGroupBox.distributionCheckBox.checked){
+        bv.SetPluginIntParameter("Distribution",1);
+    } else{
+        bv.SetPluginIntParameter("Distribution",0);
+    }
+    //Use separate VMPs
+    if(dlg.optionsGroupBox.loggingAndOutputGroupBox.separateVMPCheckBox.checked){
+        bv.SetPluginIntParameter("SeparateVmps",1);
+    } else{
+        bv.SetPluginIntParameter("SeparateVmps",0);
+    }
 
     //Setting plugin command
     bv.SetPluginStringParameter("Command", "Execute");
