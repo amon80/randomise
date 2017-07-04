@@ -103,6 +103,7 @@ bool RandomisePlugin::execute()
         int outputRawInt = qxGetIntParameter("Raw");
         int outputPermutationDistributionInt = qxGetIntParameter("Distribution");
         int outputSeparateVmpsInt = qxGetIntParameter("SeparateVmps");
+        int doOnlyFTestsInt = qxGetIntParameter("OnlyFTests");
 
         int numberContrasts = qxGetIntParameter("NumberOfContrasts");
         int numberRegressors = qxGetIntParameter("NumberOfRegressors");
@@ -176,32 +177,48 @@ bool RandomisePlugin::execute()
 
             }
         }
-
-        int total_contrasts = numberContrasts + numberFTests;
+        int total_contrasts;
+        int correct_index = 0;
+        if(!doOnlyFTestsInt)
+            total_contrasts = numberContrasts + numberFTests;
+        else
+            total_contrasts = numberFTests;
         //Initializing the contrasts and the ftests
         std::vector<Eigen::MatrixXd> C(total_contrasts);
-        for(int i = 0; i < numberContrasts; i++){
-            C[i] = Eigen::MatrixXd::Zero(numberRegressors,1);
-        }
-        for(int i = numberContrasts; i < total_contrasts; i++){
-            C[i] = Eigen::MatrixXd::Zero(numberRegressors,numberContrasts);
-        }
-        //Filling contrasts and ftests
-        for(int i = 0; i < numberContrasts; i++){
-            for(int j = 0; j < numberRegressors; j++){
-                sprintf(variableName, "ContrastMatrix%d%d",i,j);
-                qxGetStringParameter(variableName, buffer);
-                C[i](j,0) = atof(buffer);
+        if(!doOnlyFTestsInt){
+            for(; correct_index < numberContrasts; correct_index++){
+                C[correct_index] = Eigen::MatrixXd::Zero(numberRegressors,1);
             }
         }
-        for(int i = numberContrasts; i < total_contrasts; i++){
-            int k = i - numberContrasts;
+        for(; correct_index < total_contrasts; correct_index++){
+            C[correct_index] = Eigen::MatrixXd::Zero(numberRegressors,numberContrasts);
+        }
+        correct_index = 0;
+        //Filling contrasts and ftests
+        if(!doOnlyFTestsInt){
+            for(; correct_index < numberContrasts; correct_index++){
+                for(int j = 0; j < numberRegressors; j++){
+                    sprintf(variableName, "ContrastMatrix%d%d",correct_index,j);
+                    qxGetStringParameter(variableName, buffer);
+                    C[correct_index](j,0) = atof(buffer);
+                }
+            }
+        }
+        for(; correct_index < total_contrasts; correct_index++){
+            int k;
+            if(!doOnlyFTestsInt)
+                k = correct_index - numberContrasts;
+            else
+                k = correct_index;
             for(int j = 0; j < numberContrasts; j++){
                 sprintf(variableName, "FTestMatrix%d%d",k,j);
                 qxGetStringParameter(variableName, buffer);
                 float useContrastJ = atof(buffer);
                 for(int r = 0; r < numberRegressors; r++){
-                    C[i](r,j) = useContrastJ*C[j](r,0);
+                    sprintf(variableName, "ContrastMatrix%d%d",j,r);
+                    qxGetStringParameter(variableName, buffer);
+                    float contrastJValueRegressorR = atof(buffer);
+                    C[correct_index](r,j) = useContrastJ*contrastJValueRegressorR;
                 }
             }
         }
@@ -276,6 +293,10 @@ bool RandomisePlugin::execute()
 
         sprintf(outputPath, "%s/RandomiseOutput", homePath);
         mkdir(outputPath,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if(doOnlyFTestsInt)
+            numberContrasts = 0;
+
+        //Writing contrasts
         for(int i = 0; i < numberContrasts; i++){
             sprintf(outputPathContrastI, "%s/Contrast %d", outputPath, i);
             mkdir(outputPathContrastI,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -295,6 +316,7 @@ bool RandomisePlugin::execute()
                 }
                 sprintf(buffer, "Contrast %d - Raw statistic", i);
                 strcpy(vmp_header.NameOfMap, buffer);
+                vmp_header.MapType = 1; //TMAP
                 MinMaxStructure m = r[i].originalStatistic.findMinMax();
                 float min = m.min;
                 float max = m.max;
@@ -375,6 +397,7 @@ bool RandomisePlugin::execute()
                 fclose(f);
             }
         }
+        //Writing F tests. NOTE: If doOnlyFtests == true, then numberContrasts == 0
         for(int i = numberContrasts; i < numberContrasts+numberFTests; i++){
             int j = i - numberContrasts;
             sprintf(outputPathContrastI, "%s/F Test %d", outputPath, j);
@@ -395,6 +418,7 @@ bool RandomisePlugin::execute()
                 }
                 sprintf(buffer, "F Test %d - Raw statistic", j);
                 strcpy(vmp_header.NameOfMap, buffer);
+                vmp_header.MapType = 4; //FMAP
                 MinMaxStructure m = r[i].originalStatistic.findMinMax();
                 float min = m.min;
                 float max = m.max;

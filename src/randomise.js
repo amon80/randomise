@@ -1,4 +1,3 @@
-
 var bv = BrainVoyager;
 
 var scriptObj  = new Object;
@@ -111,11 +110,20 @@ scriptObj.removeContrast =  function(){
 }
 
 scriptObj.addFTest = function(){
-    ftestMatrix.insertColumn(ftestMatrix.columnCount);
+    var previousFTest = ftestMatrix.columnCount;
+    ftestMatrix.insertColumn(previousFTest);
+    if(previousFTest == 0){
+        dlg.optionsGroupBox.loggingAndOutputGroupBox.doOnlyFTestsCheckBox.setEnabled(true);
+    }
 }
 
 scriptObj.removeFTest =  function(){
     ftestMatrix.removeColumn(ftestMatrix.columnCount-1);
+    if(ftestMatrix.columnCount == 0){
+        dlg.optionsGroupBox.loggingAndOutputGroupBox.doOnlyFTestsCheckBox.setChecked(false);
+        dlg.optionsGroupBox.loggingAndOutputGroupBox.doOnlyFTestsCheckBox.setEnabled(false);
+    }
+
 }
 
 scriptObj.collectDataAndFire = function(){
@@ -221,6 +229,12 @@ scriptObj.collectDataAndFire = function(){
         bv.SetPluginIntParameter("SeparateVmps",1);
     } else{
         bv.SetPluginIntParameter("SeparateVmps",0);
+    }
+    //Carry only FTests
+    if(dlg.optionsGroupBox.loggingAndOutputGroupBox.doOnlyFTestsCheckBox.checked){
+        bv.SetPluginIntParameter("OnlyFTests", 1);
+    } else{
+        bv.SetPluginIntParameter("OnlyFTests", 0);
     }
 
     //Setting plugin command

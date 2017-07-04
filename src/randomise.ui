@@ -562,6 +562,16 @@
              </property>
             </widget>
            </item>
+           <item row="5" column="2">
+            <widget class="QCheckBox" name="doOnlyFTestsCheckBox">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Do only F Tests</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
