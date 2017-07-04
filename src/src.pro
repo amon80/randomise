@@ -46,10 +46,7 @@ SOURCES += \
     connectivity3d18.cpp \
     connectivity3d26.cpp \
     binaryio.cpp \
-    myglm.cpp \
-    myvmp.cpp \
-    multyrowarray.cpp \
-    myvmpheader.cpp
+    multyrowarray.cpp
 
 HEADERS += \
     Eigen/src/Cholesky/LDLT.h \
@@ -357,12 +354,7 @@ HEADERS += \
     connectivity3d6.h \
     connectivity3d18.h \
     connectivity3d26.h \
-    binaryio.h \
-    ioerror.h \
-    myglm.h \
-    myvmp.h \
-    multyrowarray.h \
-    myvmpheader.h
+    multyrowarray.h
 
 unix {
     target.path = ~/Documents/BVExtensions/Plugins_64

@@ -277,7 +277,7 @@ bool RandomisePlugin::execute()
         sprintf(outputPath, "%s/RandomiseOutput", homePath);
         mkdir(outputPath,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
         for(int i = 0; i < numberContrasts; i++){
-            sprintf(outputPathContrastI, "%s/Contrast%d", outputPath, i);
+            sprintf(outputPathContrastI, "%s/Contrast %d", outputPath, i);
             mkdir(outputPathContrastI,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
             if(!outputSeparateVmpsInt){
                 int total_maps = outputFWERInt + outputRawInt + outputUncorrectedInt;
@@ -375,7 +375,106 @@ bool RandomisePlugin::execute()
                 fclose(f);
             }
         }
-        //TODO: F-Tests
+        for(int i = numberContrasts; i < numberContrasts+numberFTests; i++){
+            int j = i - numberContrasts;
+            sprintf(outputPathContrastI, "%s/F Test %d", outputPath, j);
+            mkdir(outputPathContrastI,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+            if(!outputSeparateVmpsInt){
+                int total_maps = outputFWERInt + outputRawInt + outputUncorrectedInt;
+                qxCreateNRVMPsForCurrentVMR(total_maps, 0, 0, NULL);
+                qxGetNRVMPsOfCurrentVMR(&vmps_header);
+            }
+            int submap_index = 0;
+            if(outputRawInt){
+                if(outputSeparateVmpsInt){
+                    qxCreateNRVMPsForCurrentVMR(1, 0, 0, NULL);
+                    qxGetNRVMPsOfCurrentVMR(&vmps_header);
+                    vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
+                }else{
+                    vv = qxGetNRVMPOfCurrentVMR(submap_index, &vmp_header);
+                }
+                sprintf(buffer, "F Test %d - Raw statistic", j);
+                strcpy(vmp_header.NameOfMap, buffer);
+                MinMaxStructure m = r[i].originalStatistic.findMinMax();
+                float min = m.min;
+                float max = m.max;
+                if(r[i].performedPermutations > 0)
+                    vmp_header.ThreshMin = r[i].criticalThreshold;
+                else
+                    vmp_header.ThreshMin = min;
+                vmp_header.ThreshMax = max;
+                for(int k = 0; k < dim; k++)
+                    vv[k] = r[i].originalStatistic[k];
+                if(outputSeparateVmpsInt){
+                    qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
+                    sprintf(outputPathContrastICurrentMap, "%s/Raw.vmp", outputPathContrastI);
+                    qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
+                    qxDeleteNRVMPsOfCurrentVMR();
+                }else{
+                    qxSetNRVMPParametersOfCurrentVMR(submap_index++, &vmp_header);
+                }
+            }
+            if(outputUncorrectedInt){
+                if(outputSeparateVmpsInt){
+                    qxCreateNRVMPsForCurrentVMR(1, 0, 0, NULL);
+                    qxGetNRVMPsOfCurrentVMR(&vmps_header);
+                    vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
+                }else{
+                    vv = qxGetNRVMPOfCurrentVMR(submap_index, &vmp_header);
+                }
+                sprintf(buffer, "F Test %d - Uncorrected 1-p values", j);
+                strcpy(vmp_header.NameOfMap, buffer);
+                vmp_header.ThreshMin = 1-alpha;
+                vmp_header.ThreshMax = 1;
+                vmp_header.ShowPosOrNegOrBoth = 1;
+                for (int k = 0; k < dim; k++)
+                    vv[k] = 1 - r[i].uncorrected[k];
+                if(outputSeparateVmpsInt){
+                    qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
+                    sprintf(outputPathContrastICurrentMap, "%s/Uncorrected.vmp", outputPathContrastI);
+                    qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
+                    qxDeleteNRVMPsOfCurrentVMR();
+                }else{
+                    qxSetNRVMPParametersOfCurrentVMR(submap_index++, &vmp_header);
+                }
+            }
+            if(outputFWERInt){
+                if(outputSeparateVmpsInt){
+                    qxCreateNRVMPsForCurrentVMR(1, 0, 0, NULL);
+                    qxGetNRVMPsOfCurrentVMR(&vmps_header);
+                    vv = qxGetNRVMPOfCurrentVMR(0, &vmp_header);
+                }else{
+                    vv = qxGetNRVMPOfCurrentVMR(submap_index, &vmp_header);
+                }
+                sprintf(buffer, "F Test %d - FWER 1-p values",j);
+                strcpy(vmp_header.NameOfMap, buffer);
+                vmp_header.ThreshMin = 1-alpha;
+                vmp_header.ThreshMax = 1;
+                vmp_header.ShowPosOrNegOrBoth = 1;
+                for (int k = 0; k < dim; k++)
+                    vv[k] = 1 - r[i].corrected[k];
+                if(outputSeparateVmpsInt){
+                    qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
+                    sprintf(outputPathContrastICurrentMap, "%s/Corrected.vmp", outputPathContrastI);
+                    qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
+                    qxDeleteNRVMPsOfCurrentVMR();
+                }else{
+                    qxSetNRVMPParametersOfCurrentVMR(submap_index++, &vmp_header);
+                }
+            }
+            if(!outputSeparateVmpsInt){
+                sprintf(outputPathContrastICurrentMap, "%s/AllMaps.vmp", outputPathContrastI);
+                qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
+                qxDeleteNRVMPsOfCurrentVMR();
+            }
+            if(outputPermutationDistributionInt){
+                sprintf(outputPathContrastICurrentMap, "%s/F Test %d - distribution.txt", outputPathContrastI, j);
+                FILE* f = fopen(outputPathContrastICurrentMap, "w");
+                for(int k = 0; k < r[i].performedPermutations; k++)
+                    fprintf(f, "%f\n", r[i].maxDistribution[k]);
+                fclose(f);
+            }
+        }
 
         // To make the change visible, update the active window in QX
         qxUpdateActiveWindow();
