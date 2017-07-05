@@ -6,6 +6,7 @@
 #if defined(OS_WIN32)
 #include <windows.h>
 #include <malloc.h>
+#include <direct.h>
 #endif
 
 #include <stdio.h>
@@ -92,23 +93,38 @@ bool RandomisePlugin::execute()
         qxSetIntParameter("NumOfMaps", num_of_maps);
         return true;
     }else if(!strcmp(task_name, "Execute")){
+		char pathSeparator;
+		#if defined(OS_WIN32)
+			pathSeparator = '\\';
+		#else
+			pathSeparator = '/';
+		#endif
         char outputPath[200];
         char outputPathContrastI[200];
         char outputPathContrastICurrentMap[200];
 
-        int result = qxGetSaveFileName("Choose where to save the output", "", "All files (*.*)", outputPath);
+        int result = qxGetSaveFileName("Choose where to save the output", "", "", outputPath);
         if(!result){
             qxLogText("No output path selected!");
-            return false;
+            return true;
         }
-        int mkdir_result = mkdir(outputPath,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		int mkdir_result;
+		int mkdir_error_number;
+		#if defined(OS_WIN32)
+			mkdir_result = _mkdir(outputPath);
+			mkdir_error_number = -1;
+		#else
+			mkdir_result = mkdir(outputPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			mkdir_error_number == -1;
+		#endif
+		
 
-        if(mkdir_result == -1){
+        if(mkdir_result == mkdir_error_number){
             qxLogText("Output directory creation failed. Possible causes:");
             qxLogText("- Current user has no write access in the specified path");
             qxLogText("- Not enough space in the path specified.");
             qxLogText("Please select another path and retry");
-            return false;
+            return true;
         }
 
         int maxPermutations = qxGetIntParameter("MaxPermutations");
@@ -312,8 +328,12 @@ bool RandomisePlugin::execute()
 
         //Writing contrasts
         for(int i = 0; i < numberContrasts; i++){
-            sprintf(outputPathContrastI, "%s/Contrast %d", outputPath, i);
-            mkdir(outputPathContrastI,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+            sprintf(outputPathContrastI, "%s%cContrast %d", outputPath, pathSeparator, i);
+			#if defined(OS_WIN32)
+				_mkdir(outputPathContrastI);
+			#else
+				mkdir(outputPathContrastI, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#endif
             if(!outputSeparateVmpsInt){
                 int total_maps = outputFWERInt + outputRawInt + outputUncorrectedInt;
                 qxCreateNRVMPsForCurrentVMR(total_maps, 0, 0, NULL);
@@ -343,7 +363,7 @@ bool RandomisePlugin::execute()
                     vv[k] = r[i].originalStatistic[k];
                 if(outputSeparateVmpsInt){
                     qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-                    sprintf(outputPathContrastICurrentMap, "%s/Raw.vmp", outputPathContrastI);
+                    sprintf(outputPathContrastICurrentMap, "%s%cRaw.vmp", outputPathContrastI, pathSeparator);
                     qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                     qxDeleteNRVMPsOfCurrentVMR();
                 }else{
@@ -367,7 +387,7 @@ bool RandomisePlugin::execute()
                     vv[k] = 1 - r[i].uncorrected[k];
                 if(outputSeparateVmpsInt){
                     qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-                    sprintf(outputPathContrastICurrentMap, "%s/Uncorrected.vmp", outputPathContrastI);
+                    sprintf(outputPathContrastICurrentMap, "%s%cUncorrected.vmp", outputPathContrastI, pathSeparator);
                     qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                     qxDeleteNRVMPsOfCurrentVMR();
                 }else{
@@ -391,7 +411,7 @@ bool RandomisePlugin::execute()
                     vv[k] = 1 - r[i].corrected[k];
                 if(outputSeparateVmpsInt){
                     qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-                    sprintf(outputPathContrastICurrentMap, "%s/Corrected.vmp", outputPathContrastI);
+                    sprintf(outputPathContrastICurrentMap, "%s%cCorrected.vmp", outputPathContrastI,pathSeparator);
                     qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                     qxDeleteNRVMPsOfCurrentVMR();
                 }else{
@@ -399,12 +419,12 @@ bool RandomisePlugin::execute()
                 }
             }
             if(!outputSeparateVmpsInt){
-                sprintf(outputPathContrastICurrentMap, "%s/AllMaps.vmp", outputPathContrastI);
+                sprintf(outputPathContrastICurrentMap, "%s%cAllMaps.vmp", outputPathContrastI, pathSeparator);
                 qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                 qxDeleteNRVMPsOfCurrentVMR();
             }
             if(outputPermutationDistributionInt){
-                sprintf(outputPathContrastICurrentMap, "%s/Contrast %d - distribution.txt", outputPathContrastI, i);
+                sprintf(outputPathContrastICurrentMap, "%s%cContrast %d - distribution.txt", outputPathContrastI, pathSeparator, i);
                 FILE* f = fopen(outputPathContrastICurrentMap, "w");
                 for(int k = 0; k < r[i].performedPermutations; k++)
                     fprintf(f, "%f\n", r[i].maxDistribution[k]);
@@ -414,8 +434,12 @@ bool RandomisePlugin::execute()
         //Writing F tests. NOTE: If doOnlyFtests == true, then numberContrasts == 0
         for(int i = numberContrasts; i < numberContrasts+numberFTests; i++){
             int j = i - numberContrasts;
-            sprintf(outputPathContrastI, "%s/F Test %d", outputPath, j);
-            mkdir(outputPathContrastI,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+            sprintf(outputPathContrastI, "%s%cF Test %d", outputPath, pathSeparator, j);
+			#if defined(OS_WIN32)
+				_mkdir(outputPathContrastI);
+			#else
+				mkdir(outputPathContrastI, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			#endif
             if(!outputSeparateVmpsInt){
                 int total_maps = outputFWERInt + outputRawInt + outputUncorrectedInt;
                 qxCreateNRVMPsForCurrentVMR(total_maps, 0, 0, NULL);
@@ -445,7 +469,7 @@ bool RandomisePlugin::execute()
                     vv[k] = r[i].originalStatistic[k];
                 if(outputSeparateVmpsInt){
                     qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-                    sprintf(outputPathContrastICurrentMap, "%s/Raw.vmp", outputPathContrastI);
+                    sprintf(outputPathContrastICurrentMap, "%s%cRaw.vmp", outputPathContrastI, pathSeparator);
                     qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                     qxDeleteNRVMPsOfCurrentVMR();
                 }else{
@@ -469,7 +493,7 @@ bool RandomisePlugin::execute()
                     vv[k] = 1 - r[i].uncorrected[k];
                 if(outputSeparateVmpsInt){
                     qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-                    sprintf(outputPathContrastICurrentMap, "%s/Uncorrected.vmp", outputPathContrastI);
+                    sprintf(outputPathContrastICurrentMap, "%s%cUncorrected.vmp", outputPathContrastI, pathSeparator);
                     qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                     qxDeleteNRVMPsOfCurrentVMR();
                 }else{
@@ -493,7 +517,7 @@ bool RandomisePlugin::execute()
                     vv[k] = 1 - r[i].corrected[k];
                 if(outputSeparateVmpsInt){
                     qxSetNRVMPParametersOfCurrentVMR(0, &vmp_header);
-                    sprintf(outputPathContrastICurrentMap, "%s/Corrected.vmp", outputPathContrastI);
+                    sprintf(outputPathContrastICurrentMap, "%s%cCorrected.vmp", outputPathContrastI, pathSeparator);
                     qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                     qxDeleteNRVMPsOfCurrentVMR();
                 }else{
@@ -501,12 +525,12 @@ bool RandomisePlugin::execute()
                 }
             }
             if(!outputSeparateVmpsInt){
-                sprintf(outputPathContrastICurrentMap, "%s/AllMaps.vmp", outputPathContrastI);
+                sprintf(outputPathContrastICurrentMap, "%s%cAllMaps.vmp", outputPathContrastI, pathSeparator);
                 qxSaveNRVMPsOfCurrentVMR(outputPathContrastICurrentMap);
                 qxDeleteNRVMPsOfCurrentVMR();
             }
             if(outputPermutationDistributionInt){
-                sprintf(outputPathContrastICurrentMap, "%s/F Test %d - distribution.txt", outputPathContrastI, j);
+                sprintf(outputPathContrastICurrentMap, "%s%cF Test %d - distribution.txt", outputPathContrastI, pathSeparator, j);
                 FILE* f = fopen(outputPathContrastICurrentMap, "w");
                 for(int k = 0; k < r[i].performedPermutations; k++)
                     fprintf(f, "%f\n", r[i].maxDistribution[k]);
