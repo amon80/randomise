@@ -539,6 +539,15 @@ bool RandomisePlugin::execute()
             }
         }
 
+        for(int i = 0; i < numberContrasts; i++){
+            sprintf(buffer, "Contrast %d - Critical Threshold %f", i, r[i].criticalThreshold);
+            qxLogText(buffer);
+        }
+        for(int i = numberContrasts; i < numberContrasts+numberFTests; i++){
+            sprintf(buffer, "F Tests %d - Critical Threshold %f", i, r[i].criticalThreshold);
+            qxLogText(buffer);
+        }
+
         // To make the change visible, update the active window in QX
         qxUpdateActiveWindow();
 
