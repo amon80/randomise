@@ -101,7 +101,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
 		//Setting up the statistic
 		float(*statisticToUse)(Eigen::VectorXd&, Eigen::VectorXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, Eigen::MatrixXd&, int, std::vector<int>&) = nullptr;
-		if (statisticToUse == FStatistic && s == 1)
+        if (pivotal == FStatistic && s == 1)
 			statisticToUse = TStatistic;
 		else
 			statisticToUse = pivotal;
