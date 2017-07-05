@@ -106,7 +106,7 @@ bool RandomisePlugin::execute()
         int result = qxGetSaveFileName("Choose where to save the output", "", "", outputPath);
         if(!result){
             qxLogText("No output path selected!");
-            return true;
+            return false;
         }
 		int mkdir_result;
 		int mkdir_error_number;
@@ -122,9 +122,10 @@ bool RandomisePlugin::execute()
         if(mkdir_result == mkdir_error_number){
             qxLogText("Output directory creation failed. Possible causes:");
             qxLogText("- Current user has no write access in the specified path");
+            qxLogText("- A directory with the chosen name already exists");
             qxLogText("- Not enough space in the path specified.");
             qxLogText("Please select another path and retry");
-            return true;
+            return false;
         }
 
         int maxPermutations = qxGetIntParameter("MaxPermutations");
