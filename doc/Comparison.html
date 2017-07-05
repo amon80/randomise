@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+<body>
+<p>This plugin for permutation tests applied to GLM was greatly inspired by the Randomise program built in FSL, improving some of his aspects. Here's a comparison of the features:</p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="29%" />
+<col width="56%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>FSL Randomise</th>
+<th>BV Randomise Plugin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Input formats</td>
+<td>NIFTI.</td>
+<td>VMP.</td>
+</tr>
+<tr class="even">
+<td>Univariate statistics</td>
+<td>t and F.</td>
+<td>t, F, G</td>
+</tr>
+<tr class="odd">
+<td>Spatial statistics</td>
+<td>Cluster extent, cluster mass, TFCE. All of these can be volume-based (voxelwise).</td>
+<td>TFCE, cluster mass. All of these can be volume-based (voxelwise).</td>
+</tr>
+<tr class="even">
+<td>Regression and permutation strategies</td>
+<td>Freedman–Lane.</td>
+<td>Freedman–Lane.</td>
+</tr>
+<tr class="odd">
+<td>Shuffling possibilities</td>
+<td>Permutations or sign-flippings.</td>
+<td>Permutations, sign-flippings, and permutations with sign-flippings.</td>
+</tr>
+<tr class="even">
+<td>Block permutation</td>
+<td>Either whole-block or within-block.</td>
+<td>Whole-block and/or within-block, either in isolation or in arbitrary combinations, with multiple and complex levels of tree-like dependence between observations.</td>
+</tr>
+<tr class="odd">
+<td>Variance groups</td>
+<td>One. Cannot be changed.</td>
+<td>One set automatically.</td>
+</tr>
+<tr class="even">
+<td>FWER correction</td>
+<td>Within each contrast only.</td>
+<td>Within each contrast only.</td>
+</tr>
+<tr class="odd">
+<td>FDR correction</td>
+<td>Yes, separate command. Correction within each contrast only.</td>
+<td>(Scheduled) Yes, separate command. Correction within each contrast only.</td>
+</tr>
+<tr class="even">
+<td>Overall performance</td>
+<td>Generally a bit slower, except for spatial statistics.</td>
+<td>Generally a bit faster, except for spatial statistics, that can be extremely slow.</td>
+</tr>
+<tr class="odd">
+<td>Parallel processing</td>
+<td>Yes, with a separate script (randomise_parallel).</td>
+<td>Yes, built-in.</td>
+</tr>
+<tr class="even">
+<td>Language</td>
+<td>Written in C++.</td>
+<td>Written in C++.</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
