@@ -92,6 +92,25 @@ bool RandomisePlugin::execute()
         qxSetIntParameter("NumOfMaps", num_of_maps);
         return true;
     }else if(!strcmp(task_name, "Execute")){
+        char outputPath[200];
+        char outputPathContrastI[200];
+        char outputPathContrastICurrentMap[200];
+
+        int result = qxGetSaveFileName("Choose where to save the output", "", "All files (*.*)", outputPath);
+        if(!result){
+            qxLogText("No output path selected!");
+            return false;
+        }
+        int mkdir_result = mkdir(outputPath,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+        if(mkdir_result == -1){
+            qxLogText("Output directory creation failed. Possible causes:");
+            qxLogText("- Current user has no write access in the specified path");
+            qxLogText("- Not enough space in the path specified.");
+            qxLogText("Please select another path and retry");
+            return false;
+        }
+
         int maxPermutations = qxGetIntParameter("MaxPermutations");
         int useEEInt = qxGetIntParameter("EE");
         int useISEInt = qxGetIntParameter("ISE");
@@ -286,13 +305,8 @@ bool RandomisePlugin::execute()
         qxDeleteNRVMPsOfCurrentVMR();
 
         std::vector<RandomiseResult> r = fut.get();
-        char * homePath = getenv("HOME");
-        char outputPath[100];
-        char outputPathContrastI[100];
-        char outputPathContrastICurrentMap[100];
 
-        sprintf(outputPath, "%s/RandomiseOutput", homePath);
-        mkdir(outputPath,  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
         if(doOnlyFTestsInt)
             numberContrasts = 0;
 
