@@ -4,6 +4,7 @@
 int fact(int n);
 float elevate(float a, float b);
 float multiply(float a, float b);
+float add(float a, float b);
 bool moreThan(float a, float b);
 bool lessThan(float a, float b);
 

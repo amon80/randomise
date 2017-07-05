@@ -3,6 +3,7 @@
 #include "matrices.h"
 #include "tfce.h"
 #include "mystat.h"
+#include "mymath.h"
 #include <random>
 #include <limits>
 #include <algorithm>
@@ -84,6 +85,9 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         //Then, we inizialize counters for uncorrected and corrected pvalues
         toReturn[index].corrected = StatisticalMap3D(dimX, dimY, dimZ);
         toReturn[index].uncorrected = StatisticalMap3D(dimX, dimY, dimZ);
+		//Adding +1 so we don't need to recompute statistic on original permutation
+		toReturn[index].uncorrected.applyOperation(add, 1);
+		toReturn[index].corrected.applyOperation(add, 1);
 
         //Also, we inizialize a 3dmap to store the statistic on the
         //original permutation
@@ -124,37 +128,45 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 
+		//Computing and storing max of the original model
+		float maxT0 = toReturn[index].originalStatistic[0];
+		for (int v = 1; v < numVoxels; v++) {
+			if (toReturn[index].originalStatistic[v] > maxT0) {
+				maxT0 = toReturn[index].originalStatistic[v];
+			}
+		}
+		toReturn[index].maxDistribution[0] = maxT0;
+		(*performed_perm) += 1;
+
         #pragma omp parallel for
-        for(int j = 0; j < actualPermutationSize; j++){
+        for(int j = 1; j < actualPermutationSize; j++){
             std::vector<int> currentPerm;
             #pragma omp critical
             {
-                if(j != 0){
-                    if(!exhaustively){
-                        if(EE)
-                            t.randomShuffle();
-                        if(ISE)
-                            t.randomSignFlip();
-                    }
-                    else{
-                        //both hypothesis
-                        if(EE && ISE){
-                            if(!t.signFlipping()){
-                                t.resetTreeSignState();
-                                t.LAlgorithm();
-                            }
-                        }
-                        //error only exchangeable
-                        else if(EE){
-                            t.LAlgorithm();
-                        }
-                        //error indipendent and simmetric
-                        else{
-                            t.signFlipping();
-                        }
-                    }
-                }
-                currentPerm = t.getSignVector();
+				if(!exhaustively){
+					if(EE)
+						t.randomShuffle();
+					if(ISE)
+						t.randomSignFlip();
+				}
+				else{
+					//both hypothesis
+					if(EE && ISE){
+						if(!t.signFlipping()){
+							t.resetTreeSignState();
+							t.LAlgorithm();
+						}
+					}
+					//error only exchangeable
+					else if(EE){
+						t.LAlgorithm();
+					}
+					//error indipendent and simmetric
+					else{
+						t.signFlipping();
+					}
+				}
+				currentPerm = t.getSignVector();
             }
             Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
             Eigen::MatrixXd Mj = Pj*MCopy;
