@@ -115,7 +115,7 @@ bool RandomisePlugin::execute()
 			mkdir_error_number = -1;
 		#else
 			mkdir_result = mkdir(outputPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-			mkdir_error_number == -1;
+            mkdir_error_number = -1;
 		#endif
 		
 
