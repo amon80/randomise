@@ -127,6 +127,8 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
             tfce(toReturn[index].originalStatistic, E, H, dh, conn);
 
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
+		toReturn[index].exectuedPermutations = std::vector<std::vector<int>>(actualPermutationSize);
+		toReturn[index].exectuedPermutations[0] = t.getSignVector();
 
 		//Computing and storing max of the original model
 		float maxT0 = toReturn[index].originalStatistic[0];
@@ -168,6 +170,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 				}
 				currentPerm = t.getSignVector();
             }
+			toReturn[index].exectuedPermutations[j] = currentPerm;
             Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
             Eigen::MatrixXd Mj = Pj*MCopy;
             Eigen::MatrixXd Mjplus = pseudoInverse(Mj, epsilon);

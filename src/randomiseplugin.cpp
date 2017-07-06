@@ -140,6 +140,7 @@ bool RandomisePlugin::execute()
         int outputPermutationDistributionInt = qxGetIntParameter("Distribution");
         int outputSeparateVmpsInt = qxGetIntParameter("SeparateVmps");
         int doOnlyFTestsInt = qxGetIntParameter("OnlyFTests");
+		int outputPermutationVector = qxGetIntParameter("OutputPermutations");
 
         int numberContrasts = qxGetIntParameter("NumberOfContrasts");
         int numberRegressors = qxGetIntParameter("NumberOfRegressors");
@@ -431,6 +432,17 @@ bool RandomisePlugin::execute()
                     fprintf(f, "%f\n", r[i].maxDistribution[k]);
                 fclose(f);
             }
+			if (outputPermutationVector) {
+				sprintf(outputPathContrastICurrentMap, "%s%cContrast %d - permutations.txt", outputPathContrastI, pathSeparator, i);
+				FILE* f = fopen(outputPathContrastICurrentMap, "w");
+				for (int k = 0; k < r[i].performedPermutations; k++) {
+					for (int kz = 0; kz < num_of_maps; kz++) {
+						fprintf(f, "%d ", r[i].exectuedPermutations[k][kz]);
+					}
+					fprintf(f, "\n");
+				}
+				fclose(f);
+			}
         }
         //Writing F tests. NOTE: If doOnlyFtests == true, then numberContrasts == 0
         for(int i = numberContrasts; i < numberContrasts+numberFTests; i++){
@@ -537,8 +549,20 @@ bool RandomisePlugin::execute()
                     fprintf(f, "%f\n", r[i].maxDistribution[k]);
                 fclose(f);
             }
+			if (outputPermutationVector) {
+				sprintf(outputPathContrastICurrentMap, "%s%cF Test %d - permutations.txt", outputPathContrastI, pathSeparator, i);
+				FILE* f = fopen(outputPathContrastICurrentMap, "w");
+				for (int k = 0; k < r[i].performedPermutations; k++) {
+					for (int kz = 0; kz < num_of_maps; kz++) {
+						fprintf(f, "%d ", r[i].exectuedPermutations[k][kz]);
+					}
+					fprintf(f, "\n");
+				}
+				fclose(f);
+			}
         }
 
+		//Logging critical thresholds
         for(int i = 0; i < numberContrasts; i++){
             sprintf(buffer, "Contrast %d - Critical Threshold %f", i, r[i].criticalThreshold);
             qxLogText(buffer);

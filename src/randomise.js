@@ -236,7 +236,12 @@ scriptObj.collectDataAndFire = function(){
     } else{
         bv.SetPluginIntParameter("OnlyFTests", 0);
     }
-
+    //Output permutation vector
+    if (dlg.optionsGroupBox.loggingAndOutputGroupBox.outputPermutationVectorCheckBox.checked) {
+        bv.SetPluginIntParameter("OutputPermutations", 1);
+    } else {
+        bv.SetPluginIntParameter("OutputPermutations", 0);
+    }
     //Setting plugin command
     bv.SetPluginStringParameter("Command", "Execute");
 
