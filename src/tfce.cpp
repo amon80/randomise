@@ -54,9 +54,9 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
         int steps;
         float increment;
 
-        //200 steps max
-        if (precision > 200) {
-            increment = rangeData/200;
+        //100 steps max
+        if (precision > 100) {
+            increment = rangeData/100;
         } else{
             increment = dh;
         }
