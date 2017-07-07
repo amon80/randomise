@@ -111,11 +111,10 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 			statisticToUse = pivotal;
 
         //Setting omp variables
-        int max_num_threads = omp_get_num_procs();
-        omp_set_num_threads(max_num_threads);
+        //int max_num_threads = omp_get_num_procs();
+        //omp_set_num_threads(max_num_threads);
 
         //Computing statistics on original model
-        #pragma omp parallel for
         for(int v = 0; v < numVoxels; v++){
             epsilonZetas[v] = ResidualFormingMatrixZ * Y[v];
             Eigen::VectorXd phiv = Mplus*epsilonZetas[v];
@@ -126,9 +125,38 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         if(useTfce)
             tfce(toReturn[index].originalStatistic, E, H, dh, conn);
 
+		//Initializing distributions
         toReturn[index].maxDistribution = std::vector<float>(actualPermutationSize);
 		toReturn[index].exectuedPermutations = std::vector<std::vector<int>>(actualPermutationSize);
+
+		//Populating permutation vector
 		toReturn[index].exectuedPermutations[0] = t.getSignVector();
+		for (int j = 1; j < actualPermutationSize; j++) {
+			if (!exhaustively) {
+				if (EE)
+					t.randomShuffle();
+				if (ISE)
+					t.randomSignFlip();
+			}
+			else {
+				//both hypothesis
+				if (EE && ISE) {
+					if (!t.signFlipping()) {
+						t.resetTreeSignState();
+						t.LAlgorithm();
+					}
+				}
+				//error only exchangeable
+				else if (EE) {
+					t.LAlgorithm();
+				}
+				//error indipendent and simmetric
+				else {
+					t.signFlipping();
+				}
+				toReturn[index].exectuedPermutations[j] = t.getSignVector();
+			}
+		}
 
 		//Computing and storing max of the original model
 		float maxT0 = toReturn[index].originalStatistic[0];
@@ -142,35 +170,7 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 
         #pragma omp parallel for
         for(int j = 1; j < actualPermutationSize; j++){
-            std::vector<int> currentPerm;
-            #pragma omp critical
-            {
-				if(!exhaustively){
-					if(EE)
-						t.randomShuffle();
-					if(ISE)
-						t.randomSignFlip();
-				}
-				else{
-					//both hypothesis
-					if(EE && ISE){
-						if(!t.signFlipping()){
-							t.resetTreeSignState();
-							t.LAlgorithm();
-						}
-					}
-					//error only exchangeable
-					else if(EE){
-						t.LAlgorithm();
-					}
-					//error indipendent and simmetric
-					else{
-						t.signFlipping();
-					}
-				}
-				currentPerm = t.getSignVector();
-            }
-			toReturn[index].exectuedPermutations[j] = currentPerm;
+			std::vector<int> currentPerm = toReturn[index].exectuedPermutations[j];
             Eigen::MatrixXd Pj = buildShufflingMatrix(currentPerm);
             Eigen::MatrixXd Mj = Pj*MCopy;
             Eigen::MatrixXd Mjplus = pseudoInverse(Mj, epsilon);
@@ -221,18 +221,15 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
         }
         //finished the computation for current contrast
         //NOTE: Single threaded from here
-
-        //OPTIONAL
-        //t.resetTreePermutationState();
-        //t.resetTreeSignState();
         toReturn[index].performedPermutations = actualPermutationSize;
         if(actualPermutationSize > 0){
             toReturn[index].uncorrected /= actualPermutationSize;
             toReturn[index].corrected /= actualPermutationSize;
-            std::sort(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
+			std::vector<float> backup(toReturn[index].maxDistribution);
+            std::sort(backup.begin(), backup.end());
             //maximal statistic is now sorted from the lowest to the highest, we need the opposite
-            std::reverse(toReturn[index].maxDistribution.begin(), toReturn[index].maxDistribution.end());
-            toReturn[index].criticalThreshold = toReturn[index].maxDistribution[floor(alpha*toReturn[index].performedPermutations)];
+            std::reverse(backup.begin(), backup.end());
+            toReturn[index].criticalThreshold = backup[floor(alpha*toReturn[index].performedPermutations)];
         }
 		index++;
         (*contrast)++;
