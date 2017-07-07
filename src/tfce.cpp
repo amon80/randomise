@@ -44,39 +44,29 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
     int n = tfce_map.size();
     for(int i = 0; i < n; i++)
         tfce_map[i] = 0;
-    MinMaxStructure m = map.findMinMax();
+	StatisticalMap3D maskPosData = createMask(map, moreThan, 0);
+	StatisticalMap3D posData = createMapFromMask(map, maskPosData);
+    MinMaxStructure m = posData.findMinMax();
     float minData = m.min;
     float maxData = m.max;
     float rangeData = maxData - minData;
-    if(minData >= 0){
-        int i;
-        float precision = rangeData/dh;
-        int steps;
-        float increment;
+    int i;
+    float precision = rangeData/dh;
+    int steps;
+    float increment;
 
-        //100 steps max
-        if (precision > 100) {
-            increment = rangeData/100;
-        } else{
-            increment = dh;
-        }
-
-        steps = (int) floor(rangeData / increment);
-        for (i = 0; i < steps; i++) {
-            computeTfceIteration(map, tfce_map, minData + i*increment, E, H, C);
-        }
-        tfce_map.applyOperation(multiply, increment);
-    }else{
-        StatisticalMap3D maskPosData = createMask(map, moreThan, 0);
-        StatisticalMap3D maskNegData = createMask(map, lessThan, 0);
-        StatisticalMap3D posData = createMapFromMask(map, maskPosData);
-        StatisticalMap3D negData = createMapFromMask(map, maskNegData);
-        negData.flipMap();
-        tfce(posData, E, H, dh, C);
-        tfce(negData, E, H, dh, C);
-        negData.flipMap();      
-        tfce_map = posData + negData;
+    //100 steps max
+    if (precision > 100) {
+        increment = rangeData/100;
+    } else{
+        increment = dh;
     }
+
+    steps = (int) floor(rangeData / increment);
+    for (i = 0; i < steps; i++) {
+        computeTfceIteration(posData, tfce_map, minData + i*increment, E, H, C);
+    }
+    tfce_map.applyOperation(multiply, increment);
     map = tfce_map;
 }
 
