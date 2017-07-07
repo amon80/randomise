@@ -64,15 +64,19 @@
 <p>During the execution of the plugin, each contrast is treated separately. For one specific contrast, the maximum number of permutations depends on the design matrix, on the exchangeability tree and the hypothesis about the errors. After the maximum number of permutations is computed, it is compared with the number supplied by the user. If the number supplied by the user is inferior, than only that number of permutations will be performed.</p>
 <p>If this number is set to -1, exhaustive permutation analysis will be run for each contrast.</p>
 <h3 id="output-and-logging-options">Output and logging options</h3>
-<p>The results for each contrast/F Test are stored in separate folders. For each folder, the these are the possible outputs:</p>
+<p>The results for each contrast/F Test are stored in separate folders. For each folder, these are the possible outputs:</p>
 <ol style="list-style-type: decimal">
 <li>A map of the statistic of your choice computed for that contrast.</li>
 <li>A map of 1-p uncorrected p-values.</li>
 <li>A map of 1-p FWER corrected p-values.</li>
-<li>The sorted maximal distribution used to compute the critical threshold for FWER correction.</li>
+<li>The permutation distribution of maximas used to compute the critical threshold for FWER correction.</li>
+<li>A file with all the permutations executed.</li>
 </ol>
+<p>It's important to note that the the last two outputs are connected. Each line of the distribution file is the maximal statistic score obtained on the permutation specified by the same line of the permutation file.</p>
 <p>By selecting the &quot;Use separate VMPs&quot; option, in each folder there will be more than one VMP, each corrisponding to one output. Otherwise, the results will be stored as submaps of just 1 VMP.</p>
 <h2 id="tips-tricks">Tips &amp; Tricks</h2>
+<h3 id="i-want-to-compute-only-the-raw-statistic.-how-do-i-do">I want to compute only the raw statistic. How do I do?</h3>
+<p>Since the number of permutations includes the original permutation, it is sufficient to set the number of desired permutations to 1, and choose only &quot;Raw statistic&quot; as output.</p>
 <h3 id="which-type-of-standard-analysis-should-i-run">Which type of standard analysis should I run?</h3>
 <p>The choice of analysis to perform depends on what you are searching for in your study:</p>
 <ul>
