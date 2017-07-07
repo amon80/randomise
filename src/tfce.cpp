@@ -55,18 +55,21 @@ void tfce(StatisticalMap3D& map, float E, float H, float dh, Connectivity3D * C)
     int steps;
     float increment;
 
-    //100 steps max
-    if (precision > 100) {
-        increment = rangeData/100;
-    } else{
-        increment = dh;
-    }
+	if (maxData > 0) {
+		//100 steps max
+		if (precision > 100) {
+			increment = rangeData / 100;
+		}
+		else {
+			increment = dh;
+		}
 
-    steps = (int) floor(rangeData / increment);
-    for (i = 0; i < steps; i++) {
-        computeTfceIteration(posData, tfce_map, minData + i*increment, E, H, C);
-    }
-    tfce_map.applyOperation(multiply, increment);
+		steps = (int)floor(rangeData / increment);
+		for (i = 0; i < steps; i++) {
+			computeTfceIteration(posData, tfce_map, minData + i*increment, E, H, C);
+		}
+		tfce_map.applyOperation(multiply, increment);
+	}
     map = tfce_map;
 }
 
