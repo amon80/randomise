@@ -176,11 +176,11 @@ void StatisticalMap3D::applyOperation(float (* operation) (const float a, const 
 }
 
 float& StatisticalMap3D::operator()(const std::size_t idx, const std::size_t idy, const std::size_t idz){
-    return map[idz*dimX*dimY + idy*dimY + idx];
+    return map[idz*dimX*dimY + idy*dimX + idx];
 }
 
 float& StatisticalMap3D::operator()(const Point3D index){
-    return map[index.z*dimX*dimY + index.y*dimY + index.x];
+    return map[index.z*dimX*dimY + index.y*dimX + index.x];
 }
 
 
