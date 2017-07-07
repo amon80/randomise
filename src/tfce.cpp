@@ -10,8 +10,9 @@ void computeTfceIteration(StatisticalMap3D& map, StatisticalMap3D& tfce_map, flo
     StatisticalMap3D binaryClusterMap = createMask(map, moreThan, h);
     std::map<float, float> extensions = find_clusters_3D(binaryClusterMap, C);
     turn_into_extent_map(binaryClusterMap, extensions);
+	float hAtH = pow(h, H);
     binaryClusterMap.applyOperation(elevate, E);
-    binaryClusterMap.applyOperation(multiply, pow(h,H));
+    binaryClusterMap.applyOperation(multiply, hAtH);
     int dim = tfce_map.size();
     for (i = 0; i < dim; ++i)
         tfce_map[i] += binaryClusterMap[i];
@@ -80,7 +81,7 @@ void turn_into_extent_map(StatisticalMap3D& clustered_map, std::map<float, float
 }
 
 std::map<float, float> find_clusters_3D(StatisticalMap3D& image, Connectivity3D * C){
-    int label = 2;
+    float label = 2;
     std::queue<Point3D> q;
     std::map<float, float> extensions;
 	//0 is not a cluster identifier
