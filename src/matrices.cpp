@@ -33,25 +33,34 @@ Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon)
     return svd.matrixV() *  (svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix().asDiagonal() * svd.matrixU().adjoint();
 }
 
-PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C, Eigen::MatrixXd &W){
+PartitioningResult partitionModel(Eigen::MatrixXd& X, Eigen::MatrixXd &c, Eigen::MatrixXd &W){
     //Partition the model
     PartitioningResult toReturn;
-    Eigen::MatrixXd D = (M.transpose() * M).inverse();
-    Eigen::MatrixXd Dw = (M.transpose() * W * M).inverse();
-    Eigen::MatrixXd Ctrasp = C.transpose();
-    toReturn.X = M*D*C*((Ctrasp*Dw*C).inverse());
+    Eigen::MatrixXd Xtrasp = X.transpose();
+    Eigen::MatrixXd Q = (Xtrasp * X).inverse();
+    Eigen::MatrixXd Qw = (Xtrasp * W * X).inverse();
+    Eigen::MatrixXd ctrasp = c.transpose();
+    Eigen::MatrixXd F1 = (ctrasp*Qw*c).inverse();
+    toReturn.X = X*Q*c*F1;
 
-    int r = C.rows();
-    int s = C.cols();
+    int r = c.rows();
+    int s = c.cols();
     if(r == s){
-        toReturn.Z = Eigen::MatrixXd::Zero(M.rows(), 1);
+        toReturn.Z = Eigen::MatrixXd::Zero(X.rows(), 1);
     }
     else{
-        //"Cu is a matrix whose COLUMNS span in the null space of C"
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
-        Eigen::MatrixXd Cu = lu.kernel();
-        Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse())*Ctrasp*D*Cu;
-        toReturn.Z = M*D*Cv*((Cv.transpose()*D*Cv).inverse());
+        //"c2 is a matrix whose COLUMNS span in the null space of C"
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(ctrasp);
+        Eigen::MatrixXd c2 = lu.kernel();
+        Eigen::MatrixXd tmp(c.rows(), c.cols()+c2.cols());
+        tmp << c, c2;
+        Eigen::ColPivHouseholderQR<Eigen::MatrixXd> decomp(tmp);
+        int rank = decomp.rank(); //should be == r
+        Eigen::MatrixXd Pc = c*((ctrasp*Q*c).inverse())*ctrasp*Q;
+        Eigen::MatrixXd c3 = c2 - Pc*c2;
+        Eigen::MatrixXd c3trasp = c3.transpose();
+        Eigen::MatrixXd F3 = (c3trasp*Q*c3).inverse();
+        toReturn.Z = X*Q*c3*F3;
     }
     return toReturn;
 }
