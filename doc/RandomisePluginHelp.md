@@ -63,16 +63,22 @@ During the execution of the plugin, each contrast is treated separately. For one
 If this number is set to -1, exhaustive permutation analysis will be run for each contrast.
 
 ### Output and logging options ###
-The results for each contrast/F Test are stored in separate folders. For each folder, the these are the possible outputs:
+The results for each contrast/F Test are stored in separate folders. For each folder, these are the possible outputs:
 
 1. A map of the statistic of your choice computed for that contrast.
 2. A map of 1-p uncorrected p-values.
 3. A map of 1-p FWER corrected p-values.
-4. The sorted maximal distribution used to compute the critical threshold for FWER correction.
+4. The permutation distribution of maximas used to compute the critical threshold for FWER correction.
+5. A file with all the permutations executed.
+
+It's important to note that the the last two outputs are connected. Each line of the distribution file is the maximal statistic score obtained on the permutation specified by the same line of the permutation file.
 
 By selecting the "Use separate VMPs" option, in each folder there will be more than one VMP, each corrisponding to one output. Otherwise, the results will be stored as submaps of just 1 VMP.
 
 ## Tips & Tricks ##
+
+### I want to compute only the raw statistic. How do I do? ###
+Since the number of permutations includes the original permutation, it is sufficient to set the number of desired permutations to 1, and choose only "Raw statistic" as output.
 
 ### Which type of standard analysis should I run? ###
 The choice of analysis to perform depends on what you are searching for in your study:
