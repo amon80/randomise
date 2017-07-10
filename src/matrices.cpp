@@ -47,7 +47,7 @@ PartitioningResult partitionModel(Eigen::MatrixXd& M, Eigen::MatrixXd &C, Eigen:
         toReturn.Z = Eigen::MatrixXd::Zero(M.rows(), 1);
     }
     else{
-        //"Cu is a matrix whose columns span in the null space of C"
+        //"Cu is a matrix whose COLUMNS span in the null space of C"
         Eigen::FullPivLU<Eigen::MatrixXd> lu(Ctrasp);
         Eigen::MatrixXd Cu = lu.kernel();
         Eigen::MatrixXd Cv = Cu - C*((Ctrasp*D*C).inverse())*Ctrasp*D*Cu;

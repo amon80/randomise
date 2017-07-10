@@ -154,8 +154,8 @@ std::vector<RandomiseResult> randomise(StatisticalMap4D& Y, Eigen::MatrixXd& M, 
 				else {
 					t.signFlipping();
 				}
-				toReturn[index].exectuedPermutations[j] = t.getSignVector();
 			}
+			toReturn[index].exectuedPermutations[j] = t.getSignVector();
 		}
 
 		//Computing and storing max of the original model
