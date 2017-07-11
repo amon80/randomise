@@ -45,7 +45,6 @@ SOURCES += \
     connectivity3d6.cpp \
     connectivity3d18.cpp \
     connectivity3d26.cpp \
-    binaryio.cpp \
     multyrowarray.cpp
 
 HEADERS += \
