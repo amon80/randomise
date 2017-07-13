@@ -24,7 +24,6 @@ scriptObj.initDlg = function(){
     studies.addItem("Custom");
     studies.addItem("One-Sample T-Test");
     studies.addItem("Two-Sample Unpaired T-Test");
-    studies.addItem("Two-Sample Paired T-Test");
     studies.addItem("Two-Sample Unpaired T-Test (Unequal group variances)");
     studies.addItem("ANOVA: 1 factor 4 levels (Repeated measures)");
 
@@ -379,65 +378,7 @@ scriptObj.onChangeStudy = function(){
             dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("G");
 
         }
-        else if(currentStudy == "Two-Sample Paired T-Test"){
-            //Getting number of subjects
-            var num_subjects = num_of_maps/2;
-
-            //Setting permutation hypothesis
-            dlg.optionsGroupBox.eeCheckBox.setChecked(true);
-
-            //Adding necessary rows/columns to tables
-            this.addColumn();
-            for(var i = 0; i < num_subjects; i++){
-                this.addColumn();
-            }
-            this.addContrast();
-            this.addGroup();
-            this.addGroup();
-
-            //Filling the design matrix
-            //First column
-            for(var i = 0; i < num_of_maps; i+=2){
-                addEntryToTable(designMatrix, i,0, "1");
-                addEntryToTable(designMatrix, i+1,0, "-1");
-            }
-            //Other columns
-            for(var j = 1; j < num_subjects+1; j++){
-                var nsubj = j - 1;
-                for(var i = 0; i < num_of_maps; i++){
-                    if(i/2 == nsubj || i/2 - 0.5 == nsubj){
-                        addEntryToTable(designMatrix, i, j, "1");
-                    }
-                    else{
-                        addEntryToTable(designMatrix, i, j, "0");
-                    }
-                }
-            }
-
-            //Filling the group matrix
-            //First column
-            for(var i = 0; i < num_of_maps; i++){
-                addEntryToTable(treeMatrix, i,0, "-1");
-            }
-            //Second column
-            var group = 1;
-            for(var i = 0; i < num_of_maps; i+=2){
-                var group_string = ""+group;
-                addEntryToTable(treeMatrix, i,1, group_string);
-                addEntryToTable(treeMatrix, i+1,1, group_string);
-                group += 1;
-            }
-
-            //Filling the contrast matrix
-            addEntryToTable(contrastMatrix, 0, 0, "1");
-            for(var j = 1; j < num_subjects+1; j++){
-                addEntryToTable(contrastMatrix, 0, j, "0");
-            }
-
-            //Setting proper statistic
-            dlg.optionsGroupBox.statisticToUseComboBox.setCurrentText("T");
-
-        }else if(currentStudy == "ANOVA: 1 factor 4 levels (Repeated measures)"){
+        else if(currentStudy == "ANOVA: 1 factor 4 levels (Repeated measures)"){
             //Getting number of subjects
             var num_subjects = num_of_maps/4;
 
