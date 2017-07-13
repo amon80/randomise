@@ -26,7 +26,7 @@ Eigen::MatrixXd buildShufflingMatrix(std::vector<int>& perm){
 }
 
 
-Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon)
+Eigen::MatrixXd pseudoInverse(const Eigen::MatrixXd& a, double epsilon)
 {
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(a ,Eigen::ComputeThinU | Eigen::ComputeThinV);
     double tolerance = epsilon * std::max(a.cols(), a.rows()) *svd.singularValues().array().abs()(0);
@@ -35,12 +35,15 @@ Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon)
 
 PartitioningResult partitionModel(Eigen::MatrixXd& X, Eigen::MatrixXd &c, Eigen::MatrixXd &W){
     //Partition the model
+
+	double epsilon = std::numeric_limits<double>::epsilon();
+
     PartitioningResult toReturn;
     Eigen::MatrixXd Xtrasp = X.transpose();
-    Eigen::MatrixXd Q = (Xtrasp * X).inverse();
-    Eigen::MatrixXd Qw = (Xtrasp * W * X).inverse();
+	Eigen::MatrixXd Q = pseudoInverse((Xtrasp * X), epsilon);
+	Eigen::MatrixXd Qw = pseudoInverse((Xtrasp * W * X), epsilon);
     Eigen::MatrixXd ctrasp = c.transpose();
-    Eigen::MatrixXd F1 = (ctrasp*Qw*c).inverse();
+	Eigen::MatrixXd F1 = pseudoInverse((ctrasp*Qw*c), epsilon);
     toReturn.X = X*Q*c*F1;
 
     int r = c.rows();
@@ -52,14 +55,10 @@ PartitioningResult partitionModel(Eigen::MatrixXd& X, Eigen::MatrixXd &c, Eigen:
         //"c2 is a matrix whose COLUMNS span in the null space of C"
         Eigen::FullPivLU<Eigen::MatrixXd> lu(ctrasp);
         Eigen::MatrixXd c2 = lu.kernel();
-        Eigen::MatrixXd tmp(c.rows(), c.cols()+c2.cols());
-        tmp << c, c2;
-        Eigen::ColPivHouseholderQR<Eigen::MatrixXd> decomp(tmp);
-        int rank = decomp.rank(); //should be == r
-        Eigen::MatrixXd Pc = c*((ctrasp*Q*c).inverse())*ctrasp*Q;
+        Eigen::MatrixXd Pc = c*F1*ctrasp*Q;
         Eigen::MatrixXd c3 = c2 - Pc*c2;
         Eigen::MatrixXd c3trasp = c3.transpose();
-        Eigen::MatrixXd F3 = (c3trasp*Q*c3).inverse();
+        Eigen::MatrixXd F3 = pseudoInverse((c3trasp*Q*c3), epsilon);
         toReturn.Z = X*Q*c3*F3;
     }
     return toReturn;

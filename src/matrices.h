@@ -15,7 +15,7 @@ struct PartitioningResult{
 Eigen::MatrixXd buildShufflingMatrix(std::vector<int>& perm);
 
 //Function for PseudoInverse
-Eigen::MatrixXd pseudoInverse(Eigen::MatrixXd& a, double epsilon);
+Eigen::MatrixXd pseudoInverse(const Eigen::MatrixXd& a, double epsilon);
 
 PartitioningResult partitionModel(Eigen::MatrixXd& X, Eigen::MatrixXd& c, Eigen::MatrixXd &W);
 
