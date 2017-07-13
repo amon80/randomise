@@ -34,14 +34,6 @@
 <img src="images/gui/A1betamaps.png" />
 
 </div>
-<h3 id="example-creating-maps-for-paired-t-test">Example: creating maps for paired t-test</h3>
-<p>This example is very similar to the previous one, except for the fact that more than one contrast is specified. In this case, we want to contrast conditions A1 and B1. We first specify A1 as previously done, than we add the new contrast regarding B1:</p>
-<p><img src="images/gui/newcontrast1.png" /> <img src="images/gui/newcontrast2.png" /></p>
-<p>We create the beta maps in the same way as we did before, and here's the result:</p>
-<div class="figure">
-<img src="images/gui/twocontrastresult.png" />
-
-</div>
 <h2 id="gui-description">GUI description</h2>
 <p>After the creation of the beta maps, the plugin GUI can be launched from the &quot;Plugins&quot; menu. Note that the creation of the beta maps is essential, otherwise the GUI won't load at all; the &quot;Log&quot; pane of BrainVoyager will print a respective message.</p>
 <div class="figure">
@@ -75,12 +67,17 @@
 <p>It's important to note that the the last two outputs are connected. Each line of the distribution file is the maximal statistic score obtained on the permutation specified by the same line of the permutation file.</p>
 <p>By selecting the &quot;Use separate VMPs&quot; option, in each folder there will be more than one VMP, each corrisponding to one output. Otherwise, the results will be stored as submaps of just 1 VMP.</p>
 <h2 id="tips-tricks">Tips &amp; Tricks</h2>
+<h3 id="perform-a-2-sample-paired-t-test">Perform a 2 sample paired t-test</h3>
+<p>Even if the 2 sample paired t-test is not listed among the classical studies, it is straightforward to perform it. The idea is very simple: Using the previous example, let's say we want to compare condition A1 vs condition B1. It is sufficient to generate, for each subject, a single map in which the conditions are compared within subject, as showed in the example below.</p>
+<p><img src="images/gui/twosamplegen.png" /> <img src="images/gui/twosamplegenresult.png" /></p>
+<p>Using these generated maps, it is sufficient to perform a <em>One sample T Test</em> in the plugin to perform a <em>Two sample paired T Test</em>.</p>
 <h3 id="i-want-to-compute-only-the-raw-statistic.-how-do-i-do">I want to compute only the raw statistic. How do I do?</h3>
 <p>Since the number of permutations includes the original permutation, it is sufficient to set the number of desired permutations to 1, and choose only &quot;Raw statistic&quot; as output.</p>
 <h3 id="which-type-of-standard-analysis-should-i-run">Which type of standard analysis should I run?</h3>
 <p>The choice of analysis to perform depends on what you are searching for in your study:</p>
 <ul>
 <li>If you're looking for group effects, perform <em>One sample t test</em>.</li>
+<li>If you want to compare two conditions, perform a <em>Two sample paired t test</em> using the strategy previously explained.</li>
 <li>If your study involves patients and controls, and error variance can be assumed to be the same across all subjects, perform <em>Two sample unpaired t test</em>.</li>
 <li>If your study involves patients and controls, and error variance <em>cannot</em> be assumed to be the same across all subjects (i.e. patients with ASD, experiment involving twins etc.), perform <em>Two sample unpaired t test (unpaired group variance)</em>.</li>
 <li>If you want to confront a pair of different conditions over the same subjects, perform <em>Two sample paired t test</em>.</li>

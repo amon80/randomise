@@ -23,16 +23,6 @@ After the beta maps have been created, you can view them in the &quot;Volume Map
 
 ![](images/gui/A1betamaps.png)
 
-### Example: creating maps for paired t-test ###
-This example is very similar to the previous one, except for the fact that more than one contrast is specified. In this case, we want to contrast conditions A1 and B1. We first specify A1 as previously done, than we add the new contrast regarding B1:
-
-![](images/gui/newcontrast1.png)
-![](images/gui/newcontrast2.png)
-
-We create the beta maps in the same way as we did before, and here's the result:
-
-![](images/gui/twocontrastresult.png)
-
 ## GUI description ##
 After the creation of the beta maps, the plugin GUI can be launched from the "Plugins" menu. Note that the creation of the beta maps is essential, otherwise the GUI won't load at all; the "Log" pane of BrainVoyager will print a respective message.
 
@@ -77,6 +67,14 @@ By selecting the "Use separate VMPs" option, in each folder there will be more t
 
 ## Tips & Tricks ##
 
+### Perform a 2 sample paired t-test ###
+Even if the 2 sample paired t-test is not listed among the classical studies, it is straightforward to perform it. The idea is very simple: Using the previous example, let's say we want to compare condition A1 vs condition B1. It is sufficient to generate, for each subject, a single map in which the conditions are compared within subject, as showed in the example below.
+
+![](images/gui/twosamplegen.png)
+![](images/gui/twosamplegenresult.png)
+
+Using these generated maps, it is sufficient to perform a *One sample T Test* in the plugin to perform a *Two sample paired T Test*.
+
 ### I want to compute only the raw statistic. How do I do? ###
 Since the number of permutations includes the original permutation, it is sufficient to set the number of desired permutations to 1, and choose only "Raw statistic" as output.
 
@@ -84,6 +82,7 @@ Since the number of permutations includes the original permutation, it is suffic
 The choice of analysis to perform depends on what you are searching for in your study:
 
 - If you're looking for group effects, perform *One sample t test*.
+- If you want to compare two conditions, perform a *Two sample paired t test* using the strategy previously explained.
 - If your study involves patients and controls, and error variance can be assumed to be the same across all subjects, perform *Two sample unpaired t test*.
 - If your study involves patients and controls, and error variance *cannot* be assumed to be the same across all subjects (i.e. patients with ASD, experiment involving twins etc.), perform *Two sample unpaired t test (unpaired group variance)*.
 - If you want to confront a pair of different conditions over the same subjects, perform *Two sample paired t test*. 
